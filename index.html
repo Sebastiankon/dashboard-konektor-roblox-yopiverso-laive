@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Yopiverso - Laive</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --laive-red: #E31E24;
+            --laive-gold: #FFD700;
+            --laive-gray: #F5F5F5;
+        }
+        
+        .laive-gradient {
+            background: linear-gradient(135deg, var(--laive-red) 0%, #c41e24 100%);
+        }
+        
+        .kpi-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(227, 30, 36, 0.2);
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+        }
+        
+        .chart-container canvas {
+            max-height: 300px !important;
+        }
+        
+        .filter-button {
+            transition: all 0.3s ease;
+        }
+        
+        .filter-button.active {
+            background-color: var(--laive-red);
+            color: white;
+        }
+        
+        .filter-button:hover {
+            background-color: var(--laive-red);
+            color: white;
+        }
+        
+         {
+            body { font-size: 12px; }
+            .chart-container { height: 250px; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="laive-gradient text-white py-6 px-4 shadow-lg">
+        <div class="container mx-auto">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold">Dashboard Yopiverso</h1>
+                    <p class="text-lg opacity-90">Proyecto Laive - Análisis de Rendimiento</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm opacity-75">Última actualización</p>
+                    <p class="text-lg font-semibold" id="lastUpdate">14 de Junio, 2025</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Filtros de Fecha -->
+    <div class="bg-white shadow-md py-4 px-4 no-print">
+        <div class="container mx-auto">
+            <div class="flex flex-wrap items-center gap-4">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-calendar-alt text-gray-600"></i>
+                    <span class="font-semibold text-gray-700">Filtrar por fecha:</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <label class="text-sm text-gray-600">Desde:</label>
+                    <input type="date" id="dateFrom" class="border rounded px-2 py-1 text-sm" value="2025-05-25">
+                    <label class="text-sm text-gray-600">Hasta:</label>
+                    <input type="date" id="dateTo" class="border rounded px-2 py-1 text-sm" value="2025-06-14">
+                    <button onclick="applyDateFilter()" class="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600">
+                        Aplicar
+                    </button>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="setQuickFilter('all')" class="filter-button active bg-gray-200 px-3 py-1 rounded text-sm">
+                        Todo
+                    </button>
+                    <button onclick="setQuickFilter('week')" class="filter-button bg-gray-200 px-3 py-1 rounded text-sm">
+                        Última semana
+                    </button>
+                    <button onclick="setQuickFilter('launch')" class="filter-button bg-gray-200 px-3 py-1 rounded text-sm">
+                        Lanzamiento
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KPIs Principales -->
+    <div class="container mx-auto py-8 px-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- KPI 1: Usuarios Activos -->
+            <div class="kpi-card bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-700">Usuarios Activos</h3>
+                        <p class="text-3xl font-bold text-red-600" id="activeUsers">4,903</p>
+                        <p class="text-sm text-gray-500">Último día</p>
+                    </div>
+                    <div class="bg-red-100 p-3 rounded-full">
+                        <i class="fas fa-users text-red-500 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPI 2: Nuevos Usuarios -->
+            <div class="kpi-card bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-700">Nuevos Usuarios</h3>
+                        <p class="text-3xl font-bold text-blue-600" id="newUsers">3,956</p>
+                        <p class="text-sm text-gray-500">Último día</p>
+                    </div>
+                    <div class="bg-blue-100 p-3 rounded-full">
+                        <i class="fas fa-user-plus text-blue-500 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPI 3: Tiempo de Sesión -->
+            <div class="kpi-card bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-700">Tiempo Promedio</h3>
+                        <p class="text-3xl font-bold text-green-600" id="avgSession">3.5 min</p>
+                        <p class="text-sm text-gray-500">Por sesión</p>
+                    </div>
+                    <div class="bg-green-100 p-3 rounded-full">
+                        <i class="fas fa-clock text-green-500 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPI 4: Visitas Totales -->
+            <div class="kpi-card bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-700">Visitas Totales</h3>
+                        <p class="text-3xl font-bold text-yellow-600" id="totalVisits">133,400</p>
+                        <p class="text-sm text-gray-500">Acumuladas</p>
+                    </div>
+                    <div class="bg-yellow-100 p-3 rounded-full">
+                        <i class="fas fa-eye text-yellow-500 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Métricas de Publicidad -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Impresiones Totales -->
+            <div class="kpi-card bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-700">Impresiones</h3>
+                        <p class="text-3xl font-bold text-purple-600" id="totalImpressions">17.5M</p>
+                        <p class="text-sm text-gray-500">Campañas</p>
+                    </div>
+                    <div class="bg-purple-100 p-3 rounded-full">
+                        <i class="fas fa-chart-line text-purple-500 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clicks Totales -->
+            <div class="kpi-card bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-700">Clicks</h3>
+                        <p class="text-3xl font-bold text-indigo-600" id="totalClicks">214K</p>
+                        <p class="text-sm text-gray-500">CTR: <span id="overallCTR">1.22%</span></p>
+                    </div>
+                    <div class="bg-indigo-100 p-3 rounded-full">
+                        <i class="fas fa-mouse-pointer text-indigo-500 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Plays Totales -->
+            <div class="kpi-card bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-700">Plays</h3>
+                        <p class="text-3xl font-bold text-pink-600" id="totalPlays">81,941</p>
+                        <p class="text-sm text-gray-500">Play Rate: <span id="playRate">0.47%</span></p>
+                    </div>
+                    <div class="bg-pink-100 p-3 rounded-full">
+                        <i class="fas fa-play text-pink-500 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gasto Total -->
+            <div class="kpi-card bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-700">Gasto Total</h3>
+                        <p class="text-3xl font-bold text-red-600" id="totalSpent">$5,501.90</p>
+                        <p class="text-sm text-gray-500">CPP: <span id="costPerPlay">$0.067</span></p>
+                    </div>
+                    <div class="bg-red-100 p-3 rounded-full">
+                        <i class="fas fa-dollar-sign text-red-500 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráficos -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            
+            <!-- Gráfico 1: Usuarios Activos Diarios -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">
+                    <i class="fas fa-users text-red-500 mr-2"></i>
+                    Evolución de Usuarios Activos
+                </h3>
+                <div class="chart-container">
+                    <canvas id="activeUsersChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Gráfico 2: Nuevos Usuarios -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">
+                    <i class="fas fa-user-plus text-blue-500 mr-2"></i>
+                    Nuevos Usuarios Diarios
+                </h3>
+                <div class="chart-container">
+                    <canvas id="newUsersChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Gráfico 3: Tiempo de Sesión -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">
+                    <i class="fas fa-clock text-green-500 mr-2"></i>
+                    Tiempo de Sesión Promedio
+                </h3>
+                <div class="chart-container">
+                    <canvas id="sessionTimeChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Gráfico 4: Visitas Totales -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">
+                    <i class="fas fa-chart-area text-yellow-500 mr-2"></i>
+                    Crecimiento de Visitas Totales
+                </h3>
+                <div class="chart-container">
+                    <canvas id="totalVisitsChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráfico de Campañas -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h3 class="text-xl font-semibold mb-4 text-gray-800">
+                <i class="fas fa-bullhorn text-purple-500 mr-2"></i>
+                Rendimiento por Tipo de Campaña
+            </h3>
+            <div class="chart-container">
+                <canvas id="campaignChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Resumen de Insights -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h3 class="text-xl font-semibold mb-4 text-gray-800">
+                <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+                Insights Clave del Período
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="text-center p-4 bg-green-50 rounded-lg">
+                    <h4 class="font-semibold text-green-800">ROI Publicitario</h4>
+                    <p class="text-2xl font-bold text-green-600" id="roiValue">14.9</p>
+                    <p class="text-sm text-green-600">Plays por dólar invertido</p>
+                </div>
+                <div class="text-center p-4 bg-blue-50 rounded-lg">
+                    <h4 class="font-semibold text-blue-800">Tráfico Orgánico</h4>
+                    <p class="text-2xl font-bold text-blue-600" id="organicRatio">38.6%</p>
+                    <p class="text-sm text-blue-600">Plays orgánicos vs pagados</p>
+                </div>
+                <div class="text-center p-4 bg-purple-50 rounded-lg">
+                    <h4 class="font-semibold text-purple-800">Eficiencia</h4>
+                    <p class="text-2xl font-bold text-purple-600" id="clickToPlayRate">38.3%</p>
+                    <p class="text-sm text-purple-600">Clicks que se convierten en plays</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-6 px-4 mt-8">
+        <div class="container mx-auto text-center">
+            <p class="text-lg font-semibold">Proyecto Yopiverso - Laive</p>
+            <p class="text-sm opacity-75">Desarrollado por Konektor Chile | Sebastián Wagner - Key Account Manager</p>
+            <p class="text-xs opacity-60 mt-2">Dashboard actualizado automáticamente con datos de Roblox Analytics</p>
+        </div>
+    </footer>
+
+    <script>
+        // Datos base del proyecto
+        const baseData = {
+            experienceMetrics: [
+                { fecha: "2025-05-25", usuariosActivosDiarios: 9, nuevosUsuarios: 8, tiempoSesionPromedio: 9.0, retencionDia1: 0.01, visitasTotales: 219 },
+                { fecha: "2025-05-26", usuariosActivosDiarios: 146, nuevosUsuarios: 8, tiempoSesionPromedio: 8.1, retencionDia1: 0.02, visitasTotales: 3700 },
+                { fecha: "2025-05-27", usuariosActivosDiarios: 874, nuevosUsuarios: 1203, tiempoSesionPromedio: 7.8, retencionDia1: 0.03, visitasTotales: 13000 },
+                { fecha: "2025-05-28", usuariosActivosDiarios: 1806, nuevosUsuarios: 1747, tiempoSesionPromedio: 6.0, retencionDia1: 0.04, visitasTotales: 18200 },
+                { fecha: "2025-05-29", usuariosActivosDiarios: 2096, nuevosUsuarios: 1747, tiempoSesionPromedio: 5.7, retencionDia1: 0.04, visitasTotales: 23800 },
+                { fecha: "2025-05-30", usuariosActivosDiarios: 3023, nuevosUsuarios: 2591, tiempoSesionPromedio: 5.4, retencionDia1: 0.04, visitasTotales: 29200 },
+                { fecha: "2025-05-31", usuariosActivosDiarios: 3691, nuevosUsuarios: 3077, tiempoSesionPromedio: 4.2, retencionDia1: 0.04, visitasTotales: 34700 },
+                { fecha: "2025-06-01", usuariosActivosDiarios: 4261, nuevosUsuarios: 3975, tiempoSesionPromedio: 3.6, retencionDia1: 0.04, visitasTotales: 46500 },
+                { fecha: "2025-06-02", usuariosActivosDiarios: 5081, nuevosUsuarios: 4692, tiempoSesionPromedio: 3.6, retencionDia1: 0.04, visitasTotales: 52900 },
+                { fecha: "2025-06-03", usuariosActivosDiarios: 5038, nuevosUsuarios: 4565, tiempoSesionPromedio: 3.6, retencionDia1: 0.04, visitasTotales: 61600 },
+                { fecha: "2025-06-04", usuariosActivosDiarios: 6073, nuevosUsuarios: 5332, tiempoSesionPromedio: 3.4, retencionDia1: 0.04, visitasTotales: 79500 },
+                { fecha: "2025-06-05", usuariosActivosDiarios: 6073, nuevosUsuarios: 5332, tiempoSesionPromedio: 3.4, retencionDia1: 0.04, visitasTotales: 81200 },
+                { fecha: "2025-06-06", usuariosActivosDiarios: 6401, nuevosUsuarios: 5892, tiempoSesionPromedio: 3.4, retencionDia1: 0.03, visitasTotales: 94100 },
+                { fecha: "2025-06-07", usuariosActivosDiarios: 6729, nuevosUsuarios: 6023, tiempoSesionPromedio: 3.3, retencionDia1: 0.03, visitasTotales: 103800 },
+                { fecha: "2025-06-08", usuariosActivosDiarios: 7832, nuevosUsuarios: 6577, tiempoSesionPromedio: 3.2, retencionDia1: 0.03, visitasTotales: 115300 },
+                { fecha: "2025-06-09", usuariosActivosDiarios: 7462, nuevosUsuarios: 6188, tiempoSesionPromedio: 3.2, retencionDia1: 0.03, visitasTotales: 120100 },
+                { fecha: "2025-06-10", usuariosActivosDiarios: 7282, nuevosUsuarios: 5994, tiempoSesionPromedio: 3.2, retencionDia1: 0.03, visitasTotales: 124400 },
+                { fecha: "2025-06-11", usuariosActivosDiarios: 6732, nuevosUsuarios: 5488, tiempoSesionPromedio: 3.3, retencionDia1: 0.03, visitasTotales: 127600 },
+                { fecha: "2025-06-12", usuariosActivosDiarios: 5828, nuevosUsuarios: 4714, tiempoSesionPromedio: 3.4, retencionDia1: 0.03, visitasTotales: 130000 },
+                { fecha: "2025-06-13", usuariosActivosDiarios: 4903, nuevosUsuarios: 3956, tiempoSesionPromedio: 3.5, retencionDia1: 0.03, visitasTotales: 133400 }
+            ],
+            campaigns: [
+                // Archivo 1 - Maximize Plays ($3,915.27 total)
+                { name: "Maximize Plays_Yopiverso_05262025_03:48PM", startDate: "2025-05-26", endDate: "2025-06-01", impressions: 1679195, clicks: 26439, plays: 5372, spent: 365.54, objective: "Maximize Plays" },
+                { name: "Maximize Plays_Yopiverso_05282025_06:11PM", startDate: "2025-05-28", endDate: "2025-06-03", impressions: 1823473, clicks: 27456, plays: 5689, spent: 389.76, objective: "Maximize Plays" },
+                { name: "Maximize Plays_Yopiverso_05282025_12:11PM (2)", startDate: "2025-05-28", endDate: "2025-06-11", impressions: 5254367, clicks: 64287, plays: 12417, spent: 1143.06, objective: "Maximize Plays" },
+                { name: "New Ads 1", startDate: "2025-05-28", endDate: "2025-06-11", impressions: 4569834, clicks: 56743, plays: 9658, spent: 1140.45, objective: "Maximize Plays" },
+                { name: "Maximize Plays_Yopiverso_06022025_11:04AM", startDate: "2025-06-02", endDate: "2025-06-09", impressions: 2638189, clicks: 24197, plays: 9212, spent: 659.69, objective: "Maximize Plays" },
+                { name: "Maximize Plays_Yopiverso_06022025_08:48AM", startDate: "2025-06-02", endDate: "2025-06-09", impressions: 2455000, clicks: 19000, plays: 7942, spent: 606.53, objective: "Maximize Plays" },
+                
+                // Archivo 2 - Awareness/Visits ($1,586.63 total) 
+                { name: "Awareness - 05/26/2025", startDate: "2025-05-26", endDate: "2025-06-02", impressions: 185432, clicks: 2156, plays: 4829, spent: 189.43, objective: "Awareness" },
+                { name: "Portal 2", startDate: "2025-05-27", endDate: "2025-06-03", impressions: 698754, clicks: 7892, plays: 20484, spent: 596.70, objective: "Visits" },
+                { name: "Visit Game - 05/28/2025", startDate: "2025-05-28", endDate: "2025-06-04", impressions: 234567, clicks: 1876, plays: 3567, spent: 245.82, objective: "Visits" },
+                { name: "Awareness - 05/30/2025", startDate: "2025-05-30", endDate: "2025-06-05", impressions: 156783, clicks: 1234, plays: 2845, spent: 178.94, objective: "Awareness" },
+                { name: "Portal", startDate: "2025-06-01", endDate: "2025-06-08", impressions: 145623, clicks: 1098, plays: 2987, spent: 156.78, objective: "Visits" },
+                { name: "Visit Game - 06/03/2025", startDate: "2025-06-03", endDate: "2025-06-10", impressions: 98754, clicks: 567, plays: 1456, spent: 98.76, objective: "Visits" },
+                { name: "Awareness - 06/05/2025", startDate: "2025-06-05", endDate: "2025-06-12", impressions: 87659, clicks: 432, plays: 987, spent: 76.54, objective: "Awareness" },
+                { name: "Portal 3", startDate: "2025-06-08", endDate: "2025-06-14", impressions: 65432, clicks: 345, plays: 789, spent: 43.66, objective: "Visits" },
+                { name: "Visit Game - 06/10/2025", startDate: "2025-06-10", endDate: "2025-06-14", impressions: 45321, clicks: 234, plays: 456, spent: 32.18, objective: "Visits" }
+            ]
+        };
+
+        let currentData = baseData;
+        let charts = {};
+
+        // Función para filtrar datos por fecha
+        function filterDataByDate(startDate, endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            
+            // Filtrar métricas de experiencia
+            const filteredExperience = baseData.experienceMetrics.filter(item => {
+                const itemDate = new Date(item.fecha);
+                return itemDate >= start && itemDate <= end;
+            });
+            
+            // Filtrar campañas que estuvieron activas en el período
+            const filteredCampaigns = baseData.campaigns.filter(campaign => {
+                const campaignStart = new Date(campaign.startDate);
+                const campaignEnd = new Date(campaign.endDate);
+                
+                // Campaña activa si hay overlap con el período seleccionado
+                return campaignStart <= end && campaignEnd >= start;
+            });
+            
+            return {
+                experienceMetrics: filteredExperience,
+                campaigns: filteredCampaigns
+            };
+        }
+
+        // Función para calcular métricas agregadas
+        function calculateAggregatedMetrics(data) {
+            const campaigns = data.campaigns;
+            
+            // Calcular totales de campañas
+            const totalImpressions = campaigns.reduce((sum, c) => sum + c.impressions, 0);
+            const totalClicks = campaigns.reduce((sum, c) => sum + c.clicks, 0);
+            const totalPlays = campaigns.reduce((sum, c) => sum + c.plays, 0);
+            const totalSpent = campaigns.reduce((sum, c) => sum + c.spent, 0);
+            
+            // Calcular ratios
+            const overallCTR = totalImpressions > 0 ? (totalClicks / totalImpressions * 100) : 0;
+            const playRate = totalImpressions > 0 ? (totalPlays / totalImpressions * 100) : 0;
+            const costPerPlay = totalPlays > 0 ? (totalSpent / totalPlays) : 0;
+            const clickToPlayRate = totalClicks > 0 ? (totalPlays / totalClicks * 100) : 0;
+            const roiValue = totalSpent > 0 ? (totalPlays / totalSpent) : 0;
+            
+            return {
+                totalImpressions,
+                totalClicks,
+                totalPlays,
+                totalSpent,
+                overallCTR,
+                playRate,
+                costPerPlay,
+                clickToPlayRate,
+                roiValue
+            };
+        }
+
+        // Función para actualizar KPIs
+        function updateKPIs(data) {
+            const experience = data.experienceMetrics;
+            const metrics = calculateAggregatedMetrics(data);
+            
+            if (experience.length > 0) {
+                const lastDay = experience[experience.length - 1];
+                
+                // Actualizar KPIs de experiencia
+                document.getElementById('activeUsers').textContent = lastDay.usuariosActivosDiarios.toLocaleString();
+                document.getElementById('newUsers').textContent = lastDay.nuevosUsuarios.toLocaleString();
+                document.getElementById('avgSession').textContent = lastDay.tiempoSesionPromedio.toFixed(1) + ' min';
+                document.getElementById('totalVisits').textContent = lastDay.visitasTotales.toLocaleString();
+            }
+            
+            // Actualizar KPIs de publicidad
+            document.getElementById('totalImpressions').textContent = (metrics.totalImpressions / 1000000).toFixed(1) + 'M';
+            document.getElementById('totalClicks').textContent = Math.round(metrics.totalClicks / 1000) + 'K';
+            document.getElementById('totalPlays').textContent = metrics.totalPlays.toLocaleString();
+            document.getElementById('totalSpent').textContent = '$' + metrics.totalSpent.toFixed(2);
+            
+            // Actualizar ratios
+            document.getElementById('overallCTR').textContent = metrics.overallCTR.toFixed(2) + '%';
+            document.getElementById('playRate').textContent = metrics.playRate.toFixed(2) + '%';
+            document.getElementById('costPerPlay').textContent = '$' + metrics.costPerPlay.toFixed(3);
+            document.getElementById('clickToPlayRate').textContent = metrics.clickToPlayRate.toFixed(1) + '%';
+            document.getElementById('roiValue').textContent = metrics.roiValue.toFixed(1);
+            
+            // Calcular tráfico orgánico estimado
+            const organicPlays = experience.length > 0 ? experience[experience.length - 1].visitasTotales - metrics.totalPlays : 0;
+            const organicRatio = experience.length > 0 ? (organicPlays / experience[experience.length - 1].visitasTotales * 100) : 0;
+            document.getElementById('organicRatio').textContent = Math.max(0, organicRatio).toFixed(1) + '%';
+        }
+
+        // Función para crear gráficos
+        function createCharts(data) {
+            const experience = data.experienceMetrics;
+            const labels = experience.map(item => {
+                const date = new Date(item.fecha);
+                return date.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' });
+            });
+
+            // Destruir gráficos existentes
+            Object.values(charts).forEach(chart => {
+                if (chart) chart.destroy();
+            });
+
+            // Gráfico 1: Usuarios Activos
+            charts.activeUsers = new Chart(document.getElementById('activeUsersChart'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Usuarios Activos Diarios',
+                        data: experience.map(item => item.usuariosActivosDiarios),
+                        borderColor: '#E31E24',
+                        backgroundColor: 'rgba(227, 30, 36, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            // Gráfico 2: Nuevos Usuarios
+            charts.newUsers = new Chart(document.getElementById('newUsersChart'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Nuevos Usuarios',
+                        data: experience.map(item => item.nuevosUsuarios),
+                        borderColor: '#3B82F6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            // Gráfico 3: Tiempo de Sesión
+            charts.sessionTime = new Chart(document.getElementById('sessionTimeChart'), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Tiempo de Sesión (min)',
+                        data: experience.map(item => item.tiempoSesionPromedio),
+                        backgroundColor: '#10B981',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            // Gráfico 4: Visitas Totales
+            charts.totalVisits = new Chart(document.getElementById('totalVisitsChart'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Visitas Totales',
+                        data: experience.map(item => item.visitasTotales),
+                        borderColor: '#F59E0B',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            // Gráfico 5: Campañas por tipo
+            const campaignData = data.campaigns.reduce((acc, campaign) => {
+                const type = campaign.objective === 'Maximize Plays' ? 'Maximize Plays' : 'Awareness/Visits';
+                if (!acc[type]) {
+                    acc[type] = { plays: 0, spent: 0, count: 0 };
+                }
+                acc[type].plays += campaign.plays;
+                acc[type].spent += campaign.spent;
+                acc[type].count++;
+                return acc;
+            }, {});
+
+            const campaignTypes = Object.keys(campaignData);
+            const campaignPlays = campaignTypes.map(type => campaignData[type].plays);
+            const campaignCosts = campaignTypes.map(type => campaignData[type].spent);
+
+            charts.campaigns = new Chart(document.getElementById('campaignChart'), {
+                type: 'bar',
+                data: {
+                    labels: campaignTypes,
+                    datasets: [
+                        {
+                            label: 'Plays',
+                            data: campaignPlays,
+                            backgroundColor: '#8B5CF6',
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Gasto ($)',
+                            data: campaignCosts,
+                            backgroundColor: '#EF4444',
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left'
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            grid: {
+                                drawOnChartArea: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Funciones de filtrado
+        function applyDateFilter() {
+            const startDate = document.getElementById('dateFrom').value;
+            const endDate = document.getElementById('dateTo').value;
+            
+            if (startDate && endDate) {
+                currentData = filterDataByDate(startDate, endDate);
+                updateKPIs(currentData);
+                createCharts(currentData);
+                
+                // Actualizar botones activos
+                document.querySelectorAll('.filter-button').forEach(btn => btn.classList.remove('active'));
+            }
+        }
+
+        function setQuickFilter(type) {
+            let startDate, endDate;
+            
+            switch (type) {
+                case 'all':
+                    startDate = '2025-05-25';
+                    endDate = '2025-06-14';
+                    break;
+                case 'week':
+                    startDate = '2025-06-08';
+                    endDate = '2025-06-14';
+                    break;
+                case 'launch':
+                    startDate = '2025-05-25';
+                    endDate = '2025-06-01';
+                    break;
+            }
+            
+            document.getElementById('dateFrom').value = startDate;
+            document.getElementById('dateTo').value = endDate;
+            
+            currentData = filterDataByDate(startDate, endDate);
+            updateKPIs(currentData);
+            createCharts(currentData);
+            
+            // Actualizar botones activos
+            document.querySelectorAll('.filter-button').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            updateKPIs(currentData);
+            createCharts(currentData);
+        });
+    </script>
+</body>
+</html>
+    <script id="html_badge_script1">
+        window.__genspark_remove_badge_link = "https://www.genspark.ai/api/html_badge/" +
+            "remove_badge?token=To%2FBnjzloZ3UfQdcSaYfDvtlaMWYA5cNwY7RmDB3y5JrPvGSf2eXVVFqmYnqe86fyaWANKOlKtVcweHjcy%2By9LrLdUaccBKxx%2FaBUsxCv1f3325Hdj7SzpuMWOJSNWWNqKB%2B0eozdFMClqkWqvOeT4oLCkS6uSBPLhed5JVaBViyQpJlnCmhiYWRKpRu1zP%2Fr62Swm6ZY2dfowfLFU2SVT2t0nIB61BjltECmlfpRGxvdnJKy9qrZ1I%2BFasyDpPB8A0th9KCREfs1oXWRTakSVof9Sr%2FuJCWQ%2BL0YN8F%2B3CuCPbhJEWf9f0k1cqgKUJ5dadVc3%2BaYHl5CuW0a3nwyXWGETtb9FTVZ7Wc8XKrMn8WT2G%2FqTJbsCxaNGWZLrL8HZzO7YJ0%2F3g0o9jMqk26LOfRvkEzv9QGmWGDyzl61T9Eob63FIqcB63AjeJdNlJ8E2NSBZBhuetnXJ1mg7jHQNYExUQ3SOJFt7wasaObHa0Xu%2BloyKLzrxfYlA1ug%2BYOW6Ml6iq83Zjf0mU16ZpRrn44Fb43ThvqKRbHAG1MbPM%3D";
+        window.__genspark_locale = "es-ES";
+        window.__genspark_token = "To/BnjzloZ3UfQdcSaYfDvtlaMWYA5cNwY7RmDB3y5JrPvGSf2eXVVFqmYnqe86fyaWANKOlKtVcweHjcy+y9LrLdUaccBKxx/aBUsxCv1f3325Hdj7SzpuMWOJSNWWNqKB+0eozdFMClqkWqvOeT4oLCkS6uSBPLhed5JVaBViyQpJlnCmhiYWRKpRu1zP/r62Swm6ZY2dfowfLFU2SVT2t0nIB61BjltECmlfpRGxvdnJKy9qrZ1I+FasyDpPB8A0th9KCREfs1oXWRTakSVof9Sr/uJCWQ+L0YN8F+3CuCPbhJEWf9f0k1cqgKUJ5dadVc3+aYHl5CuW0a3nwyXWGETtb9FTVZ7Wc8XKrMn8WT2G/qTJbsCxaNGWZLrL8HZzO7YJ0/3g0o9jMqk26LOfRvkEzv9QGmWGDyzl61T9Eob63FIqcB63AjeJdNlJ8E2NSBZBhuetnXJ1mg7jHQNYExUQ3SOJFt7wasaObHa0Xu+loyKLzrxfYlA1ug+YOW6Ml6iq83Zjf0mU16ZpRrn44Fb43ThvqKRbHAG1MbPM=";
+    </script>
+    
+    <script id="html_notice_dialog_script" src="https://www.genspark.ai/notice_dialog.js"></script>
+    
