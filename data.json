@@ -1,6 +1,3 @@
-
-
-Download
 {
   "lastUpdate": "2025-06-14",
   "experienceMetrics": [
@@ -8,7 +5,7 @@ Download
       "fecha": "2025-05-25",
       "usuariosActivosDiarios": 9,
       "nuevosUsuarios": 8,
-      "tiempoSesionPromedio": 9,
+      "tiempoSesionPromedio": 9.0,
       "retencionDia1": 0.01,
       "visitasTotales": 219
     },
@@ -23,39 +20,39 @@ Download
     {
       "fecha": "2025-05-27",
       "usuariosActivosDiarios": 874,
-      "nuevosUsuarios": 1,
+      "nuevosUsuarios": 1203,
       "tiempoSesionPromedio": 7.8,
       "retencionDia1": 0.03,
       "visitasTotales": 13000
     },
     {
       "fecha": "2025-05-28",
-      "usuariosActivosDiarios": 1,
-      "nuevosUsuarios": 1,
-      "tiempoSesionPromedio": 6,
+      "usuariosActivosDiarios": 1806,
+      "nuevosUsuarios": 1747,
+      "tiempoSesionPromedio": 6.0,
       "retencionDia1": 0.04,
       "visitasTotales": 18200
     },
     {
       "fecha": "2025-05-29",
-      "usuariosActivosDiarios": 2,
-      "nuevosUsuarios": 1,
+      "usuariosActivosDiarios": 2096,
+      "nuevosUsuarios": 1747,
       "tiempoSesionPromedio": 5.7,
       "retencionDia1": 0.04,
       "visitasTotales": 23800
     },
     {
       "fecha": "2025-05-30",
-      "usuariosActivosDiarios": 3,
-      "nuevosUsuarios": 2,
+      "usuariosActivosDiarios": 3023,
+      "nuevosUsuarios": 2591,
       "tiempoSesionPromedio": 5.4,
       "retencionDia1": 0.04,
       "visitasTotales": 29200
     },
     {
       "fecha": "2025-06-01",
-      "usuariosActivosDiarios": 3,
-      "nuevosUsuarios": 3,
+      "usuariosActivosDiarios": 3691,
+      "nuevosUsuarios": 3077,
       "tiempoSesionPromedio": 4.2,
       "retencionDia1": 0.04,
       "visitasTotales": 34700
@@ -162,20 +159,29 @@ Download
       "nuevosUsuarios": 3956,
       "tiempoSesionPromedio": 3.5,
       "retencionDia1": 0.03,
-      "visitasTotales": 133400
+      "visitasTotales": 134300
     }
   ],
   "advertisingMetrics": {
-    "totalImpressions": 17528225,
-    "totalClicks": 214067,
-    "totalPlays": 81941,
-    "totalSpent": 5501.900000000001,
-    "overallCTR": 1.2212702655288827,
-    "overallPlayRate": 0.46748030676237895,
-    "costPerPlay": 0.06714465285998462,
-    "costPerClick": 0.02570176626943901,
-    "clickToPlayRate": 38.27820261880626,
-    "playsPerDollar": 14.893218706265108
+    "totalImpressions": 17672081,
+    "totalClicks": 215428,
+    "totalPlays": 82403,
+    "totalSpent": 5576.92,
+    "overallCTR": 1.22,
+    "overallPlayRate": 0.47,
+    "costPerPlay": 0.068,
+    "costPerClick": 0.026,
+    "clickToPlayRate": 38.25,
+    "playsPerDollar": 14.8
+  },
+  "brandKPIs": {
+    "tiempoInteraccionMarca": 470050,
+    "costoPorMinutoInteraccion": 0.0119
+  },
+  "insightsClave": {
+    "roiPublicitario": 14.8,
+    "traficoOrganico": 38.6,
+    "eficienciaConversion": 38.3
   },
   "campaigns": [
     {
@@ -185,7 +191,7 @@ Download
       "endDate": "2025-06-01",
       "objective": "Maximize Plays",
       "budgetType": "Daily",
-      "budget": 80,
+      "budget": 80.0,
       "impressions": 1679195,
       "clicks": 26439,
       "plays": 5372,
@@ -202,8 +208,8 @@ Download
       "endDate": null,
       "objective": "Maximize Plays",
       "budgetType": "Daily",
-      "budget": 200,
-      "impressions": 4164157,
+      "budget": 200.0,
+      "impressions": 4164158,
       "clicks": 55174,
       "plays": 12417,
       "spent": 1143.06,
@@ -219,7 +225,7 @@ Download
       "endDate": "2025-06-08",
       "objective": "Maximize Plays",
       "budgetType": "Daily",
-      "budget": 138,
+      "budget": 138.0,
       "impressions": 3111275,
       "clicks": 33135,
       "plays": 7942,
@@ -236,7 +242,7 @@ Download
       "endDate": "2025-06-08",
       "objective": "Maximize Plays",
       "budgetType": "Daily",
-      "budget": 157,
+      "budget": 157.0,
       "impressions": 2856647,
       "clicks": 40202,
       "plays": 9212,
@@ -253,15 +259,15 @@ Download
       "endDate": null,
       "objective": "Maximize Plays",
       "budgetType": "Daily",
-      "budget": 234,
-      "impressions": 4153784,
-      "clicks": 44172,
-      "plays": 9658,
-      "spent": 1140.45,
+      "budget": 234.0,
+      "impressions": 4287846,
+      "clicks": 45436,
+      "plays": 9941,
+      "spent": 1210.17,
       "ctr": 1.06,
       "playRate": 0.23,
-      "cpc": 0.025,
-      "cpp": 0.118
+      "cpc": 0.026,
+      "cpp": 0.121
     },
     {
       "name": "Awareness - 05/26/2025",
@@ -270,15 +276,15 @@ Download
       "endDate": "2025-06-02",
       "objective": "Awareness",
       "budgetType": "Lifetime",
-      "budget": 100,
+      "budget": 100.0,
       "impressions": 45646,
       "clicks": 0,
       "plays": 0,
       "spent": 91.29,
-      "ctr": 0,
-      "playRate": 0,
-      "cpc": 0,
-      "cpp": 0
+      "ctr": 0.0,
+      "playRate": 0.0,
+      "cpc": 0.0,
+      "cpp": 0.0
     },
     {
       "name": "Portal 1",
@@ -287,14 +293,14 @@ Download
       "endDate": "2025-06-09",
       "objective": "Visits",
       "budgetType": "Daily",
-      "budget": 100,
+      "budget": 100.0,
       "impressions": 7555,
       "clicks": 0,
       "plays": 3306,
       "spent": 395.45,
-      "ctr": 0,
+      "ctr": 0.0,
       "playRate": 43.76,
-      "cpc": 0,
+      "cpc": 0.0,
       "cpp": 0.11
     },
     {
@@ -304,14 +310,14 @@ Download
       "endDate": "2025-06-09",
       "objective": "Visits",
       "budgetType": "Daily",
-      "budget": 100,
+      "budget": 100.0,
       "impressions": 36552,
       "clicks": 0,
       "plays": 20484,
       "spent": 596.7,
-      "ctr": 0,
+      "ctr": 0.0,
       "playRate": 56.04,
-      "cpc": 0,
+      "cpc": 0.0,
       "cpp": 0.02
     },
     {
@@ -321,14 +327,14 @@ Download
       "endDate": "2025-06-02",
       "objective": "Visits",
       "budgetType": "Lifetime",
-      "budget": 200,
+      "budget": 200.0,
       "impressions": 4369,
       "clicks": 0,
       "plays": 2121,
       "spent": 179.16,
-      "ctr": 0,
+      "ctr": 0.0,
       "playRate": 48.55,
-      "cpc": 0,
+      "cpc": 0.0,
       "cpp": 0.08
     },
     {
@@ -338,14 +344,14 @@ Download
       "endDate": "2025-06-16",
       "objective": "Visits",
       "budgetType": "Lifetime",
-      "budget": 100,
-      "impressions": 3691,
+      "budget": 100.0,
+      "impressions": 3903,
       "clicks": 0,
-      "plays": 2111,
-      "spent": 63.33,
-      "ctr": 0,
-      "playRate": 57.19,
-      "cpc": 0,
+      "plays": 2264,
+      "spent": 67.92,
+      "ctr": 0.0,
+      "playRate": 58.01,
+      "cpc": 0.0,
       "cpp": 0.03
     },
     {
@@ -355,14 +361,14 @@ Download
       "endDate": "2025-06-16",
       "objective": "Visits",
       "budgetType": "Lifetime",
-      "budget": 80,
-      "impressions": 352391,
-      "clicks": 3661,
-      "plays": 790,
-      "spent": 17.72,
+      "budget": 80.0,
+      "impressions": 361972,
+      "clicks": 3758,
+      "plays": 816,
+      "spent": 18.43,
       "ctr": 1.04,
-      "playRate": 0.22,
-      "cpc": 0,
+      "playRate": 0.23,
+      "cpc": 0.0,
       "cpp": 0.02
     },
     {
@@ -372,14 +378,14 @@ Download
       "endDate": "2025-06-09",
       "objective": "Visits",
       "budgetType": "Daily",
-      "budget": 20,
+      "budget": 20.0,
       "impressions": 995817,
       "clicks": 9916,
       "plays": 2356,
       "spent": 58.96,
-      "ctr": 1,
+      "ctr": 1.0,
       "playRate": 0.24,
-      "cpc": 0,
+      "cpc": 0.0,
       "cpp": 0.02
     },
     {
@@ -389,14 +395,14 @@ Download
       "endDate": "2025-06-02",
       "objective": "Visits",
       "budgetType": "Lifetime",
-      "budget": 200,
+      "budget": 200.0,
       "impressions": 8449,
       "clicks": 0,
       "plays": 5959,
       "spent": 178.77,
-      "ctr": 0,
+      "ctr": 0.0,
       "playRate": 70.53,
-      "cpc": 0,
+      "cpc": 0.0,
       "cpp": 0.03
     },
     {
@@ -406,24 +412,15 @@ Download
       "endDate": "2025-06-02",
       "objective": "Visits",
       "budgetType": "Lifetime",
-      "budget": 200,
+      "budget": 200.0,
       "impressions": 108697,
       "clicks": 1368,
       "plays": 213,
       "spent": 5.25,
       "ctr": 1.26,
       "playRate": 0.2,
-      "cpc": 0,
+      "cpc": 0.0,
       "cpp": 0.02
     }
-  ],
-  "kpis": {
-    "latestActiveUsers": 4903,
-    "latestNewUsers": 3956,
-    "latestSessionTime": 3.5,
-    "latestRetention": 0.03,
-    "totalVisits": 133400,
-    "organicPlays": 51459,
-    "organicRatio": 38.57496251874063
-  }
+  ]
 }
