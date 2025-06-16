@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2025-06-15",
+  "lastUpdate": "2025-06-16",
   "experienceMetrics": [
     {
       "fecha": "2025-05-25",
@@ -168,28 +168,36 @@
       "tiempoSesionPromedio": 3.6,
       "retencionDia1": 0.03,
       "visitasTotales": 135800
+    },
+    {
+      "fecha": "2025-06-16",
+      "usuariosActivosDiarios": 3002,
+      "nuevosUsuarios": 2372,
+      "tiempoSesionPromedio": 3.6,
+      "retencionDia1": 0.02,
+      "visitasTotales": 138900
     }
   ],
   "advertisingMetrics": {
-    "totalImpressions": 18031147,
-    "totalClicks": 218701,
-    "totalPlays": 82838,
-    "totalSpent": 5674.47,
-    "overallCTR": 1.21,
-    "overallPlayRate": 0.46,
-    "costPerPlay": 0.069,
+    "totalImpressions": 18640913,
+    "totalClicks": 224583,
+    "totalPlays": 83867,
+    "totalSpent": 5888.08,
+    "overallCTR": 1.2,
+    "overallPlayRate": 0.45,
+    "costPerPlay": 0.07,
     "costPerClick": 0.026,
-    "clickToPlayRate": 37.88,
-    "playsPerDollar": 14.6
+    "clickToPlayRate": 37.34,
+    "playsPerDollar": 14.2
   },
   "brandKPIs": {
-    "tiempoInteraccionMarca": 488880,
-    "costoPorMinutoInteraccion": 0.0116
+    "tiempoInteraccionMarca": 500040,
+    "costoPorMinutoInteraccion": 0.0118
   },
   "insightsClave": {
-    "roiPublicitario": 14.6,
-    "traficoOrganico": 39.0,
-    "eficienciaConversion": 37.9
+    "roiPublicitario": 14.2,
+    "traficoOrganico": 39.6,
+    "eficienciaConversion": 37.3
   },
   "campaigns": [
     {
@@ -217,7 +225,7 @@
       "objective": "Maximize Plays",
       "budgetType": "Daily",
       "budget": 200.0,
-      "impressions": 4164158,
+      "impressions": 4164161,
       "clicks": 55174,
       "plays": 12417,
       "spent": 1143.06,
@@ -268,14 +276,14 @@
       "objective": "Maximize Plays",
       "budgetType": "Daily",
       "budget": 234.0,
-      "impressions": 4626574,
-      "clicks": 48535,
-      "plays": 10481,
-      "spent": 1311.01,
-      "ctr": 1.05,
-      "playRate": 0.23,
-      "cpc": 0.027,
-      "cpp": 0.125
+      "impressions": 5192829,
+      "clicks": 54012,
+      "plays": 11510,
+      "spent": 1525.25,
+      "ctr": 1.04,
+      "playRate": 0.22,
+      "cpc": 0.028,
+      "cpp": 0.132
     },
     {
       "name": "Awareness - 05/26/2025",
@@ -353,12 +361,12 @@
       "objective": "Visits",
       "budgetType": "Lifetime",
       "budget": 100.0,
-      "impressions": 4470,
+      "impressions": 5554,
       "clicks": 0,
-      "plays": 2126,
-      "spent": 63.78,
+      "plays": 2028,
+      "spent": 60.84,
       "ctr": 0.0,
-      "playRate": 47.56,
+      "playRate": 36.51,
       "cpc": 0.0,
       "cpp": 0.03
     },
@@ -387,11 +395,11 @@
       "objective": "Visits",
       "budgetType": "Lifetime",
       "budget": 80.0,
-      "impressions": 381743,
-      "clicks": 3932,
-      "plays": 849,
-      "spent": 19.28,
-      "ctr": 1.03,
+      "impressions": 424167,
+      "clicks": 4337,
+      "plays": 947,
+      "spent": 21.59,
+      "ctr": 1.02,
       "playRate": 0.22,
       "cpc": 0.0,
       "cpp": 0.02
