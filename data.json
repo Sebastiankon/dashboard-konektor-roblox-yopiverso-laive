@@ -183,29 +183,29 @@
       "nuevosUsuarios": 2218,
       "tiempoSesionPromedio": 3.6,
       "retencionDia1": 0.02,
-      "visitasTotales": 142000
+      "visitasTotales": 141000
     }
   ],
   "advertisingMetrics": {
-    "totalImpressions": 19026803,
-    "totalClicks": 244895,
-    "totalPlays": 127095,
-    "totalSpent": 6679.12,
-    "overallCTR": 1.29,
-    "overallPlayRate": 0.67,
-    "costPerPlay": 0.053,
-    "costPerClick": 0.027,
-    "clickToPlayRate": 51.91,
-    "playsPerDollar": 19.0
+    "totalImpressions": 18880559,
+    "totalClicks": 227722,
+    "totalPlays": 86778,
+    "totalSpent": 6034.12,
+    "overallCTR": 1.21,
+    "overallPlayRate": 0.46,
+    "costPerPlay": 0.070,
+    "costPerClick": 0.026,
+    "clickToPlayRate": 38.11,
+    "playsPerDollar": 14.4
   },
   "brandKPIs": {
-    "tiempoInteraccionMarca": 511200,
-    "costoPorMinutoInteraccion": 0.0131
+    "tiempoInteraccionMarca": 507600,
+    "costoPorMinutoInteraccion": 0.0119
   },
   "insightsClave": {
-    "roiPublicitario": 19.0,
-    "traficoOrganico": 10.5,
-    "eficienciaConversion": 51.91
+    "roiPublicitario": 14.4,
+    "traficoOrganico": 38.5,
+    "eficienciaConversion": 38.1
   },
   "campaigns": [
     {
@@ -250,12 +250,12 @@
       "objective": "Visits",
       "budgetType": "Lifetime",
       "budget": 50.0,
-      "impressions": 321,
+      "impressions": 246,
       "clicks": 0,
-      "plays": 227,
-      "spent": 9.75,
+      "plays": 171,
+      "spent": 7.58,
       "ctr": 0.0,
-      "playRate": 70.72,
+      "playRate": 69.51,
       "cpc": 0.0,
       "cpp": 0.04
     },
