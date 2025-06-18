@@ -183,7 +183,7 @@
       "nuevosUsuarios": 2218,
       "tiempoSesionPromedio": 3.6,
       "retencionDia1": 0.02,
-      "visitasTotales": 141000
+      "visitasTotales": 142000
     }
   ],
   "advertisingMetrics": {
@@ -199,12 +199,12 @@
     "playsPerDollar": 14.4
   },
   "brandKPIs": {
-    "tiempoInteraccionMarca": 507600,
-    "costoPorMinutoInteraccion": 0.0119
+    "tiempoInteraccionMarca": 511200,
+    "costoPorMinutoInteraccion": 0.0118
   },
   "insightsClave": {
     "roiPublicitario": 14.4,
-    "traficoOrganico": 38.5,
+    "traficoOrganico": 38.9,
     "eficienciaConversion": 38.1
   },
   "campaigns": [
