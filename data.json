@@ -10,22 +10,6 @@
       "visitasTotales": 219
     },
     {
-      "fecha": "2025-06-19",
-      "usuariosActivosDiarios": 2209,
-      "nuevosUsuarios": 1785,
-      "tiempoSesionPromedio": 3.5,
-      "retencionDia1": 0.02,
-      "visitasTotales": 145500
-    },
-    {
-      "fecha": "2025-06-18",
-      "usuariosActivosDiarios": 2415,
-      "nuevosUsuarios": 1893,
-      "tiempoSesionPromedio": 3.5,
-      "retencionDia1": 0.02,
-      "visitasTotales": 144300
-    },
-    {
       "fecha": "2025-05-26",
       "usuariosActivosDiarios": 146,
       "nuevosUsuarios": 8,
