@@ -208,6 +208,14 @@
       "tiempoSesionPromedio": 3.5,
       "retencionDia1": 0.02,
       "visitasTotales": 144300
+    },
+    {
+      "fecha": "2025-06-19",
+      "usuariosActivosDiarios": 2209,
+      "nuevosUsuarios": 1785,
+      "tiempoSesionPromedio": 3.5,
+      "retencionDia1": 0.02,
+      "visitasTotales": 145500
     }
   ],
   "advertisingMetrics": {
