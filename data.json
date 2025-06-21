@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2025-06-20",
+  "lastUpdate": "2025-06-21",
   "experienceMetrics": [
     {
       "fecha": "2025-05-25",
@@ -216,28 +216,36 @@
       "tiempoSesionPromedio": 3.4,
       "retencionDia1": 0.02,
       "visitasTotales": 147900
+    },
+    {
+      "fecha": "2025-06-21",
+      "usuariosActivosDiarios": 1993,
+      "nuevosUsuarios": 1544,
+      "tiempoSesionPromedio": 3.4,
+      "retencionDia1": 0.02,
+      "visitasTotales": 149500
     }
   ],
   "advertisingMetrics": {
-    "totalImpressions": 22165876,
-    "totalClicks": 246156,
-    "totalPlays": 93469,
-    "totalSpent": 6361.14,
-    "overallCTR": 1.11,
-    "overallPlayRate": 0.42,
+    "totalImpressions": 20192631,
+    "totalClicks": 245071,
+    "totalPlays": 92224,
+    "totalSpent": 6300.23,
+    "overallCTR": 1.21,
+    "overallPlayRate": 0.46,
     "costPerPlay": 0.068,
     "costPerClick": 0.026,
-    "clickToPlayRate": 38.0,
-    "playsPerDollar": 14.7
+    "clickToPlayRate": 37.63,
+    "playsPerDollar": 14.6
   },
   "brandKPIs": {
-    "tiempoInteraccionMarca": 502860,
-    "costoPorMinutoInteraccion": 0.0127
+    "tiempoInteraccionMarca": 508300,
+    "costoPorMinutoInteraccion": 0.0124
   },
   "insightsClave": {
-    "roiPublicitario": 14.7,
-    "traficoOrganico": 36.8,
-    "eficienciaConversion": 38.0
+    "roiPublicitario": 14.6,
+    "traficoOrganico": 38.3,
+    "eficienciaConversion": 37.6
   },
   "campaigns": [
     {
@@ -282,12 +290,12 @@
       "objective": "Visits",
       "budgetType": "Lifetime",
       "budget": 50,
-      "impressions": 1116,
+      "impressions": 1345,
       "clicks": 0,
-      "plays": 710,
-      "spent": 30.21,
+      "plays": 852,
+      "spent": 35.67,
       "ctr": 0,
-      "playRate": 63.62,
+      "playRate": 63.35,
       "cpc": 0,
       "cpp": 0.04
     },
@@ -316,12 +324,12 @@
       "objective": "Visits",
       "budgetType": "Lifetime",
       "budget": 50,
-      "impressions": 1148,
+      "impressions": 1329,
       "clicks": 0,
-      "plays": 719,
-      "spent": 29.55,
+      "plays": 863,
+      "spent": 35.46,
       "ctr": 0,
-      "playRate": 62.63,
+      "playRate": 64.94,
       "cpc": 0,
       "cpp": 0.04
     },
@@ -333,12 +341,12 @@
       "objective": "Visits",
       "budgetType": "Lifetime",
       "budget": 50,
-      "impressions": 1872,
+      "impressions": 2309,
       "clicks": 0,
-      "plays": 985,
-      "spent": 29.52,
+      "plays": 1190,
+      "spent": 35.7,
       "ctr": 0,
-      "playRate": 52.62,
+      "playRate": 51.54,
       "cpc": 0,
       "cpp": 0.03
     },
@@ -350,12 +358,12 @@
       "objective": "Visits",
       "budgetType": "Lifetime",
       "budget": 50,
-      "impressions": 1412,
+      "impressions": 1728,
       "clicks": 0,
-      "plays": 784,
-      "spent": 28.46,
+      "plays": 951,
+      "spent": 35.1,
       "ctr": 0,
-      "playRate": 55.54,
+      "playRate": 55.03,
       "cpc": 0,
       "cpp": 0.03
     },
@@ -435,12 +443,12 @@
       "objective": "Visits",
       "budgetType": "Lifetime",
       "budget": 50,
-      "impressions": 420564,
-      "clicks": 4818,
-      "plays": 898,
-      "spent": 27.64,
+      "impressions": 360677,
+      "clicks": 4155,
+      "plays": 779,
+      "spent": 24.1,
       "ctr": 1.15,
-      "playRate": 0.21,
+      "playRate": 0.22,
       "cpc": 0,
       "cpp": 0.03
     },
@@ -486,14 +494,14 @@
       "objective": "Drive Retention",
       "budgetType": "Daily",
       "budget": 8,
-      "impressions": 111816,
-      "clicks": 1821,
-      "plays": 395,
-      "spent": 33.02,
-      "ctr": 1.63,
+      "impressions": 125642,
+      "clicks": 2036,
+      "plays": 436,
+      "spent": 39.34,
+      "ctr": 1.62,
       "playRate": 0.35,
-      "cpc": 0.018,
-      "cpp": 0.083
+      "cpc": 0.019,
+      "cpp": 0.09
     },
     {
       "name": "Maximize Plays_New Ads semana 4",
@@ -503,14 +511,14 @@
       "objective": "Maximize Plays",
       "budgetType": "Lifetime",
       "budget": 200,
-      "impressions": 535063,
-      "clicks": 6494,
-      "plays": 1329,
-      "spent": 124.42,
-      "ctr": 1.21,
+      "impressions": 573049,
+      "clicks": 6978,
+      "plays": 1430,
+      "spent": 148.93,
+      "ctr": 1.22,
       "playRate": 0.25,
-      "cpc": 0.019,
-      "cpp": 0.093
+      "cpc": 0.021,
+      "cpp": 0.104
     },
     {
       "name": "Maximize Plays_Yopiverso_05262025_03:48PM",
@@ -588,7 +596,7 @@
       "objective": "Maximize Plays",
       "budgetType": "Daily",
       "budget": 234,
-      "impressions": 5202183,
+      "impressions": 5202186,
       "clicks": 54111,
       "plays": 11533,
       "spent": 1527.72,
