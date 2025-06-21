@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2025-06-21",
+  "lastUpdate": "2025-06-21T22:50:00",
   "experienceMetrics": [
     {
       "fecha": "2025-05-25",
@@ -223,28 +223,28 @@
       "nuevosUsuarios": 1544,
       "tiempoSesionPromedio": 3.4,
       "retencionDia1": 0.02,
-      "visitasTotales": 149500
+      "visitasTotales": 150600
     }
   ],
   "advertisingMetrics": {
-    "totalImpressions": 20192631,
-    "totalClicks": 245071,
-    "totalPlays": 92224,
-    "totalSpent": 6300.23,
-    "overallCTR": 1.21,
+    "totalImpressions": 20211383,
+    "totalClicks": 246626,
+    "totalPlays": 92718,
+    "totalSpent": 6331.12,
+    "overallCTR": 1.22,
     "overallPlayRate": 0.46,
     "costPerPlay": 0.068,
     "costPerClick": 0.026,
-    "clickToPlayRate": 37.63,
+    "clickToPlayRate": 37.6,
     "playsPerDollar": 14.6
   },
   "brandKPIs": {
-    "tiempoInteraccionMarca": 508300,
+    "tiempoInteraccionMarca": 512040,
     "costoPorMinutoInteraccion": 0.0124
   },
   "insightsClave": {
     "roiPublicitario": 14.6,
-    "traficoOrganico": 38.3,
+    "traficoOrganico": 38.4,
     "eficienciaConversion": 37.6
   },
   "campaigns": [
@@ -494,14 +494,14 @@
       "objective": "Drive Retention",
       "budgetType": "Daily",
       "budget": 8,
-      "impressions": 125642,
-      "clicks": 2036,
-      "plays": 436,
-      "spent": 39.34,
-      "ctr": 1.62,
+      "impressions": 134550,
+      "clicks": 2191,
+      "plays": 465,
+      "spent": 42.87,
+      "ctr": 1.63,
       "playRate": 0.35,
       "cpc": 0.019,
-      "cpp": 0.09
+      "cpp": 0.092
     },
     {
       "name": "Maximize Plays_New Ads semana 4",
