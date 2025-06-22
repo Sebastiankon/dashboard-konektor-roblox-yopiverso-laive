@@ -227,32 +227,33 @@
     },
     {
       "fecha": "2025-06-22",
-      "usuariosActivosDiarios": 1913,
-      "nuevosUsuarios": 1473,
+      "usuariosActivosDiarios": 1866,
+      "nuevosUsuarios": 1435,
       "tiempoSesionPromedio": 3.3,
       "retencionDia1": 0.02,
-      "visitasTotales": 151600
+      "visitasTotales": 152700
     }
   ],
   "advertisingMetrics": {
-    "totalImpressions": 20583681,
-    "totalClicks": 273662,
-    "totalPlays": 93264,
-    "totalSpent": 6362.28,
-    "overallCTR": 1.33,
-    "overallPlayRate": 0.45,
-    "costPerClick": 0.023,
-    "clickToPlayRate": 34.08,
-    "playsPerDollar": 14.7
+    "totalImpressions": 21651468,
+    "totalClicks": 250856,
+    "totalPlays": 101620,
+    "totalSpent": 6979.48,
+    "overallCTR": 1.16,
+    "overallPlayRate": 0.47,
+    "costPerPlay": 0.069,
+    "costPerClick": 0.028,
+    "clickToPlayRate": 40.5,
+    "playsPerDollar": 14.6
   },
   "brandKPIs": {
-    "tiempoInteraccionMarca": 500280,
-    "costoPorMinutoInteraccion": 0.0127
+    "tiempoInteraccionMarca": 503910,
+    "costoPorMinutoInteraccion": 0.0139
   },
   "insightsClave": {
-    "roiPublicitario": 14.7,
-    "traficoOrganico": 38.5,
-    "eficienciaConversion": 34.08
+    "roiPublicitario": 14.6,
+    "traficoOrganico": 33.4,
+    "eficienciaConversion": 40.5
   },
   "campaigns": [
     {
@@ -263,14 +264,14 @@
       "objective": "Drive Retention",
       "budgetType": "Daily",
       "budget": 8,
-      "impressions": 149727,
-      "clicks": 2450,
-      "plays": 515,
-      "spent": 47.24,
-      "ctr": 1.64,
-      "playRate": 0.34,
-      "cpc": 0.019,
-      "cpp": 0.091
+      "impressions": 161588,
+      "clicks": 2698,
+      "plays": 573,
+      "spent": 50.94,
+      "ctr": 1.67,
+      "playRate": 0.35,
+      "cpc": 0.018,
+      "cpp": 0.088
     },
     {
       "name": "Maximize Plays_New Ads semana 4",
@@ -280,14 +281,14 @@
       "objective": "Maximize Plays",
       "budgetType": "Lifetime",
       "budget": 200,
-      "impressions": 622154,
-      "clicks": 7587,
-      "plays": 1542,
-      "spent": 179.49,
+      "impressions": 647177,
+      "clicks": 7921,
+      "plays": 1612,
+      "spent": 193.73,
       "ctr": 1.22,
       "playRate": 0.25,
-      "cpc": 0.023,
-      "cpp": 0.116
+      "cpc": 0.024,
+      "cpp": 0.12
     },
     {
       "name": "Maximize Plays_Yopiverso_05262025_03:48PM",
@@ -365,7 +366,7 @@
       "objective": "Maximize Plays",
       "budgetType": "Daily",
       "budget": 234,
-      "impressions": 5202183,
+      "impressions": 5202189,
       "clicks": 54111,
       "plays": 11533,
       "spent": 1527.72,
@@ -416,12 +417,12 @@
       "objective": "Visits",
       "budgetType": "Lifetime",
       "budget": 50,
-      "impressions": 1630,
+      "impressions": 1732,
       "clicks": 0,
-      "plays": 1014,
-      "spent": 41.45,
+      "plays": 1084,
+      "spent": 43.51,
       "ctr": 0,
-      "playRate": 62.21,
+      "playRate": 62.59,
       "cpc": 0,
       "cpp": 0.04
     },
@@ -450,14 +451,14 @@
       "objective": "Visits",
       "budgetType": "Lifetime",
       "budget": 50,
-      "impressions": 1645,
+      "impressions": 1712,
       "clicks": 0,
-      "plays": 1029,
-      "spent": 41.56,
+      "plays": 1101,
+      "spent": 43.35,
       "ctr": 0,
-      "playRate": 62.55,
+      "playRate": 64.31,
       "cpc": 0,
-      "cpp": 0.04
+      "cpp": 0.03
     },
     {
       "name": "Portal 3 semana 4",
@@ -467,12 +468,12 @@
       "objective": "Visits",
       "budgetType": "Lifetime",
       "budget": 50,
-      "impressions": 2646,
+      "impressions": 2855,
       "clicks": 0,
-      "plays": 1392,
-      "spent": 41.76,
+      "plays": 1462,
+      "spent": 43.86,
       "ctr": 0,
-      "playRate": 52.61,
+      "playRate": 51.21,
       "cpc": 0,
       "cpp": 0.03
     },
@@ -484,12 +485,12 @@
       "objective": "Visits",
       "budgetType": "Lifetime",
       "budget": 50,
-      "impressions": 2756,
+      "impressions": 2132,
       "clicks": 0,
-      "plays": 1153,
-      "spent": 41.82,
+      "plays": 1217,
+      "spent": 43.85,
       "ctr": 0,
-      "playRate": 41.84,
+      "playRate": 57.08,
       "cpc": 0,
       "cpp": 0.03
     },
@@ -518,12 +519,12 @@
       "objective": "Visits",
       "budgetType": "Lifetime",
       "budget": 100,
-      "impressions": 2849,
+      "impressions": 5542,
       "clicks": 0,
       "plays": 3512,
       "spent": 100,
       "ctr": 0,
-      "playRate": 123.27,
+      "playRate": 63.37,
       "cpc": 0,
       "cpp": 0.02
     },
@@ -552,7 +553,7 @@
       "objective": "Visits",
       "budgetType": "Lifetime",
       "budget": 80,
-      "impressions": 424167,
+      "impressions": 424172,
       "clicks": 4337,
       "plays": 947,
       "spent": 21.59,
@@ -569,13 +570,13 @@
       "objective": "Visits",
       "budgetType": "Lifetime",
       "budget": 50,
-      "impressions": 609943,
-      "clicks": 6624,
-      "plays": 1245,
-      "spent": 39.25,
-      "ctr": 1.09,
-      "playRate": 0.2,
-      "cpc": 0.006,
+      "impressions": 627171,
+      "clicks": 7495,
+      "plays": 1343,
+      "spent": 42.52,
+      "ctr": 1.2,
+      "playRate": 0.21,
+      "cpc": 0,
       "cpp": 0.03
     },
     {
@@ -614,3 +615,4 @@
     }
   ]
 }
+      
