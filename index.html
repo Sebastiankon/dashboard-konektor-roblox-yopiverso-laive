@@ -537,80 +537,135 @@
                 tableBody.appendChild(row);
             });
         }
-
-        function filterDataByDate() {
-            const startDate = document.getElementById('startDate').value;
-            const endDate = document.getElementById('endDate').value;
+        // Función para calcular gasto proporcional por período
+function calculateProportionalSpending(campaign, startDate, endDate) {
+    const campaignStart = new Date(campaign.startDate);
+    const campaignEnd = campaign.endDate ? new Date(campaign.endDate) : new Date(endDate);
+    const filterStart = new Date(startDate);
+    const filterEnd = new Date(endDate);
+    
+    // Calcular la intersección del período de la campaña con el filtro
+    const intersectionStart = new Date(Math.max(campaignStart.getTime(), filterStart.getTime()));
+    const intersectionEnd = new Date(Math.min(campaignEnd.getTime(), filterEnd.getTime()));
+    
+    // Si no hay intersección, return 0
+    if (intersectionStart > intersectionEnd) {
+        return 0;
+    }
+    
+    // Calcular días totales de la campaña
+    const totalCampaignDays = Math.ceil((campaignEnd - campaignStart) / (1000 * 60 * 60 * 24)) + 1;
+    
+    // Calcular días en el período filtrado
+    const filteredDays = Math.ceil((intersectionEnd - intersectionStart) / (1000 * 60 * 60 * 24)) + 1;
+    
+    // Calcular gasto proporcional
+    const proportionalSpent = (campaign.spent * filteredDays) / totalCampaignDays;
+    
+    return proportionalSpent;
+}
+// Función filterDataByDate() corregida
+function filterDataByDate() {
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    
+    if (!startDate || !endDate || !dashboardData) return;
+    
+    // Filter experience metrics
+    const filteredExperience = dashboardData.experienceMetrics.filter(metric => {
+        return metric.fecha >= startDate && metric.fecha <= endDate;
+    });
+    
+    // Filter campaigns and calculate proportional spending
+    const filteredCampaigns = [];
+    let totalImpressions = 0;
+    let totalClicks = 0;
+    let totalPlays = 0;
+    let totalSpent = 0;
+    
+    dashboardData.campaigns.forEach(campaign => {
+        const campaignStart = campaign.startDate;
+        const campaignEnd = campaign.endDate || endDate;
+        
+        // Check if campaign overlaps with selected period
+        if (campaignStart <= endDate && campaignEnd >= startDate) {
+            // Calculate proportional spending for this period
+            const proportionalSpent = calculateProportionalSpending(campaign, startDate, endDate);
             
-            if (!startDate || !endDate || !dashboardData) return;
-            
-            // Filter experience metrics
-            const filteredExperience = dashboardData.experienceMetrics.filter(metric => {
-                return metric.fecha >= startDate && metric.fecha <= endDate;
-            });
-            
-            // Filter campaigns
-            const filteredCampaigns = dashboardData.campaigns.filter(campaign => {
-                const campaignStart = campaign.startDate;
-                const campaignEnd = campaign.endDate || campaign.startDate;
+            if (proportionalSpent > 0) {
+                // Calculate proportional metrics
+                const spendingRatio = proportionalSpent / campaign.spent;
                 
-                // Check if campaign overlaps with selected period
-                return campaignStart <= endDate && campaignEnd >= startDate;
-            });
-            
-            // Recalculate advertising metrics for filtered campaigns
-            const totalImpressions = filteredCampaigns.reduce((sum, c) => sum + c.impressions, 0);
-            const totalClicks = filteredCampaigns.reduce((sum, c) => sum + c.clicks, 0);
-            const totalPlays = filteredCampaigns.reduce((sum, c) => sum + c.plays, 0);
-            const totalSpent = filteredCampaigns.reduce((sum, c) => sum + c.spent, 0);
-            
-            const overallCTR = totalImpressions > 0 ? (totalClicks / totalImpressions * 100) : 0;
-            const overallPlayRate = totalImpressions > 0 ? (totalPlays / totalImpressions * 100) : 0;
-            const costPerPlay = totalPlays > 0 ? (totalSpent / totalPlays) : 0;
-            const costPerClick = totalClicks > 0 ? (totalSpent / totalClicks) : 0;
-            const clickToPlayRate = totalClicks > 0 ? (totalPlays / totalClicks * 100) : 0;
-            const playsPerDollar = totalSpent > 0 ? (totalPlays / totalSpent) : 0;
-            
-            // Recalculate brand KPIs and insights for filtered period
-            const lastExperienceMetric = filteredExperience[filteredExperience.length - 1];
-            if (lastExperienceMetric) {
-                const tiempoInteraccionMarca = lastExperienceMetric.visitasTotales * lastExperienceMetric.tiempoSesionPromedio;
-                const costoPorMinutoInteraccion = tiempoInteraccionMarca > 0 ? (totalSpent / tiempoInteraccionMarca) : 0;
-                
-                const playsOrganicosEstimados = lastExperienceMetric.visitasTotales - totalPlays;
-                const traficoOrganico = lastExperienceMetric.visitasTotales > 0 ? 
-                    (playsOrganicosEstimados / lastExperienceMetric.visitasTotales * 100) : 0;
-                
-                filteredData = {
-                    ...dashboardData,
-                    experienceMetrics: filteredExperience,
-                    campaigns: filteredCampaigns,
-                    advertisingMetrics: {
-                        totalImpressions,
-                        totalClicks,
-                        totalPlays,
-                        totalSpent,
-                        overallCTR: Math.round(overallCTR * 100) / 100,
-                        overallPlayRate: Math.round(overallPlayRate * 100) / 100,
-                        costPerPlay: Math.round(costPerPlay * 1000) / 1000,
-                        costPerClick: Math.round(costPerClick * 1000) / 1000,
-                        clickToPlayRate: Math.round(clickToPlayRate * 100) / 100,
-                        playsPerDollar: Math.round(playsPerDollar * 10) / 10
-                    },
-                    brandKPIs: {
-                        tiempoInteraccionMarca: Math.round(tiempoInteraccionMarca),
-                        costoPorMinutoInteraccion: Math.round(costoPorMinutoInteraccion * 10000) / 10000
-                    },
-                    insightsClave: {
-                        roiPublicitario: Math.round(playsPerDollar * 10) / 10,
-                        traficoOrganico: Math.round(traficoOrganico * 10) / 10,
-                        eficienciaConversion: Math.round(clickToPlayRate * 10) / 10
-                    }
+                const filteredCampaign = {
+                    ...campaign,
+                    spent: proportionalSpent,
+                    impressions: Math.round(campaign.impressions * spendingRatio),
+                    clicks: Math.round(campaign.clicks * spendingRatio),
+                    plays: Math.round(campaign.plays * spendingRatio)
                 };
+                
+                filteredCampaigns.push(filteredCampaign);
+                
+                totalImpressions += filteredCampaign.impressions;
+                totalClicks += filteredCampaign.clicks;
+                totalPlays += filteredCampaign.plays;
+                totalSpent += filteredCampaign.spent;
             }
-            
-            updateDashboard();
         }
+    });
+    
+    // Recalculate advertising metrics for filtered period
+    const overallCTR = totalImpressions > 0 ? (totalClicks / totalImpressions * 100) : 0;
+    const overallPlayRate = totalImpressions > 0 ? (totalPlays / totalImpressions * 100) : 0;
+    const costPerPlay = totalPlays > 0 ? (totalSpent / totalPlays) : 0;
+    const costPerClick = totalClicks > 0 ? (totalSpent / totalClicks) : 0;
+    const clickToPlayRate = totalClicks > 0 ? (totalPlays / totalClicks * 100) : 0;
+    const playsPerDollar = totalSpent > 0 ? (totalPlays / totalSpent) : 0;
+    
+    // Recalculate brand KPIs and insights for filtered period
+    const lastExperienceMetric = filteredExperience[filteredExperience.length - 1];
+    if (lastExperienceMetric) {
+        const tiempoInteraccionMarca = lastExperienceMetric.visitasTotales * lastExperienceMetric.tiempoSesionPromedio;
+        const costoPorMinutoInteraccion = tiempoInteraccionMarca > 0 ? (totalSpent / tiempoInteraccionMarca) : 0;
+        
+        const playsOrganicosEstimados = lastExperienceMetric.visitasTotales - totalPlays;
+        const traficoOrganico = lastExperienceMetric.visitasTotales > 0 ? 
+            (playsOrganicosEstimados / lastExperienceMetric.visitasTotales * 100) : 0;
+        
+        filteredData = {
+            ...dashboardData,
+            experienceMetrics: filteredExperience,
+            campaigns: filteredCampaigns,
+            advertisingMetrics: {
+                totalImpressions,
+                totalClicks,
+                totalPlays,
+                totalSpent: Math.round(totalSpent * 100) / 100,
+                overallCTR: Math.round(overallCTR * 100) / 100,
+                overallPlayRate: Math.round(overallPlayRate * 100) / 100,
+                costPerPlay: Math.round(costPerPlay * 1000) / 1000,
+                costPerClick: Math.round(costPerClick * 1000) / 1000,
+                clickToPlayRate: Math.round(clickToPlayRate * 100) / 100,
+                playsPerDollar: Math.round(playsPerDollar * 10) / 10
+            },
+            brandKPIs: {
+                tiempoInteraccionMarca: Math.round(tiempoInteraccionMarca),
+                costoPorMinutoInteraccion: Math.round(costoPorMinutoInteraccion * 10000) / 10000
+            },
+            insightsClave: {
+                roiPublicitario: Math.round(playsPerDollar * 10) / 10,
+                traficoOrganico: Math.round(traficoOrganico * 10) / 10,
+                eficienciaConversion: Math.round(clickToPlayRate * 10) / 10
+            }
+        };
+    }
+    
+    console.log(`Período filtrado: ${startDate} a ${endDate}`);
+    console.log(`Gasto total del período: $${totalSpent.toFixed(2)}`);
+    console.log(`Campañas incluidas: ${filteredCampaigns.length}`);
+    
+    updateDashboard();
+}
 
         // Event listeners
         document.getElementById('applyFilter').addEventListener('click', filterDataByDate);
