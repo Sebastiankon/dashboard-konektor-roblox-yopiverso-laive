@@ -582,46 +582,93 @@
             });
         }
 
-        // ===== FUNCIÓN CORREGIDA PARA FILTRAR POR FECHAS =====
+        // ===== FUNCIÓN CORREGIDA PARA FILTRAR POR FECHAS CON DEBUGGING =====
         function filterDataByDate() {
             const startDate = document.getElementById('startDate').value;
             const endDate = document.getElementById('endDate').value;
             
-            if (!startDate || !endDate || !dashboardData) return;
+            if (!startDate || !endDate || !dashboardData) {
+                console.error('❌ Faltan datos para filtrar');
+                return;
+            }
             
-            console.log('🔍 Aplicando filtro:', startDate, 'a', endDate);
+            console.log('🔍 INICIANDO FILTRO DE FECHAS');
+            console.log(`📅 Rango seleccionado: ${startDate} a ${endDate}`);
+            console.log(`📊 Total campañas disponibles: ${dashboardData.campaigns.length}`);
             
             // Filter experience metrics
             const filteredExperience = dashboardData.experienceMetrics.filter(metric => {
                 return metric.fecha >= startDate && metric.fecha <= endDate;
             });
             
-            // ===== CORRECCIÓN CRÍTICA: FILTRO DE CAMPAÑAS =====
-            const filteredCampaigns = dashboardData.campaigns.filter(campaign => {
+            console.log(`📈 Métricas de experiencia filtradas: ${filteredExperience.length}`);
+            
+            // ===== DEBUGGING DETALLADO DE CAMPAÑAS =====
+            let includedCampaigns = [];
+            let excludedCampaigns = [];
+            
+            dashboardData.campaigns.forEach((campaign, index) => {
                 const campaignStart = campaign.startDate;
-                // ✅ CAMBIO CLAVE: Campañas sin endDate se consideran activas hasta el futuro
                 const campaignEnd = campaign.endDate || "2099-12-31";
                 
-                // Check if campaign overlaps with selected period
+                // Verificar solapamiento
                 const overlaps = campaignStart <= endDate && campaignEnd >= startDate;
                 
-                if (overlaps) {
-                    console.log(`✅ Incluida: ${campaign.name} (${campaignStart} - ${campaignEnd}) - $${campaign.spent}`);
-                } else {
-                    console.log(`❌ Excluida: ${campaign.name} (${campaignStart} - ${campaignEnd}) - $${campaign.spent}`);
-                }
+                const campaignInfo = {
+                    index: index + 1,
+                    name: campaign.name,
+                    start: campaignStart,
+                    end: campaign.endDate || "SIN_FIN",
+                    spent: campaign.spent,
+                    overlaps: overlaps
+                };
                 
-                return overlaps;
+                if (overlaps) {
+                    includedCampaigns.push(campaignInfo);
+                } else {
+                    excludedCampaigns.push(campaignInfo);
+                }
             });
             
-            // Recalculate advertising metrics for filtered campaigns
+            // Log detallado
+            console.log('\n🎯 CAMPAÑAS INCLUIDAS EN EL FILTRO:');
+            includedCampaigns.forEach(camp => {
+                console.log(`✅ ${camp.index}. ${camp.name}`);
+                console.log(`   📅 ${camp.start} → ${camp.end}`);
+                console.log(`   💰 ${camp.spent}`);
+            });
+            
+            console.log('\n❌ CAMPAÑAS EXCLUIDAS DEL FILTRO:');
+            excludedCampaigns.forEach(camp => {
+                console.log(`❌ ${camp.index}. ${camp.name}`);
+                console.log(`   📅 ${camp.start} → ${camp.end}`);
+                console.log(`   💰 ${camp.spent}`);
+            });
+            
+            // Crear el array de campañas filtradas
+            const filteredCampaigns = includedCampaigns.map(camp => {
+                return dashboardData.campaigns.find(c => c.name === camp.name);
+            });
+            
+            // Calcular totales
             const totalImpressions = filteredCampaigns.reduce((sum, c) => sum + c.impressions, 0);
             const totalClicks = filteredCampaigns.reduce((sum, c) => sum + c.clicks, 0);
             const totalPlays = filteredCampaigns.reduce((sum, c) => sum + c.plays, 0);
             const totalSpent = filteredCampaigns.reduce((sum, c) => sum + c.spent, 0);
             
-            console.log(`💰 Campañas filtradas: ${filteredCampaigns.length}`);
-            console.log(`💰 Gasto total filtrado: $${totalSpent.toFixed(2)}`);
+            console.log('\n💰 RESUMEN DEL FILTRO:');
+            console.log(`📊 Campañas incluidas: ${filteredCampaigns.length}`);
+            console.log(`💸 Gasto total: ${totalSpent.toFixed(2)}`);
+            console.log(`🎯 Plays totales: ${totalPlays.toLocaleString()}`);
+            console.log(`👀 Impressiones totales: ${totalImpressions.toLocaleString()}`);
+            
+            // Verificar si el gasto es el esperado
+            if (totalSpent < 5000) {
+                console.warn('⚠️ ADVERTENCIA: El gasto total parece bajo. Posibles causas:');
+                console.warn('   1. Faltan campañas en data.json');
+                console.warn('   2. Error en fechas de campañas');
+                console.warn('   3. Valores de spent incorrectos');
+            }
             
             const overallCTR = totalImpressions > 0 ? (totalClicks / totalImpressions * 100) : 0;
             const overallPlayRate = totalImpressions > 0 ? (totalPlays / totalImpressions * 100) : 0;
@@ -667,12 +714,12 @@
                     }
                 };
                 
-                console.log('✅ Filtro aplicado correctamente');
-                console.log('📊 Nuevas métricas:', {
-                    totalSpent: totalSpent.toFixed(2),
-                    totalPlays,
-                    totalCampaigns: filteredCampaigns.length
-                });
+                console.log('✅ FILTRO APLICADO EXITOSAMENTE');
+                console.log(`📊 Nuevas métricas calculadas:`);
+                console.log(`   💰 Gasto: ${totalSpent.toFixed(2)}`);
+                console.log(`   🎯 Plays: ${totalPlays.toLocaleString()}`);
+                console.log(`   📈 CTR: ${overallCTR.toFixed(2)}%`);
+                console.log(`   🎮 Play Rate: ${overallPlayRate.toFixed(2)}%`);
             }
             
             updateDashboard();
