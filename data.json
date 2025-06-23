@@ -246,20 +246,20 @@
     "totalImpressions": 19610414,
     "totalClicks": 236521,
     "totalPlays": 90735,
-    "totalSpent": 6320.16,
+    "totalSpent": 6414.85,
     "overallCTR": 1.21,
     "overallPlayRate": 0.46,
-    "costPerPlay": 0.070,
+    "costPerPlay": 0.071,
     "costPerClick": 0.027,
     "clickToPlayRate": 38.4,
-    "playsPerDollar": 14.4
+    "playsPerDollar": 14.1
   },
   "brandKPIs": {
     "tiempoInteraccionMarca": 506880,
-    "costoPorMinutoInteraccion": 0.0125
+    "costoPorMinutoInteraccion": 0.0127
   },
   "insightsClave": {
-    "roiPublicitario": 14.4,
+    "roiPublicitario": 14.1,
     "traficoOrganico": 40.9,
     "eficienciaConversion": 38.4
   },
@@ -411,11 +411,11 @@
       "impressions": 5701,
       "clicks": 0,
       "plays": 3591,
-      "spent": 107.73,
+      "spent": 100.00,
       "ctr": 0,
       "playRate": 62.99,
       "cpc": 0,
-      "cpp": 0.03
+      "cpp": 0.028
     },
     {
       "name": "Sponsored",
@@ -462,11 +462,11 @@
       "impressions": 360677,
       "clicks": 4155,
       "plays": 779,
-      "spent": 24.1,
+      "spent": 45.02,
       "ctr": 1.15,
       "playRate": 0.22,
-      "cpc": 0,
-      "cpp": 0.03
+      "cpc": 0.011,
+      "cpp": 0.058
     },
     {
       "name": "Visits - 05/26/2025 Portal Movil todas las edades",
