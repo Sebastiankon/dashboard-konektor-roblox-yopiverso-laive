@@ -246,20 +246,20 @@
     "totalImpressions": 19610414,
     "totalClicks": 236521,
     "totalPlays": 90735,
-    "totalSpent": 6203.72,
+    "totalSpent": 6320.16,
     "overallCTR": 1.21,
     "overallPlayRate": 0.46,
-    "costPerPlay": 0.068,
-    "costPerClick": 0.026,
+    "costPerPlay": 0.070,
+    "costPerClick": 0.027,
     "clickToPlayRate": 38.4,
-    "playsPerDollar": 14.6
+    "playsPerDollar": 14.4
   },
   "brandKPIs": {
     "tiempoInteraccionMarca": 506880,
-    "costoPorMinutoInteraccion": 0.0122
+    "costoPorMinutoInteraccion": 0.0125
   },
   "insightsClave": {
-    "roiPublicitario": 14.6,
+    "roiPublicitario": 14.4,
     "traficoOrganico": 40.9,
     "eficienciaConversion": 38.4
   },
@@ -510,14 +510,14 @@
       "objective": "Drive Retention",
       "budgetType": "Daily",
       "budget": 8,
-      "impressions": 99584,
-      "clicks": 1641,
-      "plays": 356,
-      "spent": 28.56,
-      "ctr": 1.65,
-      "playRate": 0.36,
-      "cpc": 0.017,
-      "cpp": 0.08
+      "impressions": 167927,
+      "clicks": 2796,
+      "plays": 595,
+      "spent": 52.58,
+      "ctr": 1.67,
+      "playRate": 0.35,
+      "cpc": 0.018,
+      "cpp": 0.088
     },
     {
       "name": "Maximize Plays_New Ads semana 4",
@@ -527,14 +527,14 @@
       "objective": "Maximize Plays",
       "budgetType": "Lifetime",
       "budget": 200,
-      "impressions": 494707,
-      "clicks": 6043,
-      "plays": 1246,
-      "spent": 107.58,
-      "ctr": 1.22,
+      "impressions": 661656,
+      "clicks": 8128,
+      "plays": 1649,
+      "spent": 200.00,
+      "ctr": 1.23,
       "playRate": 0.25,
-      "cpc": 0.017,
-      "cpp": 0.086
+      "cpc": 0.024,
+      "cpp": 0.121
     },
     {
       "name": "Maximize Plays_Yopiverso_05262025_03:48PM",
@@ -622,4 +622,4 @@
       "cpp": 0.132
     }
   ]
-}  
+}
