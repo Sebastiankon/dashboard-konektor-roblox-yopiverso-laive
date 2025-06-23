@@ -93,10 +93,10 @@
             </div>
         </div>
 
-        <!-- Additional KPIs -->
+        <!-- Additional KPIs Row -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div class="metric-card bg-white rounded-lg shadow-lg p-4 text-center">
-                <div class="text-2xl font-bold text-orange-600" id="playsTotales">-</div>
+                <div class="text-2xl font-bold text-purple-600" id="playsTotal">-</div>
                 <div class="text-sm text-gray-600">Plays Totales</div>
             </div>
             <div class="metric-card bg-white rounded-lg shadow-lg p-4 text-center">
@@ -104,11 +104,11 @@
                 <div class="text-sm text-gray-600">CPP Promedio</div>
             </div>
             <div class="metric-card bg-white rounded-lg shadow-lg p-4 text-center">
-                <div class="text-2xl font-bold text-teal-600" id="roiVisitas">-</div>
-                <div class="text-sm text-gray-600">ROI Visitas/Dólar</div>
+                <div class="text-2xl font-bold text-orange-600" id="roiVisitas">-</div>
+                <div class="text-sm text-gray-600">ROI Visitas/Dolar</div>
             </div>
             <div class="metric-card bg-white rounded-lg shadow-lg p-4 text-center">
-                <div class="text-2xl font-bold text-cyan-600" id="cpv">-</div>
+                <div class="text-2xl font-bold text-teal-600" id="cpv">-</div>
                 <div class="text-sm text-gray-600">CPV (Costo/Visita)</div>
             </div>
         </div>
@@ -119,18 +119,18 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div class="text-center">
                     <div class="text-3xl font-bold" id="roiPublicitario">-</div>
-                    <div class="text-sm opacity-90">ROI Plays/Dólar</div>
+                    <div class="text-sm opacity-90">ROI Plays/Dolar</div>
                     <div class="text-xs opacity-75">Plays por dólar invertido</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-3xl font-bold" id="roiVisitasInsight">-</div>
-                    <div class="text-sm opacity-90">ROI Visitas/Dólar</div>
+                    <div class="text-3xl font-bold" id="roiVisitasDolar">-</div>
+                    <div class="text-sm opacity-90">ROI Visitas/Dolar</div>
                     <div class="text-xs opacity-75">Visitas por dólar invertido</div>
                 </div>
                 <div class="text-center">
                     <div class="text-3xl font-bold" id="traficoOrganico">-</div>
                     <div class="text-sm opacity-90">Tráfico Orgánico</div>
-                    <div class="text-xs opacity-75">Plays orgánicos vs pagados</div>
+                    <div class="text-xs opacity-75">Visitas orgánicas vs pagadas</div>
                 </div>
                 <div class="text-center">
                     <div class="text-3xl font-bold" id="eficiencia">-</div>
@@ -286,26 +286,32 @@
             document.getElementById('tiempoSesion').textContent = lastMetric.tiempoSesionPromedio.toFixed(1);
             document.getElementById('retencion').textContent = (lastMetric.retencionDia1 * 100).toFixed(1) + '%';
             document.getElementById('visitasTotales').textContent = lastMetric.visitasTotales.toLocaleString();
-            document.getElementById('totalSpent').textContent = '$' + adMetrics.totalSpent.toLocaleString();
+            document.getElementById('totalSpent').textContent = ' + adMetrics.totalSpent.toLocaleString();
             
             // Additional KPIs
-            document.getElementById('playsTotales').textContent = adMetrics.totalPlays.toLocaleString();
-            document.getElementById('cppPromedio').textContent = '$' + adMetrics.costPerPlay.toFixed(3);
+            document.getElementById('playsTotal').textContent = adMetrics.totalPlays.toLocaleString();
+            document.getElementById('cppPromedio').textContent = ' + adMetrics.costPerPlay.toFixed(3);
             
-            // ROI Visitas por dólar = Visitas Totales / Gasto Total
-            const roiVisitas = adMetrics.roiVisitasPorDolar || (lastMetric.visitasTotales / adMetrics.totalSpent);
+            // ROI Visitas/Dolar
+            const roiVisitas = adMetrics.totalSpent > 0 ? (lastMetric.visitasTotales / adMetrics.totalSpent) : 0;
             document.getElementById('roiVisitas').textContent = roiVisitas.toFixed(1);
             
-            // CPV = Gasto Total / Visitas Totales
-            const cpv = adMetrics.costoPorVisita || (adMetrics.totalSpent / lastMetric.visitasTotales);
-            document.getElementById('cpv').textContent = '$' + cpv.toFixed(4);
+            // CPV (Costo por Visita)
+            const cpv = lastMetric.visitasTotales > 0 ? (adMetrics.totalSpent / lastMetric.visitasTotales) : 0;
+            document.getElementById('cpv').textContent = ' + cpv.toFixed(4);
         }
 
         function updateInsights() {
             const insights = filteredData.insightsClave;
+            const lastMetric = filteredData.experienceMetrics[filteredData.experienceMetrics.length - 1];
+            const adMetrics = filteredData.advertisingMetrics;
             
             document.getElementById('roiPublicitario').textContent = insights.roiPublicitario.toFixed(1);
-            document.getElementById('roiVisitasInsight').textContent = insights.roiVisitas.toFixed(1);
+            
+            // ROI Visitas/Dolar
+            const roiVisitasDolar = adMetrics.totalSpent > 0 ? (lastMetric.visitasTotales / adMetrics.totalSpent) : 0;
+            document.getElementById('roiVisitasDolar').textContent = roiVisitasDolar.toFixed(1);
+            
             document.getElementById('traficoOrganico').textContent = insights.traficoOrganico.toFixed(1) + '%';
             document.getElementById('eficiencia').textContent = insights.eficienciaConversion.toFixed(1) + '%';
         }
@@ -314,7 +320,7 @@
             const brandKPIs = filteredData.brandKPIs;
             
             document.getElementById('tiempoInteraccionMarca').textContent = brandKPIs.tiempoInteraccionMarca.toLocaleString() + ' min';
-            document.getElementById('costoMinutoInteraccion').textContent = '$' + brandKPIs.costoPorMinutoInteraccion.toFixed(4);
+            document.getElementById('costoMinutoInteraccion').textContent = ' + brandKPIs.costoPorMinutoInteraccion.toFixed(4);
         }
 
         function updateCharts() {
@@ -563,8 +569,8 @@
                 row.innerHTML = `
                     <td class="p-3 font-medium">${campaign.name}</td>
                     <td class="p-3 text-right">${campaign.plays.toLocaleString()}</td>
-                    <td class="p-3 text-right">$${campaign.spent.toFixed(2)}</td>
-                    <td class="p-3 text-right">$${cpp.toFixed(3)}</td>
+                    <td class="p-3 text-right">${campaign.spent.toFixed(2)}</td>
+                    <td class="p-3 text-right">${cpp.toFixed(3)}</td>
                     <td class="p-3 text-center">
                         <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
                             ${campaign.objective}
@@ -576,55 +582,46 @@
             });
         }
 
+        // ===== FUNCIÓN CORREGIDA PARA FILTRAR POR FECHAS =====
         function filterDataByDate() {
             const startDate = document.getElementById('startDate').value;
             const endDate = document.getElementById('endDate').value;
             
             if (!startDate || !endDate || !dashboardData) return;
             
+            console.log('🔍 Aplicando filtro:', startDate, 'a', endDate);
+            
             // Filter experience metrics
             const filteredExperience = dashboardData.experienceMetrics.filter(metric => {
                 return metric.fecha >= startDate && metric.fecha <= endDate;
             });
             
-            // Filter campaigns
+            // ===== CORRECCIÓN CRÍTICA: FILTRO DE CAMPAÑAS =====
             const filteredCampaigns = dashboardData.campaigns.filter(campaign => {
                 const campaignStart = campaign.startDate;
-                const campaignEnd = campaign.endDate || campaign.startDate;
+                // ✅ CAMBIO CLAVE: Campañas sin endDate se consideran activas hasta el futuro
+                const campaignEnd = campaign.endDate || "2099-12-31";
                 
                 // Check if campaign overlaps with selected period
-                return campaignStart <= endDate && campaignEnd >= startDate;
+                const overlaps = campaignStart <= endDate && campaignEnd >= startDate;
+                
+                if (overlaps) {
+                    console.log(`✅ Incluida: ${campaign.name} (${campaignStart} - ${campaignEnd}) - ${campaign.spent}`);
+                } else {
+                    console.log(`❌ Excluida: ${campaign.name} (${campaignStart} - ${campaignEnd}) - ${campaign.spent}`);
+                }
+                
+                return overlaps;
             });
             
             // Recalculate advertising metrics for filtered campaigns
-            // For campaigns that partially overlap, we need to prorate the spending
-            let totalImpressions = 0;
-            let totalClicks = 0;
-            let totalPlays = 0;
-            let totalSpent = 0;
+            const totalImpressions = filteredCampaigns.reduce((sum, c) => sum + c.impressions, 0);
+            const totalClicks = filteredCampaigns.reduce((sum, c) => sum + c.clicks, 0);
+            const totalPlays = filteredCampaigns.reduce((sum, c) => sum + c.plays, 0);
+            const totalSpent = filteredCampaigns.reduce((sum, c) => sum + c.spent, 0);
             
-            filteredCampaigns.forEach(campaign => {
-                const campaignStart = new Date(campaign.startDate);
-                const campaignEnd = new Date(campaign.endDate || campaign.startDate);
-                const filterStart = new Date(startDate);
-                const filterEnd = new Date(endDate);
-                
-                // Calculate overlap period
-                const overlapStart = new Date(Math.max(campaignStart.getTime(), filterStart.getTime()));
-                const overlapEnd = new Date(Math.min(campaignEnd.getTime(), filterEnd.getTime()));
-                
-                // Calculate overlap ratio
-                const campaignDuration = (campaignEnd.getTime() - campaignStart.getTime()) || 86400000; // 1 day if same day
-                const overlapDuration = Math.max(0, overlapEnd.getTime() - overlapStart.getTime());
-                const overlapRatio = overlapDuration / campaignDuration;
-                
-                // Apply proportional metrics
-                totalImpressions += (campaign.impressions || 0) * overlapRatio;
-                totalClicks += (campaign.clicks || 0) * overlapRatio;
-                totalPlays += (campaign.plays || 0) * overlapRatio;
-                totalSpent += (campaign.spent || 0) * overlapRatio;
-            });
-            
+            console.log(`💰 Campañas filtradas: ${filteredCampaigns.length}`);
+            console.log(`💰 Gasto total filtrado: ${totalSpent.toFixed(2)}`);
             
             const overallCTR = totalImpressions > 0 ? (totalClicks / totalImpressions * 100) : 0;
             const overallPlayRate = totalImpressions > 0 ? (totalPlays / totalImpressions * 100) : 0;
@@ -643,27 +640,21 @@
                 const traficoOrganico = lastExperienceMetric.visitasTotales > 0 ? 
                     (playsOrganicosEstimados / lastExperienceMetric.visitasTotales * 100) : 0;
                 
-                // Calculate new metrics: ROI Visitas and CPV
-                const roiVisitasPorDolar = totalSpent > 0 ? (lastExperienceMetric.visitasTotales / totalSpent) : 0;
-                const costoPorVisita = lastExperienceMetric.visitasTotales > 0 ? (totalSpent / lastExperienceMetric.visitasTotales) : 0;
-                
                 filteredData = {
                     ...dashboardData,
                     experienceMetrics: filteredExperience,
                     campaigns: filteredCampaigns,
                     advertisingMetrics: {
-                        totalImpressions: Math.round(totalImpressions),
-                        totalClicks: Math.round(totalClicks),
-                        totalPlays: Math.round(totalPlays),
+                        totalImpressions,
+                        totalClicks,
+                        totalPlays,
                         totalSpent: Math.round(totalSpent * 100) / 100,
                         overallCTR: Math.round(overallCTR * 100) / 100,
                         overallPlayRate: Math.round(overallPlayRate * 100) / 100,
                         costPerPlay: Math.round(costPerPlay * 1000) / 1000,
                         costPerClick: Math.round(costPerClick * 1000) / 1000,
                         clickToPlayRate: Math.round(clickToPlayRate * 100) / 100,
-                        playsPerDollar: Math.round(playsPerDollar * 10) / 10,
-                        roiVisitasPorDolar: Math.round(roiVisitasPorDolar * 10) / 10,
-                        costoPorVisita: Math.round(costoPorVisita * 10000) / 10000
+                        playsPerDollar: Math.round(playsPerDollar * 10) / 10
                     },
                     brandKPIs: {
                         tiempoInteraccionMarca: Math.round(tiempoInteraccionMarca),
@@ -671,11 +662,17 @@
                     },
                     insightsClave: {
                         roiPublicitario: Math.round(playsPerDollar * 10) / 10,
-                        roiVisitas: Math.round(roiVisitasPorDolar * 10) / 10,
                         traficoOrganico: Math.round(traficoOrganico * 10) / 10,
                         eficienciaConversion: Math.round(clickToPlayRate * 10) / 10
                     }
                 };
+                
+                console.log('✅ Filtro aplicado correctamente');
+                console.log('📊 Nuevas métricas:', {
+                    totalSpent: totalSpent.toFixed(2),
+                    totalPlays,
+                    totalCampaigns: filteredCampaigns.length
+                });
             }
             
             updateDashboard();
@@ -699,4 +696,3 @@
     </script>
 </body>
 </html>
-    
