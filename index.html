@@ -40,6 +40,22 @@
             font-family: monospace;
             font-size: 12px;
         }
+        .error-message {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+            padding: 12px;
+            margin: 8px 0;
+            color: #721c24;
+        }
+        .success-message {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 4px;
+            padding: 12px;
+            margin: 8px 0;
+            color: #155724;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -53,8 +69,33 @@
     </div>
 
     <div class="max-w-7xl mx-auto px-6 space-y-6">
+        <!-- Loading/Error Status -->
+        <div id="statusContainer" class="bg-white rounded-lg shadow-lg p-6">
+            <div id="loadingStatus" class="flex items-center gap-3">
+                <i class="fas fa-spinner fa-spin text-blue-500"></i>
+                <span>Cargando datos del dashboard...</span>
+            </div>
+            <div id="errorStatus" class="error-message" style="display: none;">
+                <i class="fas fa-exclamation-triangle mr-2"></i>
+                <span id="errorMessage">Error al cargar los datos</span>
+                <br>
+                <small id="errorDetails"></small>
+                <br><br>
+                <button id="retryLoad" class="bg-red-500 text-white px-4 py-2 rounded text-sm hover:bg-red-600">
+                    <i class="fas fa-refresh mr-1"></i>Reintentar
+                </button>
+                <button id="useTestData" class="bg-blue-500 text-white px-4 py-2 rounded text-sm hover:bg-blue-600 ml-2">
+                    <i class="fas fa-database mr-1"></i>Usar datos de prueba
+                </button>
+            </div>
+            <div id="successStatus" class="success-message" style="display: none;">
+                <i class="fas fa-check-circle mr-2"></i>
+                <span>Datos cargados correctamente</span>
+            </div>
+        </div>
+
         <!-- Date Filters -->
-        <div class="bg-white rounded-lg shadow-lg p-6">
+        <div class="bg-white rounded-lg shadow-lg p-6" id="filtersSection" style="display: none;">
             <h3 class="text-lg font-semibold mb-4"><i class="fas fa-calendar-alt text-red-500 mr-2"></i>Filtrar por Fecha</h3>
             <div class="flex flex-wrap gap-4 items-center">
                 <div class="flex items-center gap-2">
@@ -84,158 +125,161 @@
             <button id="toggleDebug" class="mt-2 text-xs text-gray-500 hover:text-gray-700">Mostrar/Ocultar Debug</button>
         </div>
 
-        <!-- Main KPIs -->
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            <div class="metric-card bg-white rounded-lg shadow-lg p-4 text-center">
-                <div class="text-2xl font-bold text-red-600" id="usuariosActivos">-</div>
-                <div class="text-sm text-gray-600">Usuarios Activos</div>
+        <!-- Main Content (hidden until data loads) -->
+        <div id="mainContent" style="display: none;">
+            <!-- Main KPIs -->
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+                <div class="metric-card bg-white rounded-lg shadow-lg p-4 text-center">
+                    <div class="text-2xl font-bold text-red-600" id="usuariosActivos">-</div>
+                    <div class="text-sm text-gray-600">Usuarios Activos</div>
+                </div>
+                <div class="metric-card bg-white rounded-lg shadow-lg p-4 text-center">
+                    <div class="text-2xl font-bold text-blue-600" id="nuevosUsuarios">-</div>
+                    <div class="text-sm text-gray-600">Nuevos Usuarios</div>
+                </div>
+                <div class="metric-card bg-white rounded-lg shadow-lg p-4 text-center">
+                    <div class="text-2xl font-bold text-green-600" id="tiempoSesion">-</div>
+                    <div class="text-sm text-gray-600">Tiempo Sesión (min)</div>
+                </div>
+                <div class="metric-card bg-white rounded-lg shadow-lg p-4 text-center">
+                    <div class="text-2xl font-bold text-purple-600" id="retencion">-</div>
+                    <div class="text-sm text-gray-600">Retención Día 1</div>
+                </div>
+                <div class="metric-card bg-white rounded-lg shadow-lg p-4 text-center">
+                    <div class="text-2xl font-bold text-yellow-600" id="visitasTotales">-</div>
+                    <div class="text-sm text-gray-600">Visitas Totales</div>
+                </div>
+                <div class="metric-card bg-white rounded-lg shadow-lg p-4 text-center">
+                    <div class="text-2xl font-bold text-indigo-600" id="totalSpent">-</div>
+                    <div class="text-sm text-gray-600">Inversión Total</div>
+                </div>
             </div>
-            <div class="metric-card bg-white rounded-lg shadow-lg p-4 text-center">
-                <div class="text-2xl font-bold text-blue-600" id="nuevosUsuarios">-</div>
-                <div class="text-sm text-gray-600">Nuevos Usuarios</div>
-            </div>
-            <div class="metric-card bg-white rounded-lg shadow-lg p-4 text-center">
-                <div class="text-2xl font-bold text-green-600" id="tiempoSesion">-</div>
-                <div class="text-sm text-gray-600">Tiempo Sesión (min)</div>
-            </div>
-            <div class="metric-card bg-white rounded-lg shadow-lg p-4 text-center">
-                <div class="text-2xl font-bold text-purple-600" id="retencion">-</div>
-                <div class="text-sm text-gray-600">Retención Día 1</div>
-            </div>
-            <div class="metric-card bg-white rounded-lg shadow-lg p-4 text-center">
-                <div class="text-2xl font-bold text-yellow-600" id="visitasTotales">-</div>
-                <div class="text-sm text-gray-600">Visitas Totales</div>
-            </div>
-            <div class="metric-card bg-white rounded-lg shadow-lg p-4 text-center">
-                <div class="text-2xl font-bold text-indigo-600" id="totalSpent">-</div>
-                <div class="text-sm text-gray-600">Inversión Total</div>
-            </div>
-        </div>
 
-        <!-- Additional KPIs Row -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="metric-card bg-white rounded-lg shadow-lg p-4 text-center">
-                <div class="text-2xl font-bold text-purple-600" id="playsTotal">-</div>
-                <div class="text-sm text-gray-600">Plays Totales</div>
+            <!-- Additional KPIs Row -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="metric-card bg-white rounded-lg shadow-lg p-4 text-center">
+                    <div class="text-2xl font-bold text-purple-600" id="playsTotal">-</div>
+                    <div class="text-sm text-gray-600">Plays Totales</div>
+                </div>
+                <div class="metric-card bg-white rounded-lg shadow-lg p-4 text-center">
+                    <div class="text-2xl font-bold text-pink-600" id="cppPromedio">-</div>
+                    <div class="text-sm text-gray-600">CPP Promedio</div>
+                </div>
+                <div class="metric-card bg-white rounded-lg shadow-lg p-4 text-center">
+                    <div class="text-2xl font-bold text-orange-600" id="roiVisitas">-</div>
+                    <div class="text-sm text-gray-600">ROI Visitas/Dolar</div>
+                </div>
+                <div class="metric-card bg-white rounded-lg shadow-lg p-4 text-center">
+                    <div class="text-2xl font-bold text-teal-600" id="cpv">-</div>
+                    <div class="text-sm text-gray-600">CPV (Costo/Visita)</div>
+                </div>
             </div>
-            <div class="metric-card bg-white rounded-lg shadow-lg p-4 text-center">
-                <div class="text-2xl font-bold text-pink-600" id="cppPromedio">-</div>
-                <div class="text-sm text-gray-600">CPP Promedio</div>
-            </div>
-            <div class="metric-card bg-white rounded-lg shadow-lg p-4 text-center">
-                <div class="text-2xl font-bold text-orange-600" id="roiVisitas">-</div>
-                <div class="text-sm text-gray-600">ROI Visitas/Dolar</div>
-            </div>
-            <div class="metric-card bg-white rounded-lg shadow-lg p-4 text-center">
-                <div class="text-2xl font-bold text-teal-600" id="cpv">-</div>
-                <div class="text-sm text-gray-600">CPV (Costo/Visita)</div>
-            </div>
-        </div>
 
-        <!-- Insights Clave del Período -->
-        <div class="insights-gradient rounded-lg shadow-lg p-6 text-white">
-            <h3 class="text-xl font-bold mb-4"><i class="fas fa-lightbulb mr-2"></i>Insights Clave del Período</h3>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div class="text-center">
-                    <div class="text-3xl font-bold" id="roiPublicitario">-</div>
-                    <div class="text-sm opacity-90">ROI Plays/Dolar</div>
-                    <div class="text-xs opacity-75">Plays por dólar invertido</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-3xl font-bold" id="roiVisitasDolar">-</div>
-                    <div class="text-sm opacity-90">ROI Visitas/Dolar</div>
-                    <div class="text-xs opacity-75">Visitas por dólar invertido</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-3xl font-bold" id="traficoOrganico">-</div>
-                    <div class="text-sm opacity-90">Tráfico Orgánico</div>
-                    <div class="text-xs opacity-75">Visitas orgánicas vs pagadas</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-3xl font-bold" id="eficiencia">-</div>
-                    <div class="text-sm opacity-90">Eficiencia</div>
-                    <div class="text-xs opacity-75">Clicks que se convierten en plays</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- KPIs de Marca -->
-        <div class="brand-kpi-gradient rounded-lg shadow-lg p-6 text-white">
-            <h3 class="text-xl font-bold mb-4"><i class="fas fa-star mr-2"></i>KPIs de Interacción de Marca</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="text-center">
-                    <div class="text-3xl font-bold" id="tiempoInteraccionMarca">-</div>
-                    <div class="text-sm opacity-90">Tiempo de Interacción</div>
-                    <div class="text-xs opacity-75">Visitas Totales × Tiempo Promedio (minutos)</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-3xl font-bold" id="costoMinutoInteraccion">-</div>
-                    <div class="text-sm opacity-90">Costo por Minuto</div>
-                    <div class="text-xs opacity-75">Gasto Total ÷ Tiempo de Interacción</div>
+            <!-- Insights Clave del Período -->
+            <div class="insights-gradient rounded-lg shadow-lg p-6 text-white mb-6">
+                <h3 class="text-xl font-bold mb-4"><i class="fas fa-lightbulb mr-2"></i>Insights Clave del Período</h3>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="text-center">
+                        <div class="text-3xl font-bold" id="roiPublicitario">-</div>
+                        <div class="text-sm opacity-90">ROI Plays/Dolar</div>
+                        <div class="text-xs opacity-75">Plays por dólar invertido</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold" id="roiVisitasDolar">-</div>
+                        <div class="text-sm opacity-90">ROI Visitas/Dolar</div>
+                        <div class="text-xs opacity-75">Visitas por dólar invertido</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold" id="traficoOrganico">-</div>
+                        <div class="text-sm opacity-90">Tráfico Orgánico</div>
+                        <div class="text-xs opacity-75">Visitas orgánicas vs pagadas</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold" id="eficiencia">-</div>
+                        <div class="text-sm opacity-90">Eficiencia</div>
+                        <div class="text-xs opacity-75">Clicks que se convierten en plays</div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Charts Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Usuarios Activos Chart -->
-            <div class="bg-white rounded-lg shadow-lg p-6">
-                <h3 class="text-lg font-semibold mb-4">Usuarios Activos Diarios</h3>
+            <!-- KPIs de Marca -->
+            <div class="brand-kpi-gradient rounded-lg shadow-lg p-6 text-white mb-6">
+                <h3 class="text-xl font-bold mb-4"><i class="fas fa-star mr-2"></i>KPIs de Interacción de Marca</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="text-center">
+                        <div class="text-3xl font-bold" id="tiempoInteraccionMarca">-</div>
+                        <div class="text-sm opacity-90">Tiempo de Interacción</div>
+                        <div class="text-xs opacity-75">Visitas Totales × Tiempo Promedio (minutos)</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold" id="costoMinutoInteraccion">-</div>
+                        <div class="text-sm opacity-90">Costo por Minuto</div>
+                        <div class="text-xs opacity-75">Gasto Total ÷ Tiempo de Interacción</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <!-- Usuarios Activos Chart -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-lg font-semibold mb-4">Usuarios Activos Diarios</h3>
+                    <div class="chart-container">
+                        <canvas id="usuariosActivosChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Nuevos Usuarios Chart -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-lg font-semibold mb-4">Nuevos Usuarios por Día</h3>
+                    <div class="chart-container">
+                        <canvas id="nuevosUsuariosChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Tiempo Sesión Chart -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-lg font-semibold mb-4">Tiempo de Sesión Promedio</h3>
+                    <div class="chart-container">
+                        <canvas id="tiempoSesionChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Visitas Totales Chart -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-lg font-semibold mb-4">Crecimiento de Visitas Totales</h3>
+                    <div class="chart-container">
+                        <canvas id="visitasTotalesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campaign Comparison -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h3 class="text-lg font-semibold mb-4">Rendimiento por Tipo de Campaña</h3>
                 <div class="chart-container">
-                    <canvas id="usuariosActivosChart"></canvas>
+                    <canvas id="campaignComparisonChart"></canvas>
                 </div>
             </div>
 
-            <!-- Nuevos Usuarios Chart -->
-            <div class="bg-white rounded-lg shadow-lg p-6">
-                <h3 class="text-lg font-semibold mb-4">Nuevos Usuarios por Día</h3>
-                <div class="chart-container">
-                    <canvas id="nuevosUsuariosChart"></canvas>
+            <!-- Top Campaigns Table -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h3 class="text-lg font-semibold mb-4">Top 5 Campañas por Plays</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-gray-50">
+                                <th class="text-left p-3">Campaña</th>
+                                <th class="text-right p-3">Plays</th>
+                                <th class="text-right p-3">Gasto</th>
+                                <th class="text-right p-3">CPP</th>
+                                <th class="text-center p-3">Objetivo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="campaignsTableBody">
+                        </tbody>
+                    </table>
                 </div>
-            </div>
-
-            <!-- Tiempo Sesión Chart -->
-            <div class="bg-white rounded-lg shadow-lg p-6">
-                <h3 class="text-lg font-semibold mb-4">Tiempo de Sesión Promedio</h3>
-                <div class="chart-container">
-                    <canvas id="tiempoSesionChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Visitas Totales Chart -->
-            <div class="bg-white rounded-lg shadow-lg p-6">
-                <h3 class="text-lg font-semibold mb-4">Crecimiento de Visitas Totales</h3>
-                <div class="chart-container">
-                    <canvas id="visitasTotalesChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Campaign Comparison -->
-        <div class="bg-white rounded-lg shadow-lg p-6">
-            <h3 class="text-lg font-semibold mb-4">Rendimiento por Tipo de Campaña</h3>
-            <div class="chart-container">
-                <canvas id="campaignComparisonChart"></canvas>
-            </div>
-        </div>
-
-        <!-- Top Campaigns Table -->
-        <div class="bg-white rounded-lg shadow-lg p-6">
-            <h3 class="text-lg font-semibold mb-4">Top 5 Campañas por Plays</h3>
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr class="bg-gray-50">
-                            <th class="text-left p-3">Campaña</th>
-                            <th class="text-right p-3">Plays</th>
-                            <th class="text-right p-3">Gasto</th>
-                            <th class="text-right p-3">CPP</th>
-                            <th class="text-center p-3">Objetivo</th>
-                        </tr>
-                    </thead>
-                    <tbody id="campaignsTableBody">
-                    </tbody>
-                </table>
             </div>
         </div>
 
@@ -252,7 +296,112 @@
         let charts = {};
         let debugMode = false;
 
-        // Función para logging de debug
+        // Test data as fallback
+        const testData = {
+            "lastUpdate": "2025-06-23",
+            "experienceMetrics": [
+                {
+                    "fecha": "2025-06-20",
+                    "usuariosActivosDiarios": 2101,
+                    "nuevosUsuarios": 1634,
+                    "tiempoSesionPromedio": 3.4,
+                    "retencionDia1": 0.02,
+                    "visitasTotales": 147900
+                },
+                {
+                    "fecha": "2025-06-21",
+                    "usuariosActivosDiarios": 1993,
+                    "nuevosUsuarios": 1544,
+                    "tiempoSesionPromedio": 3.4,
+                    "retencionDia1": 0.02,
+                    "visitasTotales": 150600
+                },
+                {
+                    "fecha": "2025-06-22",
+                    "usuariosActivosDiarios": 1866,
+                    "nuevosUsuarios": 1435,
+                    "tiempoSesionPromedio": 3.3,
+                    "retencionDia1": 0.02,
+                    "visitasTotales": 152700
+                },
+                {
+                    "fecha": "2025-06-23",
+                    "usuariosActivosDiarios": 1703,
+                    "nuevosUsuarios": 1288,
+                    "tiempoSesionPromedio": 3.3,
+                    "retencionDia1": 0.03,
+                    "visitasTotales": 154600
+                }
+            ],
+            "advertisingMetrics": {
+                "totalImpressions": 20212273,
+                "totalClicks": 244605,
+                "totalPlays": 94940,
+                "totalSpent": 6441.47,
+                "overallCTR": 1.21,
+                "overallPlayRate": 0.47,
+                "costPerPlay": 0.068,
+                "costPerClick": 0.026,
+                "clickToPlayRate": 38.8,
+                "playsPerDollar": 14.7
+            },
+            "brandKPIs": {
+                "tiempoInteraccionMarca": 510180,
+                "costoPorMinutoInteraccion": 0.0126
+            },
+            "insightsClave": {
+                "roiPublicitario": 14.7,
+                "traficoOrganico": 38.6,
+                "eficienciaConversion": 38.8
+            },
+            "campaigns": [
+                {
+                    "name": "Test Campaign",
+                    "campaignId": "test-123",
+                    "startDate": "2025-06-20",
+                    "endDate": "2025-06-23",
+                    "objective": "Maximize Plays",
+                    "budgetType": "Daily",
+                    "budget": 100,
+                    "impressions": 50000,
+                    "clicks": 500,
+                    "plays": 250,
+                    "spent": 150.0,
+                    "ctr": 1.0,
+                    "playRate": 0.5,
+                    "cpc": 0.3,
+                    "cpp": 0.6
+                }
+            ]
+        };
+
+        function showStatus(type, message, details = '') {
+            const loading = document.getElementById('loadingStatus');
+            const error = document.getElementById('errorStatus');
+            const success = document.getElementById('successStatus');
+            
+            // Hide all status elements
+            loading.style.display = 'none';
+            error.style.display = 'none';
+            success.style.display = 'none';
+            
+            if (type === 'loading') {
+                loading.style.display = 'flex';
+                loading.querySelector('span').textContent = message;
+            } else if (type === 'error') {
+                error.style.display = 'block';
+                document.getElementById('errorMessage').textContent = message;
+                document.getElementById('errorDetails').textContent = details;
+            } else if (type === 'success') {
+                success.style.display = 'block';
+                success.querySelector('span').textContent = message;
+                
+                // Show main sections after successful load
+                document.getElementById('filtersSection').style.display = 'block';
+                document.getElementById('mainContent').style.display = 'block';
+            }
+        }
+
         function debugLog(message) {
             if (debugMode) {
                 console.log(`🐛 DEBUG: ${message}`);
@@ -263,55 +412,131 @@
             document.getElementById('debugText').innerHTML = text;
         }
 
-        // Load data from JSON
+        // Load data from JSON with enhanced error handling
         async function loadData() {
             try {
-                document.body.classList.add('loading');
-                const response = await fetch('./data.json');
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                showStatus('loading', 'Intentando cargar data.json...');
+                
+                // Try multiple possible paths
+                const possiblePaths = ['./data.json', 'data.json', '/data.json'];
+                let dataLoaded = false;
+                let lastError = null;
+                
+                for (const path of possiblePaths) {
+                    try {
+                        debugLog(`Intentando cargar desde: ${path}`);
+                        const response = await fetch(path);
+                        
+                        if (!response.ok) {
+                            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                        }
+                        
+                        const contentType = response.headers.get('content-type');
+                        if (!contentType || !contentType.includes('application/json')) {
+                            debugLog(`Warning: Content-Type is ${contentType}, esperaba JSON`);
+                        }
+                        
+                        dashboardData = await response.json();
+                        
+                        // Validate data structure
+                        if (!dashboardData.experienceMetrics || !Array.isArray(dashboardData.experienceMetrics)) {
+                            throw new Error('Estructura de datos inválida: falta experienceMetrics');
+                        }
+                        
+                        if (!dashboardData.campaigns || !Array.isArray(dashboardData.campaigns)) {
+                            throw new Error('Estructura de datos inválida: falta campaigns');
+                        }
+                        
+                        dataLoaded = true;
+                        console.log('✅ Data loaded successfully from:', path);
+                        debugLog(`Loaded ${dashboardData.experienceMetrics.length} experience metrics`);
+                        debugLog(`Loaded ${dashboardData.campaigns.length} campaigns`);
+                        break;
+                        
+                    } catch (error) {
+                        lastError = error;
+                        debugLog(`Failed to load from ${path}: ${error.message}`);
+                        continue;
+                    }
                 }
-                dashboardData = await response.json();
+                
+                if (!dataLoaded) {
+                    throw lastError || new Error('No se pudo cargar desde ninguna ubicación');
+                }
+                
                 filteredData = JSON.parse(JSON.stringify(dashboardData));
-                
-                console.log('✅ Data loaded successfully:', dashboardData);
-                debugLog('Dashboard data loaded with ' + dashboardData.experienceMetrics.length + ' experience metrics');
-                debugLog('Campaign count: ' + dashboardData.campaigns.length);
-                
+                showStatus('success', `Datos cargados correctamente (${dashboardData.experienceMetrics.length} métricas, ${dashboardData.campaigns.length} campañas)`);
                 initializeDashboard();
-                document.body.classList.remove('loading');
+                
             } catch (error) {
                 console.error('❌ Error loading data:', error);
-                document.body.classList.remove('loading');
-                alert('Error al cargar los datos. Asegúrate de que el archivo data.json esté disponible.');
+                const errorMsg = error.message || 'Error desconocido';
+                const errorDetails = `
+                    Posibles causas:
+                    • El archivo data.json no existe en la misma carpeta que el HTML
+                    • El servidor web no está sirviendo archivos JSON correctamente
+                    • El archivo data.json tiene formato incorrecto
+                    • Problemas de CORS (Cross-Origin Resource Sharing)
+                    
+                    Verifica que:
+                    1. El archivo data.json esté en la misma carpeta que este HTML
+                    2. Estés abriendo el HTML desde un servidor web (no file://)
+                    3. El archivo JSON tenga formato válido
+                `;
+                showStatus('error', errorMsg, errorDetails);
             }
         }
 
+        function useTestData() {
+            console.log('📊 Using test data as fallback');
+            dashboardData = testData;
+            filteredData = JSON.parse(JSON.stringify(dashboardData));
+            showStatus('success', 'Usando datos de prueba (modo de desarrollo)');
+            initializeDashboard();
+        }
+
         function initializeDashboard() {
-            if (!dashboardData) return;
+            if (!dashboardData) {
+                console.error('No dashboard data available');
+                return;
+            }
             
-            // Set date range
-            const dates = dashboardData.experienceMetrics.map(d => d.fecha).sort();
-            document.getElementById('startDate').value = dates[0];
-            document.getElementById('endDate').value = dates[dates.length - 1];
-            
-            debugLog(`Date range set: ${dates[0]} to ${dates[dates.length - 1]}`);
-            
-            // Set last update
-            document.getElementById('lastUpdate').textContent = dashboardData.lastUpdate || 'N/A';
-            
-            updateDashboard();
+            try {
+                // Set date range
+                const dates = dashboardData.experienceMetrics.map(d => d.fecha).sort();
+                document.getElementById('startDate').value = dates[0];
+                document.getElementById('endDate').value = dates[dates.length - 1];
+                
+                debugLog(`Date range set: ${dates[0]} to ${dates[dates.length - 1]}`);
+                
+                // Set last update
+                document.getElementById('lastUpdate').textContent = dashboardData.lastUpdate || 'N/A';
+                
+                updateDashboard();
+                
+            } catch (error) {
+                console.error('Error initializing dashboard:', error);
+                showStatus('error', 'Error al inicializar dashboard', error.message);
+            }
         }
 
         function updateDashboard() {
-            if (!filteredData) return;
+            if (!filteredData) {
+                console.error('No filtered data available');
+                return;
+            }
             
-            debugLog('Updating dashboard with filtered data');
-            updateKPIs();
-            updateInsights();
-            updateBrandKPIs();
-            updateCharts();
-            updateCampaignsTable();
+            try {
+                debugLog('Updating dashboard with filtered data');
+                updateKPIs();
+                updateInsights();
+                updateBrandKPIs();
+                updateCharts();
+                updateCampaignsTable();
+            } catch (error) {
+                console.error('Error updating dashboard:', error);
+                showStatus('error', 'Error al actualizar dashboard', error.message);
+            }
         }
 
         function updateKPIs() {
@@ -325,11 +550,11 @@
             document.getElementById('tiempoSesion').textContent = lastMetric.tiempoSesionPromedio.toFixed(1);
             document.getElementById('retencion').textContent = (lastMetric.retencionDia1 * 100).toFixed(1) + '%';
             document.getElementById('visitasTotales').textContent = lastMetric.visitasTotales.toLocaleString();
-            document.getElementById('totalSpent').textContent = ' + adMetrics.totalSpent.toLocaleString();
+            document.getElementById('totalSpent').textContent = '$' + adMetrics.totalSpent.toLocaleString();
             
             // Additional KPIs
             document.getElementById('playsTotal').textContent = adMetrics.totalPlays.toLocaleString();
-            document.getElementById('cppPromedio').textContent = ' + adMetrics.costPerPlay.toFixed(3);
+            document.getElementById('cppPromedio').textContent = '$' + adMetrics.costPerPlay.toFixed(3);
             
             // ROI Visitas/Dolar
             const roiVisitas = adMetrics.totalSpent > 0 ? (lastMetric.visitasTotales / adMetrics.totalSpent) : 0;
@@ -337,7 +562,7 @@
             
             // CPV (Costo por Visita)
             const cpv = lastMetric.visitasTotales > 0 ? (adMetrics.totalSpent / lastMetric.visitasTotales) : 0;
-            document.getElementById('cpv').textContent = ' + cpv.toFixed(4);
+            document.getElementById('cpv').textContent = '$' + cpv.toFixed(4);
         }
 
         function updateInsights() {
@@ -359,15 +584,19 @@
             const brandKPIs = filteredData.brandKPIs;
             
             document.getElementById('tiempoInteraccionMarca').textContent = brandKPIs.tiempoInteraccionMarca.toLocaleString() + ' min';
-            document.getElementById('costoMinutoInteraccion').textContent = ' + brandKPIs.costoPorMinutoInteraccion.toFixed(4);
+            document.getElementById('costoMinutoInteraccion').textContent = '$' + brandKPIs.costoPorMinutoInteraccion.toFixed(4);
         }
 
         function updateCharts() {
-            createUsuariosActivosChart();
-            createNuevosUsuariosChart();
-            createTiempoSesionChart();
-            createVisitasTotalesChart();
-            createCampaignComparisonChart();
+            try {
+                createUsuariosActivosChart();
+                createNuevosUsuariosChart();
+                createTiempoSesionChart();
+                createVisitasTotalesChart();
+                createCampaignComparisonChart();
+            } catch (error) {
+                console.error('Error updating charts:', error);
+            }
         }
 
         function createUsuariosActivosChart() {
@@ -609,7 +838,7 @@
                 
                 row.innerHTML = `
                     <td class="p-3 font-medium">${campaign.name}</td>
-                    <td class="p-3 text-right">${actualPlays.toLocaleString()}</td>
+                    <td class="p-3 text-right">${Math.round(actualPlays).toLocaleString()}</td>
                     <td class="p-3 text-right">${actualSpent.toFixed(2)}</td>
                     <td class="p-3 text-right">${cpp.toFixed(3)}</td>
                     <td class="p-3 text-center">
@@ -724,7 +953,7 @@
                 <strong>Experiencia:</strong> ${filteredExperience.length} métricas filtradas<br>
                 <strong>Campañas:</strong> ${filteredCampaigns.length} de ${dashboardData.campaigns.length} incluidas<br>
                 <strong>Gasto total:</strong> ${totalAdjustedSpent.toFixed(2)}<br>
-                <strong>Plays totales:</strong> ${totalAdjustedPlays.toLocaleString()}<br><br>
+                <strong>Plays totales:</strong> ${Math.round(totalAdjustedPlays).toLocaleString()}<br><br>
                 <strong>Detalle de campañas:</strong><br>
                 ${debugDetails.join('<br>')}
             `;
@@ -798,6 +1027,12 @@
                 updateDashboard();
             }
         });
+
+        // Retry loading data
+        document.getElementById('retryLoad').addEventListener('click', loadData);
+        
+        // Use test data fallback
+        document.getElementById('useTestData').addEventListener('click', useTestData);
 
         // Toggle debug mode
         document.getElementById('toggleDebug').addEventListener('click', () => {
