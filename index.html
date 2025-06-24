@@ -62,6 +62,10 @@
                 <button id="resetFilter" class="bg-gray-500 text-white px-4 py-2 rounded text-sm hover:bg-gray-600 transition-colors">
                     <i class="fas fa-undo mr-1"></i>Todo el período
                 </button>
+                <div class="flex items-center gap-2 ml-4 text-sm text-gray-600">
+                    <i class="fas fa-info-circle"></i>
+                    <span id="filterInfo">Mostrando todo el período</span>
+                </div>
             </div>
         </div>
 
@@ -504,7 +508,7 @@
                     };
                 }
                 campaignGroups[campaign.objective].plays += campaign.plays;
-                campaignGroups[campaign.objective].spent += campaign.spent;
+                campaignGroups[campaign.objective].spent += campaign.adjustedSpent || campaign.spent;
                 campaignGroups[campaign.objective].campaigns += 1;
             });
             
@@ -564,13 +568,14 @@
                 const row = document.createElement('tr');
                 row.className = 'border-b hover:bg-gray-50';
                 
-                const cpp = campaign.plays > 0 ? (campaign.spent / campaign.plays) : 0;
+                const actualSpent = campaign.adjustedSpent || campaign.spent;
+                const cpp = campaign.plays > 0 ? (actualSpent / campaign.plays) : 0;
                 
                 row.innerHTML = `
                     <td class="p-3 font-medium">${campaign.name}</td>
                     <td class="p-3 text-right">${campaign.plays.toLocaleString()}</td>
-                    <td class="p-3 text-right">$${campaign.spent.toFixed(2)}</td>
-                    <td class="p-3 text-right">$${cpp.toFixed(3)}</td>
+                    <td class="p-3 text-right">${actualSpent.toFixed(2)}</td>
+                    <td class="p-3 text-right">${cpp.toFixed(3)}</td>
                     <td class="p-3 text-center">
                         <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
                             ${campaign.objective}
@@ -582,7 +587,7 @@
             });
         }
 
-        // ===== FUNCIÓN CORREGIDA PARA FILTRAR POR FECHAS CON DEBUGGING =====
+        // FUNCIÓN MEJORADA PARA FILTRAR POR FECHAS CON PRORRATEO
         function filterDataByDate() {
             const startDate = document.getElementById('startDate').value;
             const endDate = document.getElementById('endDate').value;
@@ -592,9 +597,13 @@
                 return;
             }
             
-            console.log('🔍 INICIANDO FILTRO DE FECHAS');
+            console.log('🔍 INICIANDO FILTRO DE FECHAS CON PRORRATEO');
             console.log(`📅 Rango seleccionado: ${startDate} a ${endDate}`);
-            console.log(`📊 Total campañas disponibles: ${dashboardData.campaigns.length}`);
+            
+            // Calcular días del período filtrado
+            const filterStartMs = new Date(startDate).getTime();
+            const filterEndMs = new Date(endDate).getTime();
+            const filterDays = Math.ceil((filterEndMs - filterStartMs) / (1000 * 60 * 60 * 24)) + 1;
             
             // Filter experience metrics
             const filteredExperience = dashboardData.experienceMetrics.filter(metric => {
@@ -602,73 +611,67 @@
             });
             
             console.log(`📈 Métricas de experiencia filtradas: ${filteredExperience.length}`);
+            console.log(`📅 Días en el período: ${filterDays}`);
             
-            // ===== DEBUGGING DETALLADO DE CAMPAÑAS =====
-            let includedCampaigns = [];
-            let excludedCampaigns = [];
+            // Filtrar y prorratear campañas
+            let filteredCampaigns = [];
+            let totalAdjustedSpent = 0;
             
             dashboardData.campaigns.forEach((campaign, index) => {
                 const campaignStart = campaign.startDate;
                 const campaignEnd = campaign.endDate || "2099-12-31";
                 
-                // Verificar solapamiento
-                const overlaps = campaignStart <= endDate && campaignEnd >= startDate;
-                
-                const campaignInfo = {
-                    index: index + 1,
-                    name: campaign.name,
-                    start: campaignStart,
-                    end: campaign.endDate || "SIN_FIN",
-                    spent: campaign.spent,
-                    overlaps: overlaps
-                };
-                
-                if (overlaps) {
-                    includedCampaigns.push(campaignInfo);
-                } else {
-                    excludedCampaigns.push(campaignInfo);
+                // Verificar si la campaña tiene overlap con el período filtrado
+                if (campaignStart <= endDate && campaignEnd >= startDate) {
+                    // Calcular el período efectivo de la campaña dentro del filtro
+                    const effectiveStart = campaignStart > startDate ? campaignStart : startDate;
+                    const effectiveEnd = campaignEnd < endDate ? campaignEnd : endDate;
+                    
+                    const effectiveStartMs = new Date(effectiveStart).getTime();
+                    const effectiveEndMs = new Date(effectiveEnd).getTime();
+                    const effectiveDays = Math.ceil((effectiveEndMs - effectiveStartMs) / (1000 * 60 * 60 * 24)) + 1;
+                    
+                    // Calcular días totales de la campaña
+                    const campaignStartMs = new Date(campaignStart).getTime();
+                    const campaignEndMs = new Date(campaignEnd).getTime();
+                    const campaignTotalDays = Math.ceil((campaignEndMs - campaignStartMs) / (1000 * 60 * 60 * 24)) + 1;
+                    
+                    // Calcular factor de prorrateo
+                    const prorateFactor = effectiveDays / campaignTotalDays;
+                    
+                    // Crear copia de la campaña con valores prorrateados
+                    const adjustedCampaign = {
+                        ...campaign,
+                        adjustedSpent: campaign.spent * prorateFactor,
+                        adjustedImpressions: Math.round(campaign.impressions * prorateFactor),
+                        adjustedClicks: Math.round(campaign.clicks * prorateFactor),
+                        adjustedPlays: Math.round(campaign.plays * prorateFactor),
+                        prorateFactor: prorateFactor,
+                        effectiveDays: effectiveDays,
+                        campaignTotalDays: campaignTotalDays
+                    };
+                    
+                    filteredCampaigns.push(adjustedCampaign);
+                    totalAdjustedSpent += adjustedCampaign.adjustedSpent;
+                    
+                    console.log(`✅ ${campaign.name}`);
+                    console.log(`   📅 Campaña: ${campaignStart} → ${campaignEnd}`);
+                    console.log(`   📅 Efectivo: ${effectiveStart} → ${effectiveEnd}`);
+                    console.log(`   📊 Días: ${effectiveDays}/${campaignTotalDays} (${(prorateFactor * 100).toFixed(1)}%)`);
+                    console.log(`   💰 Gasto: ${campaign.spent.toFixed(2)} → ${adjustedCampaign.adjustedSpent.toFixed(2)}`);
                 }
             });
             
-            // Log detallado
-            console.log('\n🎯 CAMPAÑAS INCLUIDAS EN EL FILTRO:');
-            includedCampaigns.forEach(camp => {
-                console.log(`✅ ${camp.index}. ${camp.name}`);
-                console.log(`   📅 ${camp.start} → ${camp.end}`);
-                console.log(`   💰 ${camp.spent}`);
-            });
+            // Calcular totales con valores prorrateados
+            const totalImpressions = filteredCampaigns.reduce((sum, c) => sum + c.adjustedImpressions, 0);
+            const totalClicks = filteredCampaigns.reduce((sum, c) => sum + c.adjustedClicks, 0);
+            const totalPlays = filteredCampaigns.reduce((sum, c) => sum + c.adjustedPlays, 0);
+            const totalSpent = totalAdjustedSpent;
             
-            console.log('\n❌ CAMPAÑAS EXCLUIDAS DEL FILTRO:');
-            excludedCampaigns.forEach(camp => {
-                console.log(`❌ ${camp.index}. ${camp.name}`);
-                console.log(`   📅 ${camp.start} → ${camp.end}`);
-                console.log(`   💰 ${camp.spent}`);
-            });
-            
-            // Crear el array de campañas filtradas
-            const filteredCampaigns = includedCampaigns.map(camp => {
-                return dashboardData.campaigns.find(c => c.name === camp.name);
-            });
-            
-            // Calcular totales
-            const totalImpressions = filteredCampaigns.reduce((sum, c) => sum + c.impressions, 0);
-            const totalClicks = filteredCampaigns.reduce((sum, c) => sum + c.clicks, 0);
-            const totalPlays = filteredCampaigns.reduce((sum, c) => sum + c.plays, 0);
-            const totalSpent = filteredCampaigns.reduce((sum, c) => sum + c.spent, 0);
-            
-            console.log('\n💰 RESUMEN DEL FILTRO:');
+            console.log('\n💰 RESUMEN DEL FILTRO CON PRORRATEO:');
             console.log(`📊 Campañas incluidas: ${filteredCampaigns.length}`);
-            console.log(`💸 Gasto total: ${totalSpent.toFixed(2)}`);
-            console.log(`🎯 Plays totales: ${totalPlays.toLocaleString()}`);
-            console.log(`👀 Impressiones totales: ${totalImpressions.toLocaleString()}`);
-            
-            // Verificar si el gasto es el esperado
-            if (totalSpent < 5000) {
-                console.warn('⚠️ ADVERTENCIA: El gasto total parece bajo. Posibles causas:');
-                console.warn('   1. Faltan campañas en data.json');
-                console.warn('   2. Error en fechas de campañas');
-                console.warn('   3. Valores de spent incorrectos');
-            }
+            console.log(`💸 Gasto total prorrateado: ${totalSpent.toFixed(2)}`);
+            console.log(`🎯 Plays totales prorrateados: ${totalPlays.toLocaleString()}`);
             
             const overallCTR = totalImpressions > 0 ? (totalClicks / totalImpressions * 100) : 0;
             const overallPlayRate = totalImpressions > 0 ? (totalPlays / totalImpressions * 100) : 0;
@@ -714,12 +717,9 @@
                     }
                 };
                 
-                console.log('✅ FILTRO APLICADO EXITOSAMENTE');
-                console.log(`📊 Nuevas métricas calculadas:`);
-                console.log(`   💰 Gasto: ${totalSpent.toFixed(2)}`);
-                console.log(`   🎯 Plays: ${totalPlays.toLocaleString()}`);
-                console.log(`   📈 CTR: ${overallCTR.toFixed(2)}%`);
-                console.log(`   🎮 Play Rate: ${overallPlayRate.toFixed(2)}%`);
+                // Actualizar información del filtro
+                document.getElementById('filterInfo').textContent = 
+                    `Mostrando ${filterDays} días (${new Date(startDate).toLocaleDateString('es-ES')} - ${new Date(endDate).toLocaleDateString('es-ES')})`;
             }
             
             updateDashboard();
@@ -734,6 +734,7 @@
                 document.getElementById('startDate').value = dates[0];
                 document.getElementById('endDate').value = dates[dates.length - 1];
                 filteredData = JSON.parse(JSON.stringify(dashboardData));
+                document.getElementById('filterInfo').textContent = 'Mostrando todo el período';
                 updateDashboard();
             }
         });
