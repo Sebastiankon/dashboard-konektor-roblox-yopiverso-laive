@@ -260,7 +260,9 @@
     "costPerPlay": 0.068,
     "costPerClick": 0.026,
     "clickToPlayRate": 38.98,
-    "playsPerDollar": 14.8
+    "playsPerDollar": 14.8,
+    "costPerVisit": 0.0416,
+    "visitsPerDollar": 24.1
   },
   "brandKPIs": {
     "tiempoInteraccionMarca": 515460,
@@ -268,6 +270,7 @@
   },
   "insightsClave": {
     "roiPublicitario": 14.8,
+    "roiVisitas": 24.1,
     "traficoOrganico": 38.6,
     "eficienciaConversion": 39.0
   },
