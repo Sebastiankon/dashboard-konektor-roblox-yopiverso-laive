@@ -298,7 +298,7 @@
 
         // Test data as fallback
         const testData = {
-            "lastUpdate": "2025-06-23",
+            "lastUpdate": "2025-06-24",
             "experienceMetrics": [
                 {
                     "fecha": "2025-06-20",
@@ -331,35 +331,46 @@
                     "tiempoSesionPromedio": 3.3,
                     "retencionDia1": 0.03,
                     "visitasTotales": 154600
+                },
+                {
+                    "fecha": "2025-06-24",
+                    "usuariosActivosDiarios": 1722,
+                    "nuevosUsuarios": 1306,
+                    "tiempoSesionPromedio": 3.3,
+                    "retencionDia1": 0.03,
+                    "visitasTotales": 156200
                 }
             ],
             "advertisingMetrics": {
-                "totalImpressions": 20212273,
-                "totalClicks": 244605,
-                "totalPlays": 94940,
-                "totalSpent": 6441.47,
-                "overallCTR": 1.21,
+                "totalImpressions": 20286952,
+                "totalClicks": 252689,
+                "totalPlays": 95951,
+                "totalSpent": 6491.45,
+                "overallCTR": 1.25,
                 "overallPlayRate": 0.47,
                 "costPerPlay": 0.068,
                 "costPerClick": 0.026,
-                "clickToPlayRate": 38.8,
-                "playsPerDollar": 14.7
+                "clickToPlayRate": 38.98,
+                "playsPerDollar": 14.8,
+                "costPerVisit": 0.0416,
+                "visitsPerDollar": 24.1
             },
             "brandKPIs": {
-                "tiempoInteraccionMarca": 510180,
+                "tiempoInteraccionMarca": 515460,
                 "costoPorMinutoInteraccion": 0.0126
             },
             "insightsClave": {
-                "roiPublicitario": 14.7,
+                "roiPublicitario": 14.8,
+                "roiVisitas": 24.1,
                 "traficoOrganico": 38.6,
-                "eficienciaConversion": 38.8
+                "eficienciaConversion": 39.0
             },
             "campaigns": [
                 {
                     "name": "Test Campaign",
                     "campaignId": "test-123",
                     "startDate": "2025-06-20",
-                    "endDate": "2025-06-23",
+                    "endDate": "2025-06-24",
                     "objective": "Maximize Plays",
                     "budgetType": "Daily",
                     "budget": 100,
@@ -557,11 +568,11 @@
             document.getElementById('cppPromedio').textContent = '$' + adMetrics.costPerPlay.toFixed(3);
             
             // ROI Visitas/Dolar
-            const roiVisitas = adMetrics.totalSpent > 0 ? (lastMetric.visitasTotales / adMetrics.totalSpent) : 0;
+            const roiVisitas = adMetrics.visitsPerDollar || (adMetrics.totalSpent > 0 ? (lastMetric.visitasTotales / adMetrics.totalSpent) : 0);
             document.getElementById('roiVisitas').textContent = roiVisitas.toFixed(1);
             
             // CPV (Costo por Visita)
-            const cpv = lastMetric.visitasTotales > 0 ? (adMetrics.totalSpent / lastMetric.visitasTotales) : 0;
+            const cpv = adMetrics.costPerVisit || (lastMetric.visitasTotales > 0 ? (adMetrics.totalSpent / lastMetric.visitasTotales) : 0);
             document.getElementById('cpv').textContent = '$' + cpv.toFixed(4);
         }
 
@@ -573,7 +584,7 @@
             document.getElementById('roiPublicitario').textContent = insights.roiPublicitario.toFixed(1);
             
             // ROI Visitas/Dolar
-            const roiVisitasDolar = adMetrics.totalSpent > 0 ? (lastMetric.visitasTotales / adMetrics.totalSpent) : 0;
+            const roiVisitasDolar = insights.roiVisitas || adMetrics.visitsPerDollar || (adMetrics.totalSpent > 0 ? (lastMetric.visitasTotales / adMetrics.totalSpent) : 0);
             document.getElementById('roiVisitasDolar').textContent = roiVisitasDolar.toFixed(1);
             
             document.getElementById('traficoOrganico').textContent = insights.traficoOrganico.toFixed(1) + '%';
@@ -584,7 +595,7 @@
             const brandKPIs = filteredData.brandKPIs;
             
             document.getElementById('tiempoInteraccionMarca').textContent = brandKPIs.tiempoInteraccionMarca.toLocaleString() + ' min';
-            document.getElementById('costoMinutoInteraccion').textContent = '$' + brandKPIs.costoPorMinutoInteraccion.toFixed(4);
+            document.getElementById('costoMinutoInteraccion').textContent = ' + brandKPIs.costoPorMinutoInteraccion.toFixed(4);
         }
 
         function updateCharts() {
@@ -771,8 +782,8 @@
                         campaigns: 0
                     };
                 }
-                campaignGroups[campaign.objective].plays += campaign.adjustedPlays || campaign.plays;
-                campaignGroups[campaign.objective].spent += campaign.adjustedSpent || campaign.spent;
+                campaignGroups[campaign.objective].plays += campaign.plays;
+                campaignGroups[campaign.objective].spent += campaign.spent;
                 campaignGroups[campaign.objective].campaigns += 1;
             });
             
@@ -824,22 +835,20 @@
             
             // Sort campaigns by plays (descending) and take top 5
             const topCampaigns = filteredData.campaigns
-                .filter(c => (c.adjustedPlays || c.plays) > 0)
-                .sort((a, b) => (b.adjustedPlays || b.plays) - (a.adjustedPlays || a.plays))
+                .filter(c => c.plays > 0)
+                .sort((a, b) => b.plays - a.plays)
                 .slice(0, 5);
             
             topCampaigns.forEach(campaign => {
                 const row = document.createElement('tr');
                 row.className = 'border-b hover:bg-gray-50';
                 
-                const actualPlays = campaign.adjustedPlays || campaign.plays;
-                const actualSpent = campaign.adjustedSpent || campaign.spent;
-                const cpp = actualPlays > 0 ? (actualSpent / actualPlays) : 0;
+                const cpp = campaign.plays > 0 ? (campaign.spent / campaign.plays) : 0;
                 
                 row.innerHTML = `
                     <td class="p-3 font-medium">${campaign.name}</td>
-                    <td class="p-3 text-right">${Math.round(actualPlays).toLocaleString()}</td>
-                    <td class="p-3 text-right">${actualSpent.toFixed(2)}</td>
+                    <td class="p-3 text-right">${campaign.plays.toLocaleString()}</td>
+                    <td class="p-3 text-right">${campaign.spent.toFixed(2)}</td>
                     <td class="p-3 text-right">${cpp.toFixed(3)}</td>
                     <td class="p-3 text-center">
                         <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
@@ -852,7 +861,7 @@
             });
         }
 
-        // FUNCIÓN MEJORADA PARA FILTRAR POR FECHAS CON PRORRATEO CORREGIDO
+        // NUEVA FUNCIÓN DE FILTRADO CON LÓGICA CPV
         function filterDataByDate() {
             const startDate = document.getElementById('startDate').value;
             const endDate = document.getElementById('endDate').value;
@@ -862,7 +871,7 @@
                 return;
             }
             
-            debugLog('🔍 INICIANDO FILTRO DE FECHAS CON PRORRATEO CORREGIDO');
+            debugLog('🔍 INICIANDO FILTRO DE FECHAS CON LÓGICA CPV');
             debugLog(`📅 Rango seleccionado: ${startDate} a ${endDate}`);
             
             // Calcular días del período filtrado
@@ -878,138 +887,115 @@
             debugLog(`📈 Métricas de experiencia filtradas: ${filteredExperience.length} de ${dashboardData.experienceMetrics.length}`);
             debugLog(`📅 Días en el período: ${filterDays}`);
             
-            // Filtrar y prorratear campañas
-            let filteredCampaigns = [];
-            let totalAdjustedSpent = 0;
-            let totalAdjustedImpressions = 0;
-            let totalAdjustedClicks = 0;
-            let totalAdjustedPlays = 0;
+            if (filteredExperience.length === 0) {
+                console.warn('⚠️ No hay métricas de experiencia en el período seleccionado');
+                return;
+            }
             
-            let debugDetails = [];
+            // Obtener la última métrica del período filtrado
+            const lastExperienceMetric = filteredExperience[filteredExperience.length - 1];
             
-            dashboardData.campaigns.forEach((campaign, index) => {
+            // **NUEVA LÓGICA CPV**: Calcular inversión total estimada basada en visitas
+            const cpv = dashboardData.advertisingMetrics.costPerVisit || 0.0416; // CPV del dataset completo como fallback
+            const visitasTotalesEnPeriodo = lastExperienceMetric.visitasTotales;
+            const inversionEstimada = visitasTotalesEnPeriodo * cpv;
+            
+            debugLog(`💰 CÁLCULO CPV:`);
+            debugLog(`📊 Visitas totales en período: ${visitasTotalesEnPeriodo.toLocaleString()}`);
+            debugLog(`💵 CPV promedio: ${cpv.toFixed(4)}`);
+            debugLog(`💸 Inversión estimada: ${inversionEstimada.toFixed(2)}`);
+            
+            // Filtrar campañas que tienen overlap con el período
+            const filteredCampaigns = dashboardData.campaigns.filter(campaign => {
                 const campaignStart = campaign.startDate;
-                const campaignEnd = campaign.endDate || "2099-12-31"; // Si no tiene fecha fin, asumimos que sigue activa
-                
-                // Verificar si la campaña tiene overlap con el período filtrado
-                if (campaignStart <= endDate && campaignEnd >= startDate) {
-                    // Calcular el período efectivo de la campaña dentro del filtro
-                    const effectiveStart = campaignStart > startDate ? campaignStart : startDate;
-                    const effectiveEnd = campaignEnd < endDate ? campaignEnd : endDate;
-                    
-                    const effectiveStartMs = new Date(effectiveStart).getTime();
-                    const effectiveEndMs = new Date(effectiveEnd).getTime();
-                    const effectiveDays = Math.ceil((effectiveEndMs - effectiveStartMs) / (1000 * 60 * 60 * 24)) + 1;
-                    
-                    // Calcular días totales de la campaña
-                    const campaignStartMs = new Date(campaignStart).getTime();
-                    const campaignEndMs = new Date(campaignEnd).getTime();
-                    const campaignTotalDays = Math.ceil((campaignEndMs - campaignStartMs) / (1000 * 60 * 60 * 24)) + 1;
-                    
-                    // Calcular factor de prorrateo
-                    const prorateFactor = effectiveDays / campaignTotalDays;
-                    
-                    // Crear copia de la campaña con valores prorrateados
-                    const adjustedCampaign = {
-                        ...campaign,
-                        adjustedSpent: campaign.spent * prorateFactor,
-                        adjustedImpressions: Math.round(campaign.impressions * prorateFactor),
-                        adjustedClicks: Math.round(campaign.clicks * prorateFactor),
-                        adjustedPlays: Math.round(campaign.plays * prorateFactor),
-                        prorateFactor: prorateFactor,
-                        effectiveDays: effectiveDays,
-                        campaignTotalDays: campaignTotalDays,
-                        effectiveStart: effectiveStart,
-                        effectiveEnd: effectiveEnd
-                    };
-                    
-                    filteredCampaigns.push(adjustedCampaign);
-                    totalAdjustedSpent += adjustedCampaign.adjustedSpent;
-                    totalAdjustedImpressions += adjustedCampaign.adjustedImpressions;
-                    totalAdjustedClicks += adjustedCampaign.adjustedClicks;
-                    totalAdjustedPlays += adjustedCampaign.adjustedPlays;
-                    
-                    debugDetails.push(`✅ ${campaign.name.substring(0, 30)}...<br>
-                        &nbsp;&nbsp;📅 Campaña: ${campaignStart} → ${campaignEnd}<br>
-                        &nbsp;&nbsp;📅 Efectivo: ${effectiveStart} → ${effectiveEnd}<br>
-                        &nbsp;&nbsp;📊 Días: ${effectiveDays}/${campaignTotalDays} (${(prorateFactor * 100).toFixed(1)}%)<br>
-                        &nbsp;&nbsp;💰 Gasto: ${campaign.spent.toFixed(2)} → ${adjustedCampaign.adjustedSpent.toFixed(2)}<br>
-                        &nbsp;&nbsp;🎯 Plays: ${campaign.plays} → ${adjustedCampaign.adjustedPlays}`);
-                } else {
-                    debugDetails.push(`❌ ${campaign.name.substring(0, 30)}... (fuera del rango)<br>
-                        &nbsp;&nbsp;📅 Campaña: ${campaignStart} → ${campaignEnd}<br>
-                        &nbsp;&nbsp;📅 Filtro: ${startDate} → ${endDate}`);
-                }
+                const campaignEnd = campaign.endDate || "2099-12-31";
+                return campaignStart <= endDate && campaignEnd >= startDate;
             });
             
-            debugLog(`💰 RESUMEN DEL FILTRO CON PRORRATEO:`);
-            debugLog(`📊 Campañas incluidas: ${filteredCampaigns.length} de ${dashboardData.campaigns.length}`);
-            debugLog(`💸 Gasto total prorrateado: ${totalAdjustedSpent.toFixed(2)}`);
-            debugLog(`🎯 Plays totales prorrateados: ${totalAdjustedPlays.toLocaleString()}`);
+            // Calcular métricas agregadas estimadas basadas en proporción de visitas
+            const proporcionVisitas = visitasTotalesEnPeriodo / dashboardData.experienceMetrics[dashboardData.experienceMetrics.length - 1].visitasTotales;
             
-            // Actualizar debug info en la interfaz
+            const totalPlaysEstimados = Math.round(dashboardData.advertisingMetrics.totalPlays * proporcionVisitas);
+            const totalImpressionsEstimadas = Math.round(dashboardData.advertisingMetrics.totalImpressions * proporcionVisitas);
+            const totalClicksEstimados = Math.round(dashboardData.advertisingMetrics.totalClicks * proporcionVisitas);
+            
+            debugLog(`📊 MÉTRICAS ESTIMADAS (proporción ${(proporcionVisitas * 100).toFixed(1)}%):`);
+            debugLog(`🎯 Plays estimados: ${totalPlaysEstimados.toLocaleString()}`);
+            debugLog(`👀 Impresiones estimadas: ${totalImpressionsEstimadas.toLocaleString()}`);
+            debugLog(`👆 Clicks estimados: ${totalClicksEstimados.toLocaleString()}`);
+            
+            // Calcular métricas derivadas
+            const overallCTR = totalImpressionsEstimadas > 0 ? (totalClicksEstimados / totalImpressionsEstimadas * 100) : 0;
+            const overallPlayRate = totalImpressionsEstimadas > 0 ? (totalPlaysEstimados / totalImpressionsEstimadas * 100) : 0;
+            const costPerPlay = totalPlaysEstimados > 0 ? (inversionEstimada / totalPlaysEstimados) : 0;
+            const costPerClick = totalClicksEstimados > 0 ? (inversionEstimada / totalClicksEstimados) : 0;
+            const clickToPlayRate = totalClicksEstimados > 0 ? (totalPlaysEstimados / totalClicksEstimados * 100) : 0;
+            const playsPerDollar = inversionEstimada > 0 ? (totalPlaysEstimados / inversionEstimada) : 0;
+            const visitsPerDollar = inversionEstimada > 0 ? (visitasTotalesEnPeriodo / inversionEstimada) : 0;
+            
+            // Calcular KPIs de marca
+            const tiempoInteraccionMarca = visitasTotalesEnPeriodo * lastExperienceMetric.tiempoSesionPromedio;
+            const costoPorMinutoInteraccion = tiempoInteraccionMarca > 0 ? (inversionEstimada / tiempoInteraccionMarca) : 0;
+            
+            // Estimar tráfico orgánico
+            const playsOrganicosEstimados = Math.max(0, visitasTotalesEnPeriodo - totalPlaysEstimados);
+            const traficoOrganico = visitasTotalesEnPeriodo > 0 ? 
+                (playsOrganicosEstimados / visitasTotalesEnPeriodo * 100) : 0;
+            
+            // Crear datos filtrados con nueva lógica
+            filteredData = {
+                ...dashboardData,
+                experienceMetrics: filteredExperience,
+                campaigns: filteredCampaigns,
+                advertisingMetrics: {
+                    totalImpressions: totalImpressionsEstimadas,
+                    totalClicks: totalClicksEstimados,
+                    totalPlays: totalPlaysEstimados,
+                    totalSpent: Math.round(inversionEstimada * 100) / 100,
+                    overallCTR: Math.round(overallCTR * 100) / 100,
+                    overallPlayRate: Math.round(overallPlayRate * 100) / 100,
+                    costPerPlay: Math.round(costPerPlay * 1000) / 1000,
+                    costPerClick: Math.round(costPerClick * 1000) / 1000,
+                    clickToPlayRate: Math.round(clickToPlayRate * 100) / 100,
+                    playsPerDollar: Math.round(playsPerDollar * 10) / 10,
+                    costPerVisit: cpv,
+                    visitsPerDollar: Math.round(visitsPerDollar * 10) / 10
+                },
+                brandKPIs: {
+                    tiempoInteraccionMarca: Math.round(tiempoInteraccionMarca),
+                    costoPorMinutoInteraccion: Math.round(costoPorMinutoInteraccion * 10000) / 10000
+                },
+                insightsClave: {
+                    roiPublicitario: Math.round(playsPerDollar * 10) / 10,
+                    roiVisitas: Math.round(visitsPerDollar * 10) / 10,
+                    traficoOrganico: Math.round(traficoOrganico * 10) / 10,
+                    eficienciaConversion: Math.round(clickToPlayRate * 10) / 10
+                }
+            };
+            
+            // Actualizar información del filtro
+            document.getElementById('filterInfo').textContent = 
+                `Mostrando ${filterDays} días (${new Date(startDate).toLocaleDateString('es-ES')} - ${new Date(endDate).toLocaleDateString('es-ES')})`;
+            
+            // Debug info para la interfaz
             const debugText = `
-                <strong>Período:</strong> ${startDate} a ${endDate} (${filterDays} días)<br>
-                <strong>Experiencia:</strong> ${filteredExperience.length} métricas filtradas<br>
-                <strong>Campañas:</strong> ${filteredCampaigns.length} de ${dashboardData.campaigns.length} incluidas<br>
-                <strong>Gasto total:</strong> ${totalAdjustedSpent.toFixed(2)}<br>
-                <strong>Plays totales:</strong> ${Math.round(totalAdjustedPlays).toLocaleString()}<br><br>
-                <strong>Detalle de campañas:</strong><br>
-                ${debugDetails.join('<br>')}
+                <strong>🗓️ Período:</strong> ${startDate} a ${endDate} (${filterDays} días)<br>
+                <strong>📈 Experiencia:</strong> ${filteredExperience.length} métricas filtradas<br>
+                <strong>🎯 Campañas:</strong> ${filteredCampaigns.length} de ${dashboardData.campaigns.length} incluidas<br><br>
+                <strong>💰 CÁLCULO CPV:</strong><br>
+                &nbsp;&nbsp;🏠 Visitas en período: ${visitasTotalesEnPeriodo.toLocaleString()}<br>
+                &nbsp;&nbsp;💵 CPV promedio: ${cpv.toFixed(4)}<br>
+                &nbsp;&nbsp;💸 Inversión estimada: ${inversionEstimada.toFixed(2)}<br>
+                &nbsp;&nbsp;📊 ROI Visitas/Dólar: ${visitsPerDollar.toFixed(1)}<br><br>
+                <strong>📊 MÉTRICAS ESTIMADAS:</strong><br>
+                &nbsp;&nbsp;🎯 Plays: ${totalPlaysEstimados.toLocaleString()}<br>
+                &nbsp;&nbsp;👀 Impresiones: ${totalImpressionsEstimadas.toLocaleString()}<br>
+                &nbsp;&nbsp;👆 Clicks: ${totalClicksEstimados.toLocaleString()}<br>
+                &nbsp;&nbsp;🌱 Tráfico orgánico: ${traficoOrganico.toFixed(1)}%
             `;
             updateDebugInfo(debugText);
             
-            // Calcular métricas agregadas
-            const overallCTR = totalAdjustedImpressions > 0 ? (totalAdjustedClicks / totalAdjustedImpressions * 100) : 0;
-            const overallPlayRate = totalAdjustedImpressions > 0 ? (totalAdjustedPlays / totalAdjustedImpressions * 100) : 0;
-            const costPerPlay = totalAdjustedPlays > 0 ? (totalAdjustedSpent / totalAdjustedPlays) : 0;
-            const costPerClick = totalAdjustedClicks > 0 ? (totalAdjustedSpent / totalAdjustedClicks) : 0;
-            const clickToPlayRate = totalAdjustedClicks > 0 ? (totalAdjustedPlays / totalAdjustedClicks * 100) : 0;
-            const playsPerDollar = totalAdjustedSpent > 0 ? (totalAdjustedPlays / totalAdjustedSpent) : 0;
-            
-            // Recalculate brand KPIs and insights for filtered period
-            const lastExperienceMetric = filteredExperience[filteredExperience.length - 1];
-            if (lastExperienceMetric) {
-                const tiempoInteraccionMarca = lastExperienceMetric.visitasTotales * lastExperienceMetric.tiempoSesionPromedio;
-                const costoPorMinutoInteraccion = tiempoInteraccionMarca > 0 ? (totalAdjustedSpent / tiempoInteraccionMarca) : 0;
-                
-                // Estimar tráfico orgánico
-                const playsOrganicosEstimados = Math.max(0, lastExperienceMetric.visitasTotales - totalAdjustedPlays);
-                const traficoOrganico = lastExperienceMetric.visitasTotales > 0 ? 
-                    (playsOrganicosEstimados / lastExperienceMetric.visitasTotales * 100) : 0;
-                
-                filteredData = {
-                    ...dashboardData,
-                    experienceMetrics: filteredExperience,
-                    campaigns: filteredCampaigns,
-                    advertisingMetrics: {
-                        totalImpressions: Math.round(totalAdjustedImpressions),
-                        totalClicks: Math.round(totalAdjustedClicks),
-                        totalPlays: Math.round(totalAdjustedPlays),
-                        totalSpent: Math.round(totalAdjustedSpent * 100) / 100,
-                        overallCTR: Math.round(overallCTR * 100) / 100,
-                        overallPlayRate: Math.round(overallPlayRate * 100) / 100,
-                        costPerPlay: Math.round(costPerPlay * 1000) / 1000,
-                        costPerClick: Math.round(costPerClick * 1000) / 1000,
-                        clickToPlayRate: Math.round(clickToPlayRate * 100) / 100,
-                        playsPerDollar: Math.round(playsPerDollar * 10) / 10
-                    },
-                    brandKPIs: {
-                        tiempoInteraccionMarca: Math.round(tiempoInteraccionMarca),
-                        costoPorMinutoInteraccion: Math.round(costoPorMinutoInteraccion * 10000) / 10000
-                    },
-                    insightsClave: {
-                        roiPublicitario: Math.round(playsPerDollar * 10) / 10,
-                        traficoOrganico: Math.round(traficoOrganico * 10) / 10,
-                        eficienciaConversion: Math.round(clickToPlayRate * 10) / 10
-                    }
-                };
-                
-                // Actualizar información del filtro
-                document.getElementById('filterInfo').textContent = 
-                    `Mostrando ${filterDays} días (${new Date(startDate).toLocaleDateString('es-ES')} - ${new Date(endDate).toLocaleDateString('es-ES')})`;
-            }
-            
+            debugLog('✅ Filtro aplicado con éxito usando lógica CPV');
             updateDashboard();
         }
 
