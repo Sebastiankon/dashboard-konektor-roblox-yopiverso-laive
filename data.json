@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2025-06-27",
+  "lastUpdate": "2025-06-28",
   "experienceMetrics": [
     {
       "fecha": "2025-05-25",
@@ -272,31 +272,39 @@
       "tiempoSesionPromedio": 3,
       "retencionDia1": 0.03,
       "visitasTotales": 166400
+    },
+    {
+      "fecha": "2025-06-28",
+      "usuariosActivosDiarios": 2049,
+      "nuevosUsuarios": 1558,
+      "tiempoSesionPromedio": 3,
+      "retencionDia1": 0.03,
+      "visitasTotales": 168200
     }
   ],
   "advertisingMetrics": {
-    "totalImpressions": 21776804,
-    "totalClicks": 271743,
-    "totalPlays": 102788,
-    "totalSpent": 6806.12,
-    "overallCTR": 1.25,
-    "overallPlayRate": 0.47,
+    "totalImpressions": 21346048,
+    "totalClicks": 278688,
+    "totalPlays": 105018,
+    "totalSpent": 6906.9,
+    "overallCTR": 1.31,
+    "overallPlayRate": 0.49,
     "costPerPlay": 0.066,
     "costPerClick": 0.025,
-    "clickToPlayRate": 37.8,
-    "playsPerDollar": 15.1,
-    "costPerVisit": 0.0409,
+    "clickToPlayRate": 37.7,
+    "playsPerDollar": 15.2,
+    "costPerVisit": 0.041,
     "visitsPerDollar": 24.4
   },
   "brandKPIs": {
-    "tiempoInteraccionMarca": 499200,
-    "costoPorMinutoInteraccion": 0.0136
+    "tiempoInteraccionMarca": 504600,
+    "costoPorMinutoInteraccion": 0.0137
   },
   "insightsClave": {
-    "roiPublicitario": 15.1,
+    "roiPublicitario": 15.2,
     "roiVisitas": 24.4,
-    "traficoOrganico": 38.2,
-    "eficienciaConversion": 37.8
+    "traficoOrganico": 37.6,
+    "eficienciaConversion": 37.7
   },
   "campaigns": [
     {
@@ -324,14 +332,14 @@
       "objective": "Drive Retention",
       "budgetType": "Daily",
       "budget": 8,
-      "impressions": 108945,
-      "clicks": 1893,
-      "plays": 423,
-      "spent": 31.1,
+      "impressions": 134014,
+      "clicks": 2336,
+      "plays": 514,
+      "spent": 38.75,
       "ctr": 1.74,
-      "playRate": 0.39,
+      "playRate": 0.38,
       "cpc": 0.016,
-      "cpp": 0.073
+      "cpp": 0.075
     },
     {
       "name": "Maximize Plays_New Ads semana 4",
@@ -426,14 +434,14 @@
       "objective": "Maximize Plays",
       "budgetType": "Daily",
       "budget": 80,
-      "impressions": 256699,
-      "clicks": 3054,
-      "plays": 638,
-      "spent": 57.07,
+      "impressions": 317181,
+      "clicks": 3778,
+      "plays": 796,
+      "spent": 72.76,
       "ctr": 1.19,
       "playRate": 0.25,
       "cpc": 0.019,
-      "cpp": 0.089
+      "cpp": 0.091
     },
     {
       "name": "New Ads 1",
@@ -613,12 +621,12 @@
       "objective": "Visits",
       "budgetType": "Lifetime",
       "budget": 70,
-      "impressions": 1375,
+      "impressions": 1678,
       "clicks": 0,
-      "plays": 858,
-      "spent": 40.67,
+      "plays": 1045,
+      "spent": 49.62,
       "ctr": 0,
-      "playRate": 62.4,
+      "playRate": 62.27,
       "cpc": 0,
       "cpp": 0.047
     },
@@ -630,12 +638,12 @@
       "objective": "Visits",
       "budgetType": "Lifetime",
       "budget": 70,
-      "impressions": 1462,
+      "impressions": 1783,
       "clicks": 0,
-      "plays": 910,
-      "spent": 40.66,
+      "plays": 1110,
+      "spent": 50.37,
       "ctr": 0,
-      "playRate": 62.24,
+      "playRate": 62.25,
       "cpc": 0,
       "cpp": 0.045
     },
@@ -647,14 +655,14 @@
       "objective": "Visits",
       "budgetType": "Lifetime",
       "budget": 70,
-      "impressions": 1210,
+      "impressions": 1478,
       "clicks": 0,
-      "plays": 758,
-      "spent": 40.05,
+      "plays": 925,
+      "spent": 50.6,
       "ctr": 0,
-      "playRate": 62.64,
+      "playRate": 62.58,
       "cpc": 0,
-      "cpp": 0.053
+      "cpp": 0.055
     },
     {
       "name": "Portal movil semana 5 D",
@@ -664,14 +672,14 @@
       "objective": "Visits",
       "budgetType": "Lifetime",
       "budget": 70,
-      "impressions": 1548,
+      "impressions": 1887,
       "clicks": 0,
-      "plays": 1015,
-      "spent": 39.73,
+      "plays": 1238,
+      "spent": 49.72,
       "ctr": 0,
-      "playRate": 65.57,
+      "playRate": 65.61,
       "cpc": 0,
-      "cpp": 0.039
+      "cpp": 0.04
     },
     {
       "name": "Portal semana 5 A",
@@ -681,14 +689,14 @@
       "objective": "Visits",
       "budgetType": "Lifetime",
       "budget": 70,
-      "impressions": 2774,
+      "impressions": 3382,
       "clicks": 0,
-      "plays": 1302,
-      "spent": 39.47,
+      "plays": 1588,
+      "spent": 49.72,
       "ctr": 0,
-      "playRate": 46.94,
+      "playRate": 46.96,
       "cpc": 0,
-      "cpp": 0.03
+      "cpp": 0.031
     },
     {
       "name": "Portal semana 5 C",
@@ -698,31 +706,14 @@
       "objective": "Visits",
       "budgetType": "Lifetime",
       "budget": 70,
-      "impressions": 2036,
+      "impressions": 2484,
       "clicks": 0,
-      "plays": 972,
-      "spent": 39.15,
+      "plays": 1186,
+      "spent": 49.47,
       "ctr": 0,
       "playRate": 47.74,
       "cpc": 0,
-      "cpp": 0.04
-    },
-    {
-      "name": "Sponsored",
-      "campaignId": "59ea4319-4585-4b49-8c7d-ca778bac9a56",
-      "startDate": "2025-06-02",
-      "endDate": "2025-06-09",
-      "objective": "Visits",
-      "budgetType": "Daily",
-      "budget": 20,
-      "impressions": 995817,
-      "clicks": 9916,
-      "plays": 2356,
-      "spent": 58.96,
-      "ctr": 1,
-      "playRate": 0.24,
-      "cpc": 0.006,
-      "cpp": 0.025
+      "cpp": 0.042
     },
     {
       "name": "Sponsored",
@@ -740,6 +731,23 @@
       "playRate": 0.22,
       "cpc": 0.005,
       "cpp": 0.023
+    },
+    {
+      "name": "Sponsored",
+      "campaignId": "59ea4319-4585-4b49-8c7d-ca778bac9a56",
+      "startDate": "2025-06-02",
+      "endDate": "2025-06-09",
+      "objective": "Visits",
+      "budgetType": "Daily",
+      "budget": 20,
+      "impressions": 995817,
+      "clicks": 9916,
+      "plays": 2356,
+      "spent": 58.96,
+      "ctr": 1,
+      "playRate": 0.24,
+      "cpc": 0.006,
+      "cpp": 0.025
     },
     {
       "name": "Sponsored semana 4",
@@ -766,11 +774,11 @@
       "objective": "Visits",
       "budgetType": "Lifetime",
       "budget": 50,
-      "impressions": 377691,
-      "clicks": 3795,
-      "plays": 806,
-      "spent": 25.68,
-      "ctr": 1,
+      "impressions": 468309,
+      "clicks": 4705,
+      "plays": 1000,
+      "spent": 32.36,
+      "ctr": 1.01,
       "playRate": 0.21,
       "cpc": 0.007,
       "cpp": 0.032
