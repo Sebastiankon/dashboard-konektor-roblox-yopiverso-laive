@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2025-06-30",
+  "lastUpdate": "2025-07-01",
   "experienceMetrics": [
     {
       "fecha": "2025-05-25",
@@ -296,31 +296,39 @@
       "tiempoSesionPromedio": 2.8,
       "retencionDia1": 0.03,
       "visitasTotales": 177300
+    },
+    {
+      "fecha": "2025-07-01",
+      "usuariosActivosDiarios": 2510,
+      "nuevosUsuarios": 1816,
+      "tiempoSesionPromedio": 2.8,
+      "retencionDia1": 0.03,
+      "visitasTotales": 179700
     }
   ],
   "advertisingMetrics": {
-    "totalImpressions": 21543122,
-    "totalClicks": 259776,
-    "totalPlays": 110121,
-    "totalSpent": 7075.64,
-    "overallCTR": 1.21,
-    "overallPlayRate": 0.51,
+    "totalImpressions": 21664994,
+    "totalClicks": 261028,
+    "totalPlays": 111643,
+    "totalSpent": 7157.99,
+    "overallCTR": 1.2,
+    "overallPlayRate": 0.52,
     "costPerPlay": 0.064,
     "costPerClick": 0.027,
-    "clickToPlayRate": 42.4,
+    "clickToPlayRate": 42.8,
     "playsPerDollar": 15.6,
-    "costPerVisit": 0.0399,
+    "costPerVisit": 0.0398,
     "visitsPerDollar": 25.1
   },
   "brandKPIs": {
-    "tiempoInteraccionMarca": 496440,
+    "tiempoInteraccionMarca": 503160,
     "costoPorMinutoInteraccion": 0.0142
   },
   "insightsClave": {
     "roiPublicitario": 15.6,
     "roiVisitas": 25.1,
     "traficoOrganico": 37.9,
-    "eficienciaConversion": 42.4
+    "eficienciaConversion": 42.8
   },
   "campaigns": [
     {
@@ -355,7 +363,7 @@
       "ctr": 1.72,
       "playRate": 0.37,
       "cpc": 0.015,
-      "cpp": 0.074
+      "cpp": 0.073
     },
     {
       "name": "Maximize Plays_New Ads semana 4",
@@ -371,7 +379,7 @@
       "spent": 200,
       "ctr": 1.23,
       "playRate": 0.25,
-      "cpc": 0.025,
+      "cpc": 0.024,
       "cpp": 0.121
     },
     {
@@ -388,7 +396,7 @@
       "spent": 365.54,
       "ctr": 1.57,
       "playRate": 0.32,
-      "cpc": 0.014,
+      "cpc": 0.013,
       "cpp": 0.068
     },
     {
@@ -399,13 +407,13 @@
       "objective": "Maximize Plays",
       "budgetType": "Daily",
       "budget": 200,
-      "impressions": 4164161,
+      "impressions": 4164166,
       "clicks": 55174,
       "plays": 12417,
       "spent": 1143.06,
       "ctr": 1.32,
-      "playRate": 0.30,
-      "cpc": 0.021,
+      "playRate": 0.3,
+      "cpc": 0.02,
       "cpp": 0.092
     },
     {
@@ -440,7 +448,7 @@
       "ctr": 1.41,
       "playRate": 0.32,
       "cpc": 0.016,
-      "cpp": 0.072
+      "cpp": 0.071
     },
     {
       "name": "Maximize Plays_Yopiverso_06232025_08:35AM",
@@ -450,14 +458,14 @@
       "objective": "Maximize Plays",
       "budgetType": "Daily",
       "budget": 15,
-      "impressions": 388794,
-      "clicks": 4618,
+      "impressions": 392714,
+      "clicks": 4615,
       "plays": 983,
       "spent": 98.82,
-      "ctr": 1.19,
+      "ctr": 1.18,
       "playRate": 0.25,
       "cpc": 0.021,
-      "cpp": 0.101
+      "cpp": 0.1
     },
     {
       "name": "New Ads 1",
@@ -467,7 +475,7 @@
       "objective": "Maximize Plays",
       "budgetType": "Daily",
       "budget": 234,
-      "impressions": 5202183,
+      "impressions": 5202193,
       "clicks": 54111,
       "plays": 11533,
       "spent": 1527.72,
@@ -508,7 +516,7 @@
       "ctr": 0,
       "playRate": 43.76,
       "cpc": 0,
-      "cpp": 0.120
+      "cpp": 0.11
     },
     {
       "name": "Portal 1 semana 4",
@@ -525,7 +533,7 @@
       "ctr": 0,
       "playRate": 62.32,
       "cpc": 0,
-      "cpp": 0.040
+      "cpp": 0.04
     },
     {
       "name": "Portal 2",
@@ -538,11 +546,11 @@
       "impressions": 36552,
       "clicks": 0,
       "plays": 20484,
-      "spent": 596.70,
+      "spent": 596.7,
       "ctr": 0,
       "playRate": 56.04,
       "cpc": 0,
-      "cpp": 0.029
+      "cpp": 0.02
     },
     {
       "name": "Portal 2 semana 4",
@@ -555,11 +563,11 @@
       "impressions": 1827,
       "clicks": 0,
       "plays": 1182,
-      "spent": 46.70,
+      "spent": 46.7,
       "ctr": 0,
-      "playRate": 64.70,
+      "playRate": 64.7,
       "cpc": 0,
-      "cpp": 0.040
+      "cpp": 0.03
     },
     {
       "name": "Portal 3 semana 4",
@@ -576,7 +584,7 @@
       "ctr": 0,
       "playRate": 51.52,
       "cpc": 0,
-      "cpp": 0.030
+      "cpp": 0.03
     },
     {
       "name": "Portal 4 semana 4",
@@ -593,7 +601,7 @@
       "ctr": 0,
       "playRate": 56.56,
       "cpc": 0,
-      "cpp": 0.036
+      "cpp": 0.03
     },
     {
       "name": "Portal Ads Yopiverso 26-05-2025",
@@ -610,7 +618,7 @@
       "ctr": 0,
       "playRate": 48.55,
       "cpc": 0,
-      "cpp": 0.084
+      "cpp": 0.08
     },
     {
       "name": "Portal Movil",
@@ -623,11 +631,11 @@
       "impressions": 5542,
       "clicks": 0,
       "plays": 3512,
-      "spent": 100.00,
+      "spent": 100,
       "ctr": 0,
       "playRate": 63.37,
       "cpc": 0,
-      "cpp": 0.028
+      "cpp": 0.02
     },
     {
       "name": "Portal Movil semana 5 A",
@@ -681,74 +689,6 @@
       "cpp": 0.044
     },
     {
-      "name": "Portal Movil semana 6 A",
-      "campaignId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-      "startDate": "2025-06-30",
-      "endDate": "2025-07-07",
-      "objective": "Visits",
-      "budgetType": "Lifetime",
-      "budget": 50,
-      "impressions": 571,
-      "clicks": 0,
-      "plays": 134,
-      "spent": 8.29,
-      "ctr": 0,
-      "playRate": 23.47,
-      "cpc": 0,
-      "cpp": 0.062
-    },
-    {
-      "name": "Portal Movil semana 6 B",
-      "campaignId": "b2c3d4e5-f6g7-8901-bcde-f23456789012",
-      "startDate": "2025-06-30",
-      "endDate": "2025-07-07",
-      "objective": "Visits",
-      "budgetType": "Lifetime",
-      "budget": 50,
-      "impressions": 890,
-      "clicks": 0,
-      "plays": 210,
-      "spent": 8.89,
-      "ctr": 0,
-      "playRate": 23.60,
-      "cpc": 0,
-      "cpp": 0.042
-    },
-    {
-      "name": "Portal Movil semana 6 C",
-      "campaignId": "c3d4e5f6-g7h8-9012-cdef-345678901234",
-      "startDate": "2025-06-30",
-      "endDate": "2025-07-07",
-      "objective": "Visits",
-      "budgetType": "Lifetime",
-      "budget": 50,
-      "impressions": 642,
-      "clicks": 0,
-      "plays": 152,
-      "spent": 8.13,
-      "ctr": 0,
-      "playRate": 23.68,
-      "cpc": 0,
-      "cpp": 0.053
-    },
-    {
-      "name": "Portal Movil semana 6 D",
-      "campaignId": "d4e5f6g7-h8i9-0123-defg-456789012345",
-      "startDate": "2025-06-30",
-      "endDate": "2025-07-07",
-      "objective": "Visits",
-      "budgetType": "Lifetime",
-      "budget": 50,
-      "impressions": 720,
-      "clicks": 0,
-      "plays": 216,
-      "spent": 9.70,
-      "ctr": 0,
-      "playRate": 30.00,
-      "cpc": 0,
-      "cpp": 0.045
-    },
-    {
       "name": "Portal movil semana 5 D",
       "campaignId": "1ee12d8c-d2f8-47e2-bff9-cd17d72e11f4",
       "startDate": "2025-06-23",
@@ -800,40 +740,6 @@
       "cpp": 0.035
     },
     {
-      "name": "Portal semana 6 B",
-      "campaignId": "e5f6g7h8-i9j0-1234-efgh-567890123456",
-      "startDate": "2025-06-30",
-      "endDate": "2025-07-07",
-      "objective": "Visits",
-      "budgetType": "Lifetime",
-      "budget": 50,
-      "impressions": 892,
-      "clicks": 0,
-      "plays": 248,
-      "spent": 9.26,
-      "ctr": 0,
-      "playRate": 27.80,
-      "cpc": 0,
-      "cpp": 0.037
-    },
-    {
-      "name": "Portal semana 6 D",
-      "campaignId": "f6g7h8i9-j0k1-2345-fghi-678901234567",
-      "startDate": "2025-06-30",
-      "endDate": "2025-07-07",
-      "objective": "Visits",
-      "budgetType": "Lifetime",
-      "budget": 50,
-      "impressions": 983,
-      "clicks": 0,
-      "plays": 274,
-      "spent": 8.22,
-      "ctr": 0,
-      "playRate": 27.87,
-      "cpc": 0,
-      "cpp": 0.030
-    },
-    {
       "name": "Sponsored",
       "campaignId": "0a37a273-a2ef-4201-a0ab-5fd0b2a13697",
       "startDate": "2025-06-09",
@@ -862,7 +768,7 @@
       "clicks": 9916,
       "plays": 2356,
       "spent": 58.96,
-      "ctr": 1.00,
+      "ctr": 1,
       "playRate": 0.24,
       "cpc": 0.006,
       "cpp": 0.025
@@ -879,7 +785,7 @@
       "clicks": 8032,
       "plays": 1438,
       "spent": 45.37,
-      "ctr": 1.20,
+      "ctr": 1.2,
       "playRate": 0.21,
       "cpc": 0.006,
       "cpp": 0.032
@@ -902,23 +808,6 @@
       "cpp": 0.033
     },
     {
-      "name": "Sponsored semana 6",
-      "campaignId": "g7h8i9j0-k1l2-3456-ghij-789012345678",
-      "startDate": "2025-06-30",
-      "endDate": "2025-07-07",
-      "objective": "Visits",
-      "budgetType": "Lifetime",
-      "budget": 50,
-      "impressions": 172968,
-      "clicks": 1794,
-      "plays": 306,
-      "spent": 7.67,
-      "ctr": 1.04,
-      "playRate": 0.18,
-      "cpc": 0.004,
-      "cpp": 0.025
-    },
-    {
       "name": "Visits - 05/26/2025 Portal Movil todas las edades",
       "campaignId": "beb6b1db-b096-4b78-a8ce-8b7cc1a278df",
       "startDate": "2025-05-26",
@@ -933,7 +822,7 @@
       "ctr": 0,
       "playRate": 70.53,
       "cpc": 0,
-      "cpp": 0.030
+      "cpp": 0.03
     },
     {
       "name": "sponsor ads Yopiverso 26-05-2025",
@@ -948,9 +837,10 @@
       "plays": 213,
       "spent": 5.25,
       "ctr": 1.26,
-      "playRate": 0.20,
+      "playRate": 0.2,
       "cpc": 0.004,
       "cpp": 0.025
     }
   ]
 }
+      
