@@ -327,10 +327,26 @@
   "insightsClave": {
     "roiPublicitario": 15.7,
     "roiVisitas": 25.2,
-    "traficoOrganico": 37.7,
+    "traficoOrganico": 37.6,
     "eficienciaConversion": 43.1
   },
   "campaigns": [
+    {
+      "name": "Drive Retention_New Ads",
+      "campaignId": "72a6eac0-9cb5-4b5b-9dc4-d8fe26a742d7",
+      "startDate": "2025-06-16",
+      "endDate": "2025-06-22",
+      "objective": "Drive Retention",
+      "budgetType": "Daily",
+      "budget": 8,
+      "impressions": 167927,
+      "clicks": 2796,
+      "plays": 595,
+      "spent": 52.58,
+      "ctr": 1.67,
+      "playRate": 0.35,
+      "cpc": 0.018,
+      "cpp": 0.088
     },
     {
       "name": "Drive Retention_Yopiverso_06232025_11:56AM",
@@ -683,22 +699,6 @@
       "impressions": 2431,
       "clicks": 0,
       "plays": 1939,
-      "spent":52.58,
-      "ctr": 1.67,
-      "playRate": 0.35,
-      "cpc": 0.018,
-      "cpp": 0.088
-       {
-      "name": "Drive Retention_New Ads",
-      "campaignId": "72a6eac0-9cb5-4b5b-9dc4-d8fe26a742d7",
-      "startDate": "2025-06-16",
-      "endDate": "2025-06-22",
-      "objective": "Drive Retention",
-      "budgetType": "Daily",
-      "budget": 8,
-      "impressions": 167927,
-      "clicks": 2796,
-      "plays": 595,
       "spent": 66.75,
       "ctr": 0,
       "playRate": 79.76,
