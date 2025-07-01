@@ -300,53 +300,37 @@
     {
       "fecha": "2025-07-01",
       "usuariosActivosDiarios": 2510,
-      "nuevosUsuarios": 1816,
+      "nuevosUsuarios": 1906,
       "tiempoSesionPromedio": 2.8,
       "retencionDia1": 0.03,
-      "visitasTotales": 179700
+      "visitasTotales": 182100
     }
   ],
   "advertisingMetrics": {
-    "totalImpressions": 21664994,
-    "totalClicks": 261028,
-    "totalPlays": 111643,
-    "totalSpent": 7157.99,
+    "totalImpressions": 21854414,
+    "totalClicks": 263116,
+    "totalPlays": 113556,
+    "totalSpent": 7237.02,
     "overallCTR": 1.2,
     "overallPlayRate": 0.52,
     "costPerPlay": 0.064,
-    "costPerClick": 0.027,
-    "clickToPlayRate": 42.8,
-    "playsPerDollar": 15.6,
-    "costPerVisit": 0.0398,
-    "visitsPerDollar": 25.1
+    "costPerClick": 0.028,
+    "clickToPlayRate": 43.1,
+    "playsPerDollar": 15.7,
+    "costPerVisit": 0.0397,
+    "visitsPerDollar": 25.2
   },
   "brandKPIs": {
-    "tiempoInteraccionMarca": 503160,
+    "tiempoInteraccionMarca": 509880,
     "costoPorMinutoInteraccion": 0.0142
   },
   "insightsClave": {
-    "roiPublicitario": 15.6,
-    "roiVisitas": 25.1,
-    "traficoOrganico": 37.9,
-    "eficienciaConversion": 42.8
+    "roiPublicitario": 15.7,
+    "roiVisitas": 25.2,
+    "traficoOrganico": 37.7,
+    "eficienciaConversion": 43.1
   },
   "campaigns": [
-    {
-      "name": "Drive Retention_New Ads",
-      "campaignId": "72a6eac0-9cb5-4b5b-9dc4-d8fe26a742d7",
-      "startDate": "2025-06-16",
-      "endDate": "2025-06-22",
-      "objective": "Drive Retention",
-      "budgetType": "Daily",
-      "budget": 8,
-      "impressions": 167927,
-      "clicks": 2796,
-      "plays": 595,
-      "spent": 52.58,
-      "ctr": 1.67,
-      "playRate": 0.35,
-      "cpc": 0.018,
-      "cpp": 0.088
     },
     {
       "name": "Drive Retention_Yopiverso_06232025_11:56AM",
@@ -516,7 +500,7 @@
       "ctr": 0,
       "playRate": 43.76,
       "cpc": 0,
-      "cpp": 0.11
+      "cpp": 0.12
     },
     {
       "name": "Portal 1 semana 4",
@@ -550,7 +534,7 @@
       "ctr": 0,
       "playRate": 56.04,
       "cpc": 0,
-      "cpp": 0.02
+      "cpp": 0.029
     },
     {
       "name": "Portal 2 semana 4",
@@ -567,7 +551,7 @@
       "ctr": 0,
       "playRate": 64.7,
       "cpc": 0,
-      "cpp": 0.03
+      "cpp": 0.04
     },
     {
       "name": "Portal 3 semana 4",
@@ -601,7 +585,7 @@
       "ctr": 0,
       "playRate": 56.56,
       "cpc": 0,
-      "cpp": 0.03
+      "cpp": 0.036
     },
     {
       "name": "Portal Ads Yopiverso 26-05-2025",
@@ -618,7 +602,7 @@
       "ctr": 0,
       "playRate": 48.55,
       "cpc": 0,
-      "cpp": 0.08
+      "cpp": 0.084
     },
     {
       "name": "Portal Movil",
@@ -635,7 +619,7 @@
       "ctr": 0,
       "playRate": 63.37,
       "cpc": 0,
-      "cpp": 0.02
+      "cpp": 0.028
     },
     {
       "name": "Portal Movil semana 5 A",
@@ -699,6 +683,22 @@
       "impressions": 2431,
       "clicks": 0,
       "plays": 1939,
+      "spent":52.58,
+      "ctr": 1.67,
+      "playRate": 0.35,
+      "cpc": 0.018,
+      "cpp": 0.088
+       {
+      "name": "Drive Retention_New Ads",
+      "campaignId": "72a6eac0-9cb5-4b5b-9dc4-d8fe26a742d7",
+      "startDate": "2025-06-16",
+      "endDate": "2025-06-22",
+      "objective": "Drive Retention",
+      "budgetType": "Daily",
+      "budget": 8,
+      "impressions": 167927,
+      "clicks": 2796,
+      "plays": 595,
       "spent": 66.75,
       "ctr": 0,
       "playRate": 79.76,
@@ -843,4 +843,3 @@
     }
   ]
 }
-      
