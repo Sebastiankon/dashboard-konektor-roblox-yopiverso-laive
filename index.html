@@ -564,38 +564,38 @@
                 return metric.fecha >= startDate && metric.fecha <= endDate;
             });
             
-            // Filter campaigns that overlap with the selected period
+            if (filteredExperience.length === 0) return;
+            
+            // Calculate cost per visit from total data
+            const totalVisitsAllTime = dashboardData.experienceMetrics[dashboardData.experienceMetrics.length - 1].visitasTotales;
+            const totalSpentAllTime = dashboardData.advertisingMetrics.totalSpent;
+            const costPerVisit = totalSpentAllTime / totalVisitsAllTime;
+            
+            // Calculate visits for the filtered period
+            const filteredVisits = filteredExperience[filteredExperience.length - 1].visitasTotales - 
+                                  (filteredExperience[0].visitasTotales - filteredExperience[0].visitasTotales); // Reset base
+            
+            // Better approach: calculate visits increment in the filtered period
+            const startVisits = filteredExperience[0].visitasTotales;
+            const endVisits = filteredExperience[filteredExperience.length - 1].visitasTotales;
+            const visitsInPeriod = endVisits - startVisits;
+            
+            // Calculate proportional spent based on visits in period
+            const proportionalSpent = visitsInPeriod * costPerVisit;
+            
+            // Filter campaigns that overlap with the selected period for other metrics
             const filteredCampaigns = dashboardData.campaigns.filter(campaign => {
                 const campaignStart = campaign.startDate;
                 const campaignEnd = campaign.endDate || new Date().toISOString().split('T')[0];
-                
                 return campaignStart <= endDate && campaignEnd >= startDate;
             });
             
-            // Calculate metrics using CPP-based approach for more accuracy
-            let totalImpressions = 0;
-            let totalClicks = 0;
-            let totalPlays = 0;
-            let totalSpent = 0;
-            
-            filteredCampaigns.forEach(campaign => {
-                // Use full campaign metrics for overlapping campaigns
-                // since we can't precisely determine daily breakdown
-                totalImpressions += campaign.impressions;
-                totalClicks += campaign.clicks;
-                totalPlays += campaign.plays;
-                
-                // Calculate spent based on CPP to ensure accuracy
-                if (campaign.plays > 0 && campaign.cpp > 0) {
-                    totalSpent += campaign.plays * campaign.cpp;
-                } else if (campaign.clicks > 0 && campaign.cpc > 0) {
-                    // Fallback to CPC if CPP is not available
-                    totalSpent += campaign.clicks * campaign.cpc;
-                } else {
-                    // Use original spent if no per-unit cost is available
-                    totalSpent += campaign.spent;
-                }
-            });
+            // Calculate proportional other metrics based on the spending ratio
+            const spendingRatio = proportionalSpent / totalSpentAllTime;
+            const totalImpressions = Math.round(dashboardData.advertisingMetrics.totalImpressions * spendingRatio);
+            const totalClicks = Math.round(dashboardData.advertisingMetrics.totalClicks * spendingRatio);
+            const totalPlays = Math.round(dashboardData.advertisingMetrics.totalPlays * spendingRatio);
+            const totalSpent = proportionalSpent;
             
             const overallCTR = totalImpressions > 0 ? (totalClicks / totalImpressions * 100) : 0;
             const overallPlayRate = totalImpressions > 0 ? (totalPlays / totalImpressions * 100) : 0;
