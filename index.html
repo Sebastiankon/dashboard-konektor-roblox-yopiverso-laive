@@ -93,44 +93,19 @@
             </div>
         </div>
 
-        <!-- Additional KPIs Row -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="metric-card bg-white rounded-lg shadow-lg p-4 text-center">
-                <div class="text-2xl font-bold text-purple-600" id="playsTotal">-</div>
-                <div class="text-sm text-gray-600">Plays Totales</div>
-            </div>
-            <div class="metric-card bg-white rounded-lg shadow-lg p-4 text-center">
-                <div class="text-2xl font-bold text-pink-600" id="cppPromedio">-</div>
-                <div class="text-sm text-gray-600">CPP Promedio</div>
-            </div>
-            <div class="metric-card bg-white rounded-lg shadow-lg p-4 text-center">
-                <div class="text-2xl font-bold text-orange-600" id="roiVisitas">-</div>
-                <div class="text-sm text-gray-600">ROI Visitas/Dolar</div>
-            </div>
-            <div class="metric-card bg-white rounded-lg shadow-lg p-4 text-center">
-                <div class="text-2xl font-bold text-teal-600" id="cpv">-</div>
-                <div class="text-sm text-gray-600">CPV (Costo/Visita)</div>
-            </div>
-        </div>
-
         <!-- Insights Clave del Período -->
         <div class="insights-gradient rounded-lg shadow-lg p-6 text-white">
             <h3 class="text-xl font-bold mb-4"><i class="fas fa-lightbulb mr-2"></i>Insights Clave del Período</h3>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="text-center">
                     <div class="text-3xl font-bold" id="roiPublicitario">-</div>
-                    <div class="text-sm opacity-90">ROI Plays/Dolar</div>
+                    <div class="text-sm opacity-90">ROI Publicitario</div>
                     <div class="text-xs opacity-75">Plays por dólar invertido</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-3xl font-bold" id="roiVisitasDolar">-</div>
-                    <div class="text-sm opacity-90">ROI Visitas/Dolar</div>
-                    <div class="text-xs opacity-75">Visitas por dólar invertido</div>
                 </div>
                 <div class="text-center">
                     <div class="text-3xl font-bold" id="traficoOrganico">-</div>
                     <div class="text-sm opacity-90">Tráfico Orgánico</div>
-                    <div class="text-xs opacity-75">Visitas orgánicas vs pagadas</div>
+                    <div class="text-xs opacity-75">Plays orgánicos vs pagados</div>
                 </div>
                 <div class="text-center">
                     <div class="text-3xl font-bold" id="eficiencia">-</div>
@@ -232,21 +207,39 @@
         let filteredData = null;
         let charts = {};
 
-        // Load data from JSON
+        // Load data from separate JSON files
         async function loadData() {
             try {
-                const response = await fetch('./data.json');
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                document.body.classList.add('loading');
+                
+                // Load both files in parallel
+                const [mainResponse, campaignsResponse] = await Promise.all([
+                    fetch('./data-main.json'),
+                    fetch('./data-campaigns.json')
+                ]);
+                
+                if (!mainResponse.ok || !campaignsResponse.ok) {
+                    throw new Error('Error loading data files');
                 }
-                dashboardData = await response.json();
+                
+                const mainData = await mainResponse.json();
+                const campaignsData = await campaignsResponse.json();
+                
+                // Combine the data
+                dashboardData = {
+                    ...mainData,
+                    campaigns: campaignsData.campaigns
+                };
+                
                 filteredData = JSON.parse(JSON.stringify(dashboardData));
                 
                 console.log('Data loaded successfully:', dashboardData);
                 initializeDashboard();
+                document.body.classList.remove('loading');
             } catch (error) {
                 console.error('Error loading data:', error);
-                alert('Error al cargar los datos. Asegúrate de que el archivo data.json esté disponible.');
+                document.body.classList.remove('loading');
+                alert('Error al cargar los datos. Asegúrate de que los archivos data-main.json y data-campaigns.json estén disponibles.');
             }
         }
 
@@ -284,31 +277,12 @@
             document.getElementById('retencion').textContent = (lastMetric.retencionDia1 * 100).toFixed(1) + '%';
             document.getElementById('visitasTotales').textContent = lastMetric.visitasTotales.toLocaleString();
             document.getElementById('totalSpent').textContent = '$' + adMetrics.totalSpent.toLocaleString();
-            
-            // Additional KPIs
-            document.getElementById('playsTotal').textContent = adMetrics.totalPlays.toLocaleString();
-            document.getElementById('cppPromedio').textContent = '$' + adMetrics.costPerPlay.toFixed(3);
-            
-            // ROI Visitas/Dolar
-            const roiVisitas = adMetrics.visitsPerDollar || (adMetrics.totalSpent > 0 ? (lastMetric.visitasTotales / adMetrics.totalSpent) : 0);
-            document.getElementById('roiVisitas').textContent = roiVisitas.toFixed(1);
-            
-            // CPV (Costo por Visita)
-            const cpv = adMetrics.costPerVisit || (lastMetric.visitasTotales > 0 ? (adMetrics.totalSpent / lastMetric.visitasTotales) : 0);
-            document.getElementById('cpv').textContent = '$' + cpv.toFixed(4);
         }
 
         function updateInsights() {
             const insights = filteredData.insightsClave;
-            const lastMetric = filteredData.experienceMetrics[filteredData.experienceMetrics.length - 1];
-            const adMetrics = filteredData.advertisingMetrics;
             
             document.getElementById('roiPublicitario').textContent = insights.roiPublicitario.toFixed(1);
-            
-            // ROI Visitas/Dolar
-            const roiVisitasDolar = insights.roiVisitas || adMetrics.visitsPerDollar || (adMetrics.totalSpent > 0 ? (lastMetric.visitasTotales / adMetrics.totalSpent) : 0);
-            document.getElementById('roiVisitasDolar').textContent = roiVisitasDolar.toFixed(1);
-            
             document.getElementById('traficoOrganico').textContent = insights.traficoOrganico.toFixed(1) + '%';
             document.getElementById('eficiencia').textContent = insights.eficienciaConversion.toFixed(1) + '%';
         }
@@ -579,85 +553,76 @@
             });
         }
 
-        // FUNCIÓN SIMPLE DE FILTRADO CON LÓGICA CPV
         function filterDataByDate() {
             const startDate = document.getElementById('startDate').value;
             const endDate = document.getElementById('endDate').value;
             
-            if (!startDate || !endDate || !dashboardData) {
-                return;
-            }
+            if (!startDate || !endDate || !dashboardData) return;
             
             // Filter experience metrics
             const filteredExperience = dashboardData.experienceMetrics.filter(metric => {
                 return metric.fecha >= startDate && metric.fecha <= endDate;
             });
             
-            if (filteredExperience.length === 0) {
-                return;
-            }
-            
-            // Obtener la última métrica del período filtrado
-            const lastExperienceMetric = filteredExperience[filteredExperience.length - 1];
-            
-            // LÓGICA CPV: Calcular inversión estimada basada en visitas
-            const cpv = dashboardData.advertisingMetrics.costPerVisit || 0.0416;
-            const visitasTotalesEnPeriodo = lastExperienceMetric.visitasTotales;
-            const inversionEstimada = visitasTotalesEnPeriodo * cpv;
-            
-            // Filtrar campañas que tienen overlap con el período
+            // Filter campaigns
             const filteredCampaigns = dashboardData.campaigns.filter(campaign => {
                 const campaignStart = campaign.startDate;
-                const campaignEnd = campaign.endDate || "2099-12-31";
+                const campaignEnd = campaign.endDate || campaign.startDate;
+                
+                // Check if campaign overlaps with selected period
                 return campaignStart <= endDate && campaignEnd >= startDate;
             });
             
-            // Calcular métricas estimadas
-            const proporcionVisitas = visitasTotalesEnPeriodo / dashboardData.experienceMetrics[dashboardData.experienceMetrics.length - 1].visitasTotales;
-            const totalPlaysEstimados = Math.round(dashboardData.advertisingMetrics.totalPlays * proporcionVisitas);
-            const totalImpressionsEstimadas = Math.round(dashboardData.advertisingMetrics.totalImpressions * proporcionVisitas);
-            const totalClicksEstimados = Math.round(dashboardData.advertisingMetrics.totalClicks * proporcionVisitas);
+            // Recalculate advertising metrics for filtered campaigns
+            const totalImpressions = filteredCampaigns.reduce((sum, c) => sum + c.impressions, 0);
+            const totalClicks = filteredCampaigns.reduce((sum, c) => sum + c.clicks, 0);
+            const totalPlays = filteredCampaigns.reduce((sum, c) => sum + c.plays, 0);
+            const totalSpent = filteredCampaigns.reduce((sum, c) => sum + c.spent, 0);
             
-            // Calcular métricas derivadas
-            const costPerPlay = totalPlaysEstimados > 0 ? (inversionEstimada / totalPlaysEstimados) : 0;
-            const playsPerDollar = inversionEstimada > 0 ? (totalPlaysEstimados / inversionEstimada) : 0;
-            const visitsPerDollar = inversionEstimada > 0 ? (visitasTotalesEnPeriodo / inversionEstimada) : 0;
-            const clickToPlayRate = totalClicksEstimados > 0 ? (totalPlaysEstimados / totalClicksEstimados * 100) : 0;
+            const overallCTR = totalImpressions > 0 ? (totalClicks / totalImpressions * 100) : 0;
+            const overallPlayRate = totalImpressions > 0 ? (totalPlays / totalImpressions * 100) : 0;
+            const costPerPlay = totalPlays > 0 ? (totalSpent / totalPlays) : 0;
+            const costPerClick = totalClicks > 0 ? (totalSpent / totalClicks) : 0;
+            const clickToPlayRate = totalClicks > 0 ? (totalPlays / totalClicks * 100) : 0;
+            const playsPerDollar = totalSpent > 0 ? (totalPlays / totalSpent) : 0;
             
-            // Calcular KPIs de marca
-            const tiempoInteraccionMarca = visitasTotalesEnPeriodo * lastExperienceMetric.tiempoSesionPromedio;
-            const costoPorMinutoInteraccion = tiempoInteraccionMarca > 0 ? (inversionEstimada / tiempoInteraccionMarca) : 0;
-            
-            // Estimar tráfico orgánico
-            const playsOrganicosEstimados = Math.max(0, visitasTotalesEnPeriodo - totalPlaysEstimados);
-            const traficoOrganico = visitasTotalesEnPeriodo > 0 ? 
-                (playsOrganicosEstimados / visitasTotalesEnPeriodo * 100) : 0;
-            
-            // Crear datos filtrados
-            filteredData = {
-                ...dashboardData,
-                experienceMetrics: filteredExperience,
-                campaigns: filteredCampaigns,
-                advertisingMetrics: {
-                    ...dashboardData.advertisingMetrics,
-                    totalPlays: totalPlaysEstimados,
-                    totalSpent: Math.round(inversionEstimada * 100) / 100,
-                    costPerPlay: Math.round(costPerPlay * 1000) / 1000,
-                    playsPerDollar: Math.round(playsPerDollar * 10) / 10,
-                    costPerVisit: cpv,
-                    visitsPerDollar: Math.round(visitsPerDollar * 10) / 10
-                },
-                brandKPIs: {
-                    tiempoInteraccionMarca: Math.round(tiempoInteraccionMarca),
-                    costoPorMinutoInteraccion: Math.round(costoPorMinutoInteraccion * 10000) / 10000
-                },
-                insightsClave: {
-                    roiPublicitario: Math.round(playsPerDollar * 10) / 10,
-                    roiVisitas: Math.round(visitsPerDollar * 10) / 10,
-                    traficoOrganico: Math.round(traficoOrganico * 10) / 10,
-                    eficienciaConversion: Math.round(clickToPlayRate * 10) / 10
-                }
-            };
+            // Recalculate brand KPIs and insights for filtered period
+            const lastExperienceMetric = filteredExperience[filteredExperience.length - 1];
+            if (lastExperienceMetric) {
+                const tiempoInteraccionMarca = lastExperienceMetric.visitasTotales * lastExperienceMetric.tiempoSesionPromedio;
+                const costoPorMinutoInteraccion = tiempoInteraccionMarca > 0 ? (totalSpent / tiempoInteraccionMarca) : 0;
+                
+                const playsOrganicosEstimados = lastExperienceMetric.visitasTotales - totalPlays;
+                const traficoOrganico = lastExperienceMetric.visitasTotales > 0 ? 
+                    (playsOrganicosEstimados / lastExperienceMetric.visitasTotales * 100) : 0;
+                
+                filteredData = {
+                    ...dashboardData,
+                    experienceMetrics: filteredExperience,
+                    campaigns: filteredCampaigns,
+                    advertisingMetrics: {
+                        totalImpressions,
+                        totalClicks,
+                        totalPlays,
+                        totalSpent,
+                        overallCTR: Math.round(overallCTR * 100) / 100,
+                        overallPlayRate: Math.round(overallPlayRate * 100) / 100,
+                        costPerPlay: Math.round(costPerPlay * 1000) / 1000,
+                        costPerClick: Math.round(costPerClick * 1000) / 1000,
+                        clickToPlayRate: Math.round(clickToPlayRate * 100) / 100,
+                        playsPerDollar: Math.round(playsPerDollar * 10) / 10
+                    },
+                    brandKPIs: {
+                        tiempoInteraccionMarca: Math.round(tiempoInteraccionMarca),
+                        costoPorMinutoInteraccion: Math.round(costoPorMinutoInteraccion * 10000) / 10000
+                    },
+                    insightsClave: {
+                        roiPublicitario: Math.round(playsPerDollar * 10) / 10,
+                        traficoOrganico: Math.round(traficoOrganico * 10) / 10,
+                        eficienciaConversion: Math.round(clickToPlayRate * 10) / 10
+                    }
+                };
+            }
             
             updateDashboard();
         }
