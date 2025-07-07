@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2025-07-06",
+  "lastUpdate": "2025-07-07",
   "experienceMetrics": [
     {
       "fecha": "2025-05-25",
@@ -211,123 +211,123 @@
     },
     {
       "fecha": "2025-06-20",
-      "usuariosActivosDiarios": 2023,
-      "nuevosUsuarios": 1581,
+      "usuariosActivosDiarios": 2151,
+      "nuevosUsuarios": 1674,
       "tiempoSesionPromedio": 3.3,
       "retencionDia1": 0.02,
-      "visitasTotales": 149600
+      "visitasTotales": 148600
     },
     {
       "fecha": "2025-06-21",
-      "usuariosActivosDiarios": 1884,
-      "nuevosUsuarios": 1472,
-      "tiempoSesionPromedio": 3.2,
+      "usuariosActivosDiarios": 2093,
+      "nuevosUsuarios": 1621,
+      "tiempoSesionPromedio": 3.3,
       "retencionDia1": 0.02,
-      "visitasTotales": 152000
+      "visitasTotales": 150200
     },
     {
       "fecha": "2025-06-22",
-      "usuariosActivosDiarios": 1762,
-      "nuevosUsuarios": 1378,
-      "tiempoSesionPromedio": 3.1,
+      "usuariosActivosDiarios": 2048,
+      "nuevosUsuarios": 1581,
+      "tiempoSesionPromedio": 3.2,
       "retencionDia1": 0.02,
-      "visitasTotales": 154300
+      "visitasTotales": 151400
     },
     {
       "fecha": "2025-06-23",
-      "usuariosActivosDiarios": 1660,
-      "nuevosUsuarios": 1299,
-      "tiempoSesionPromedio": 3,
+      "usuariosActivosDiarios": 2177,
+      "nuevosUsuarios": 1683,
+      "tiempoSesionPromedio": 3.1,
       "retencionDia1": 0.02,
-      "visitasTotales": 156500
+      "visitasTotales": 153500
     },
     {
       "fecha": "2025-06-24",
-      "usuariosActivosDiarios": 1574,
-      "nuevosUsuarios": 1233,
-      "tiempoSesionPromedio": 2.9,
-      "retencionDia1": 0.02,
-      "visitasTotales": 158600
+      "usuariosActivosDiarios": 2443,
+      "nuevosUsuarios": 1892,
+      "tiempoSesionPromedio": 3,
+      "retencionDia1": 0.03,
+      "visitasTotales": 156700
     },
     {
       "fecha": "2025-06-25",
-      "usuariosActivosDiarios": 1500,
-      "nuevosUsuarios": 1176,
-      "tiempoSesionPromedio": 2.8,
-      "retencionDia1": 0.02,
-      "visitasTotales": 160600
+      "usuariosActivosDiarios": 2587,
+      "nuevosUsuarios": 2004,
+      "tiempoSesionPromedio": 2.9,
+      "retencionDia1": 0.03,
+      "visitasTotales": 159200
     },
     {
       "fecha": "2025-06-26",
-      "usuariosActivosDiarios": 1436,
-      "nuevosUsuarios": 1127,
-      "tiempoSesionPromedio": 2.7,
-      "retencionDia1": 0.02,
-      "visitasTotales": 162500
+      "usuariosActivosDiarios": 2703,
+      "nuevosUsuarios": 2093,
+      "tiempoSesionPromedio": 2.8,
+      "retencionDia1": 0.03,
+      "visitasTotales": 162100
     },
     {
       "fecha": "2025-06-27",
-      "usuariosActivosDiarios": 1382,
-      "nuevosUsuarios": 1086,
+      "usuariosActivosDiarios": 2798,
+      "nuevosUsuarios": 2167,
       "tiempoSesionPromedio": 2.7,
-      "retencionDia1": 0.02,
-      "visitasTotales": 164300
+      "retencionDia1": 0.03,
+      "visitasTotales": 164800
     },
     {
       "fecha": "2025-06-28",
-      "usuariosActivosDiarios": 1337,
-      "nuevosUsuarios": 1052,
-      "tiempoSesionPromedio": 2.6,
-      "retencionDia1": 0.02,
-      "visitasTotales": 166000
+      "usuariosActivosDiarios": 2878,
+      "nuevosUsuarios": 2228,
+      "tiempoSesionPromedio": 2.7,
+      "retencionDia1": 0.03,
+      "visitasTotales": 167300
     },
     {
       "fecha": "2025-06-29",
-      "usuariosActivosDiarios": 1300,
-      "nuevosUsuarios": 1023,
+      "usuariosActivosDiarios": 2943,
+      "nuevosUsuarios": 2279,
       "tiempoSesionPromedio": 2.6,
-      "retencionDia1": 0.02,
-      "visitasTotales": 167600
+      "retencionDia1": 0.03,
+      "visitasTotales": 169600
     },
     {
       "fecha": "2025-06-30",
-      "usuariosActivosDiarios": 1269,
-      "nuevosUsuarios": 999,
-      "tiempoSesionPromedio": 2.5,
-      "retencionDia1": 0.02,
-      "visitasTotales": 169100
+      "usuariosActivosDiarios": 2992,
+      "nuevosUsuarios": 2316,
+      "tiempoSesionPromedio": 2.6,
+      "retencionDia1": 0.03,
+      "visitasTotales": 171700
     },
     {
       "fecha": "2025-07-01",
-      "usuariosActivosDiarios": 1243,
-      "nuevosUsuarios": 980,
+      "usuariosActivosDiarios": 3128,
+      "nuevosUsuarios": 2421,
       "tiempoSesionPromedio": 2.5,
-      "retencionDia1": 0.02,
-      "visitasTotales": 170500
+      "retencionDia1": 0.04,
+      "visitasTotales": 175200
     },
     {
       "fecha": "2025-07-02",
-      "usuariosActivosDiarios": 2454,
-      "nuevosUsuarios": 1880,
-      "tiempoSesionPromedio": 2.7,
+      "usuariosActivosDiarios": 3237,
+      "nuevosUsuarios": 2506,
+      "tiempoSesionPromedio": 2.5,
       "retencionDia1": 0.04,
-      "visitasTotales": 189600
+      "visitasTotales": 178900
     },
     {
       "fecha": "2025-07-03",
-      "usuariosActivosDiarios": 2809,
-      "nuevosUsuarios": 2147,
-      "tiempoSesionPromedio": 2.6,
+      "usuariosActivosDiarios": 3321,
+      "nuevosUsuarios": 2571,
+      "tiempoSesionPromedio": 2.5,
       "retencionDia1": 0.04,
-      "visitasTotales": 193900
+      "visitasTotales": 182400
     },
     {
       "fecha": "2025-07-04",
-      "usuariosActivosDiarios": 3162,
-      "nuevosUsuarios": 2413,
-      "tiempoSesionPromedio": 2.6,
+      "usuariosActivosDiarios": 3389,
+      "nuevosUsuarios": 2624,
+      "tiempoSesionPromedio": 2.5,
       "retencionDia1": 0.04,
-      "visitasTotales": 199200
+      "visitasTotales": 185700
     },
     {
       "fecha": "2025-07-05",
@@ -344,27 +344,35 @@
       "tiempoSesionPromedio": 2.5,
       "retencionDia1": 0.04,
       "visitasTotales": 209500
+    },
+    {
+      "fecha": "2025-07-07",
+      "usuariosActivosDiarios": 4093,
+      "nuevosUsuarios": 3142,
+      "tiempoSesionPromedio": 2.4,
+      "retencionDia1": 0.04,
+      "visitasTotales": 215500
     }
   ],
   "advertisingMetrics": {
-    "totalImpressions": 23936208,
-    "totalClicks": 283809,
-    "totalPlays": 133042,
-    "totalSpent": 7931.91,
-    "overallCTR": 1.19,
-    "overallPlayRate": 0.56,
-    "costPerPlay": 0.06,
+    "totalImpressions": 24274308,
+    "totalClicks": 287368,
+    "totalPlays": 137311,
+    "totalSpent": 8020.33,
+    "overallCTR": 1.18,
+    "overallPlayRate": 0.57,
+    "costPerPlay": 0.058,
     "costPerClick": 0.028,
-    "clickToPlayRate": 46.9,
-    "playsPerDollar": 16.8
+    "clickToPlayRate": 47.8,
+    "playsPerDollar": 17.1
   },
   "brandKPIs": {
-    "tiempoInteraccionMarca": 523750,
-    "costoPorMinutoInteraccion": 0.0151
+    "tiempoInteraccionMarca": 517200,
+    "costoPorMinutoInteraccion": 0.0155
   },
   "insightsClave": {
-    "roiPublicitario": 16.8,
-    "traficoOrganico": 36.5,
-    "eficienciaConversion": 46.9
+    "roiPublicitario": 17.1,
+    "traficoOrganico": 36.3,
+    "eficienciaConversion": 47.8
   }
 }
