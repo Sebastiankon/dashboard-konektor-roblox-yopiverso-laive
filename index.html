@@ -31,7 +31,7 @@
             background: rgba(255,255,255,1);
         }
         .chart-container {
-            height: 350px;
+            height: 300px;
         }
         .compact-chart {
             height: 200px;
@@ -55,9 +55,31 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.9);
+            display: flex;
+            items-center: center;
+            justify-content: center;
+            z-index: 9999;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+    
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="text-center">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-red-500 mb-4"></div>
+            <div class="text-lg font-semibold text-gray-700">Cargando Dashboard Ejecutivo...</div>
+            <div class="text-sm text-gray-500">Procesando datos de Yopiverso</div>
+        </div>
+    </div>
+
     <!-- Executive Header -->
     <div class="executive-gradient text-white p-8 mb-8">
         <div class="max-w-7xl mx-auto">
@@ -67,7 +89,7 @@
                     <p class="text-red-100 text-lg">Campaña Laive en Roblox • Reporte Ejecutivo</p>
                     <p class="text-red-200 text-sm mt-1">
                         <i class="fas fa-sync-alt mr-1"></i>
-                        Actualizado: <span id="lastUpdate">-</span> • 
+                        Actualizado: <span id="lastUpdate">Cargando...</span> • 
                         <i class="fas fa-chart-line mr-1"></i>
                         Konektor Chile
                     </p>
@@ -157,7 +179,7 @@
                     <div class="text-lg opacity-90 mb-1">Costo por Play</div>
                     <div class="text-sm opacity-75">Eficiencia publicitaria</div>
                     <div class="mt-4 text-sm bg-white bg-opacity-20 rounded-lg p-2">
-                        vs. Benchmark: <span id="benchmarkComparison">-</span>
+                        vs. Benchmark: <span id="benchmarkComparison">Cargando...</span>
                     </div>
                 </div>
                 <div class="text-center">
@@ -165,7 +187,7 @@
                     <div class="text-lg opacity-90 mb-1">Tráfico Orgánico</div>
                     <div class="text-sm opacity-75">Impacto viral generado</div>
                     <div class="mt-4 text-sm bg-white bg-opacity-20 rounded-lg p-2">
-                        Multiplicador: <span id="viralMultiplier">-</span>
+                        Multiplicador: <span id="viralMultiplier">Cargando...</span>
                     </div>
                 </div>
                 <div class="text-center">
@@ -173,7 +195,7 @@
                     <div class="text-lg opacity-90 mb-1">Tasa Conversión</div>
                     <div class="text-sm opacity-75">Click-to-Play Rate</div>
                     <div class="mt-4 text-sm bg-white bg-opacity-20 rounded-lg p-2">
-                        Industria: <span id="industryAverage">-</span>
+                        Industria: <span id="industryAverage">25-35%</span>
                     </div>
                 </div>
             </div>
@@ -192,7 +214,7 @@
                     <div class="mt-4">
                         <div class="bg-white bg-opacity-20 rounded-lg p-3">
                             <div class="text-sm mb-1">Equivalente a:</div>
-                            <div class="text-lg font-semibold" id="tvEquivalent">-</div>
+                            <div class="text-lg font-semibold" id="tvEquivalent">Cargando...</div>
                         </div>
                     </div>
                 </div>
@@ -203,7 +225,7 @@
                     <div class="mt-4">
                         <div class="bg-white bg-opacity-20 rounded-lg p-3">
                             <div class="text-sm mb-1">vs. TV Traditional:</div>
-                            <div class="text-lg font-semibold" id="tvComparison">-</div>
+                            <div class="text-lg font-semibold" id="tvComparison">Cargando...</div>
                         </div>
                     </div>
                 </div>
@@ -220,7 +242,7 @@
                 <div class="bg-white bg-opacity-10 rounded-xl p-6">
                     <h4 class="text-lg font-semibold mb-4">Mejores Campañas por ROI</h4>
                     <div class="space-y-3" id="topCampaignsList">
-                        <!-- Dynamic content -->
+                        <div class="text-center text-sm opacity-75 py-8">Cargando campañas...</div>
                     </div>
                 </div>
                 
@@ -261,7 +283,7 @@
                 <i class="fas fa-lightbulb text-yellow-500 mr-3"></i>Executive Insights
             </h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="executiveInsights">
-                <!-- Dynamic insights -->
+                <div class="text-center text-gray-500 py-8">Generando insights...</div>
             </div>
         </div>
 
@@ -296,22 +318,54 @@
         let filteredData = null;
         let charts = {};
 
+        // Debug function
+        function logError(message, error) {
+            console.error(`[Dashboard Error] ${message}:`, error);
+        }
+
+        function logInfo(message, data) {
+            console.log(`[Dashboard Info] ${message}:`, data);
+        }
+
         // Load data from separate JSON files
         async function loadData() {
             try {
-                document.body.classList.add('loading');
+                logInfo("Iniciando carga de datos", "Buscando archivos JSON");
                 
                 const [mainResponse, campaignsResponse] = await Promise.all([
                     fetch('./data-main.json'),
                     fetch('./data-campaigns.json')
                 ]);
                 
-                if (!mainResponse.ok || !campaignsResponse.ok) {
-                    throw new Error('Error loading data files');
+                logInfo("Respuestas recibidas", {
+                    main: mainResponse.status,
+                    campaigns: campaignsResponse.status
+                });
+                
+                if (!mainResponse.ok) {
+                    throw new Error(`Error cargando data-main.json: ${mainResponse.status} ${mainResponse.statusText}`);
+                }
+                
+                if (!campaignsResponse.ok) {
+                    throw new Error(`Error cargando data-campaigns.json: ${campaignsResponse.status} ${campaignsResponse.statusText}`);
                 }
                 
                 const mainData = await mainResponse.json();
                 const campaignsData = await campaignsResponse.json();
+                
+                logInfo("Datos parseados", {
+                    mainDataKeys: Object.keys(mainData),
+                    campaignsCount: campaignsData.campaigns ? campaignsData.campaigns.length : 0
+                });
+                
+                // Validate data structure
+                if (!mainData.experienceMetrics || !Array.isArray(mainData.experienceMetrics)) {
+                    throw new Error("Estructura de data-main.json inválida: falta experienceMetrics");
+                }
+                
+                if (!campaignsData.campaigns || !Array.isArray(campaignsData.campaigns)) {
+                    throw new Error("Estructura de data-campaigns.json inválida: falta campaigns");
+                }
                 
                 dashboardData = {
                     ...mainData,
@@ -320,173 +374,283 @@
                 
                 filteredData = JSON.parse(JSON.stringify(dashboardData));
                 
-                console.log('Executive Dashboard loaded:', dashboardData);
+                logInfo("Dashboard data combinado exitosamente", {
+                    experienceMetrics: dashboardData.experienceMetrics.length,
+                    campaigns: dashboardData.campaigns.length,
+                    lastUpdate: dashboardData.lastUpdate
+                });
+                
+                // Hide loading overlay
+                const overlay = document.getElementById('loadingOverlay');
+                if (overlay) {
+                    overlay.style.display = 'none';
+                }
+                
                 initializeExecutiveDashboard();
-                document.body.classList.remove('loading');
+                
             } catch (error) {
-                console.error('Error loading executive data:', error);
-                document.body.classList.remove('loading');
-                alert('Error al cargar los datos ejecutivos. Verificar archivos data-main.json y data-campaigns.json.');
+                logError("Error en loadData", error);
+                
+                // Hide loading overlay and show error
+                const overlay = document.getElementById('loadingOverlay');
+                if (overlay) {
+                    overlay.innerHTML = `
+                        <div class="text-center">
+                            <div class="text-red-500 text-6xl mb-4"><i class="fas fa-exclamation-triangle"></i></div>
+                            <div class="text-xl font-semibold text-gray-700 mb-2">Error al cargar datos</div>
+                            <div class="text-sm text-gray-500 mb-4">${error.message}</div>
+                            <button onclick="location.reload()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                                <i class="fas fa-refresh mr-1"></i>Reintentar
+                            </button>
+                        </div>
+                    `;
+                }
             }
         }
 
         function initializeExecutiveDashboard() {
-            if (!dashboardData) return;
-            
-            const dates = dashboardData.experienceMetrics.map(d => d.fecha).sort();
-            document.getElementById('startDate').value = dates[0];
-            document.getElementById('endDate').value = dates[dates.length - 1];
-            document.getElementById('lastUpdate').textContent = new Date(dashboardData.lastUpdate).toLocaleDateString('es-ES');
-            
-            updateExecutiveDashboard();
+            try {
+                if (!dashboardData) {
+                    throw new Error("dashboardData is null");
+                }
+                
+                logInfo("Inicializando dashboard", "Configurando fechas y UI");
+                
+                const dates = dashboardData.experienceMetrics.map(d => d.fecha).sort();
+                const startDateInput = document.getElementById('startDate');
+                const endDateInput = document.getElementById('endDate');
+                const lastUpdateSpan = document.getElementById('lastUpdate');
+                
+                if (startDateInput && endDateInput) {
+                    startDateInput.value = dates[0];
+                    endDateInput.value = dates[dates.length - 1];
+                }
+                
+                if (lastUpdateSpan) {
+                    lastUpdateSpan.textContent = new Date(dashboardData.lastUpdate).toLocaleDateString('es-ES');
+                }
+                
+                updateExecutiveDashboard();
+                
+                logInfo("Dashboard inicializado correctamente", "Actualizando métricas");
+                
+            } catch (error) {
+                logError("Error en initializeExecutiveDashboard", error);
+            }
         }
 
         function updateExecutiveDashboard() {
-            if (!filteredData) return;
-            
-            updateExecutiveKPIs();
-            updateROIMetrics();
-            updateBrandImpact();
-            updateCampaignPerformance();
-            updateTrendCharts();
-            updateExecutiveInsights();
+            try {
+                if (!filteredData) {
+                    throw new Error("filteredData is null");
+                }
+                
+                updateExecutiveKPIs();
+                updateROIMetrics();
+                updateBrandImpact();
+                updateCampaignPerformance();
+                updateTrendCharts();
+                updateExecutiveInsights();
+                
+                logInfo("Dashboard actualizado completamente", "Todas las secciones");
+                
+            } catch (error) {
+                logError("Error en updateExecutiveDashboard", error);
+            }
+        }
+
+        function safeUpdateElement(id, content, fallback = '-') {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = content;
+            } else {
+                logError(`Elemento no encontrado: ${id}`, null);
+            }
         }
 
         function updateExecutiveKPIs() {
-            const lastMetric = filteredData.experienceMetrics[filteredData.experienceMetrics.length - 1];
-            const adMetrics = filteredData.advertisingMetrics;
-            
-            // Visitas totales (acumulativas del CSV)
-            document.getElementById('visitasTotales').textContent = lastMetric.visitasTotales.toLocaleString();
-            
-            // ROI publicitario
-            document.getElementById('roiCampaign').textContent = adMetrics.playsPerDollar.toFixed(1);
-            
-            // Engagement promedio
-            document.getElementById('avgEngagement').textContent = lastMetric.tiempoSesionPromedio.toFixed(1) + 'm';
-            
-            // Inversión total
-            document.getElementById('totalInvestment').textContent = '$' + (adMetrics.totalSpent / 1000).toFixed(1) + 'K';
+            try {
+                const lastMetric = filteredData.experienceMetrics[filteredData.experienceMetrics.length - 1];
+                const adMetrics = filteredData.advertisingMetrics;
+                
+                if (!lastMetric || !adMetrics) {
+                    throw new Error("Métricas faltantes en filteredData");
+                }
+                
+                // Visitas totales (acumulativas del CSV)
+                safeUpdateElement('visitasTotales', lastMetric.visitasTotales.toLocaleString());
+                
+                // ROI publicitario
+                safeUpdateElement('roiCampaign', adMetrics.playsPerDollar.toFixed(1));
+                
+                // Engagement promedio
+                safeUpdateElement('avgEngagement', lastMetric.tiempoSesionPromedio.toFixed(1) + 'm');
+                
+                // Inversión total
+                safeUpdateElement('totalInvestment', '$' + (adMetrics.totalSpent / 1000).toFixed(1) + 'K');
+                
+                logInfo("KPIs ejecutivos actualizados", {
+                    visitas: lastMetric.visitasTotales,
+                    roi: adMetrics.playsPerDollar,
+                    engagement: lastMetric.tiempoSesionPromedio
+                });
+                
+            } catch (error) {
+                logError("Error en updateExecutiveKPIs", error);
+            }
         }
 
         function updateROIMetrics() {
-            const adMetrics = filteredData.advertisingMetrics;
-            const insights = filteredData.insightsClave;
-            
-            document.getElementById('costPerPlay').textContent = '$' + adMetrics.costPerPlay.toFixed(3);
-            document.getElementById('organicTraffic').textContent = insights.traficoOrganico.toFixed(1) + '%';
-            document.getElementById('conversionRate').textContent = insights.eficienciaConversion.toFixed(1) + '%';
-            
-            // Comparaciones vs benchmark
-            const benchmarkCPP = 0.080; // Benchmark industry
-            const comparison = ((benchmarkCPP - adMetrics.costPerPlay) / benchmarkCPP * 100);
-            document.getElementById('benchmarkComparison').textContent = comparison > 0 ? 
-                `${comparison.toFixed(1)}% mejor` : `${Math.abs(comparison).toFixed(1)}% por mejorar`;
-            
-            document.getElementById('viralMultiplier').textContent = (insights.traficoOrganico / 10).toFixed(1) + 'x';
-            document.getElementById('industryAverage').textContent = '25-35%';
+            try {
+                const adMetrics = filteredData.advertisingMetrics;
+                const insights = filteredData.insightsClave;
+                
+                safeUpdateElement('costPerPlay', '$' + adMetrics.costPerPlay.toFixed(3));
+                safeUpdateElement('organicTraffic', insights.traficoOrganico.toFixed(1) + '%');
+                safeUpdateElement('conversionRate', insights.eficienciaConversion.toFixed(1) + '%');
+                
+                // Comparaciones vs benchmark
+                const benchmarkCPP = 0.080;
+                const comparison = ((benchmarkCPP - adMetrics.costPerPlay) / benchmarkCPP * 100);
+                safeUpdateElement('benchmarkComparison', comparison > 0 ? 
+                    `${comparison.toFixed(1)}% mejor` : `${Math.abs(comparison).toFixed(1)}% por mejorar`);
+                
+                safeUpdateElement('viralMultiplier', (insights.traficoOrganico / 10).toFixed(1) + 'x');
+                
+            } catch (error) {
+                logError("Error en updateROIMetrics", error);
+            }
         }
 
         function updateBrandImpact() {
-            const brandKPIs = filteredData.brandKPIs;
-            
-            document.getElementById('brandInteractionTime').textContent = (brandKPIs.tiempoInteraccionMarca / 1000).toFixed(0) + 'K';
-            document.getElementById('costPerMinute').textContent = '$' + brandKPIs.costoPorMinutoInteraccion.toFixed(4);
-            
-            // TV equivalency
-            const tvHours = (brandKPIs.tiempoInteraccionMarca / 60).toFixed(0);
-            document.getElementById('tvEquivalent').textContent = tvHours + ' horas de TV';
-            
-            // TV comparison (traditional TV costs ~$0.05-0.10 per minute reach)
-            const tvCost = 0.075;
-            const efficiency = ((tvCost - brandKPIs.costoPorMinutoInteraccion) / tvCost * 100);
-            document.getElementById('tvComparison').textContent = efficiency > 0 ? 
-                `${efficiency.toFixed(0)}% más eficiente` : 'En análisis';
+            try {
+                const brandKPIs = filteredData.brandKPIs;
+                
+                safeUpdateElement('brandInteractionTime', (brandKPIs.tiempoInteraccionMarca / 1000).toFixed(0) + 'K');
+                safeUpdateElement('costPerMinute', '$' + brandKPIs.costoPorMinutoInteraccion.toFixed(4));
+                
+                // TV equivalency
+                const tvHours = (brandKPIs.tiempoInteraccionMarca / 60).toFixed(0);
+                safeUpdateElement('tvEquivalent', tvHours + ' horas de TV');
+                
+                // TV comparison
+                const tvCost = 0.075;
+                const efficiency = ((tvCost - brandKPIs.costoPorMinutoInteraccion) / tvCost * 100);
+                safeUpdateElement('tvComparison', efficiency > 0 ? 
+                    `${efficiency.toFixed(0)}% más eficiente` : 'En análisis');
+                
+            } catch (error) {
+                logError("Error en updateBrandImpact", error);
+            }
         }
 
         function updateCampaignPerformance() {
-            // Top campaigns by ROI
-            const topCampaigns = filteredData.campaigns
-                .filter(c => c.plays > 0 && c.spent > 0)
-                .map(c => ({
-                    ...c,
-                    roi: c.plays / c.spent
-                }))
-                .sort((a, b) => b.roi - a.roi)
-                .slice(0, 5);
+            try {
+                // Top campaigns by ROI
+                const topCampaigns = filteredData.campaigns
+                    .filter(c => c.plays > 0 && c.spent > 0)
+                    .map(c => ({
+                        ...c,
+                        roi: c.plays / c.spent
+                    }))
+                    .sort((a, b) => b.roi - a.roi)
+                    .slice(0, 5);
 
-            const topList = document.getElementById('topCampaignsList');
-            topList.innerHTML = '';
-            
-            topCampaigns.forEach((campaign, index) => {
-                const item = document.createElement('div');
-                item.className = 'flex items-center justify-between p-3 bg-white bg-opacity-20 rounded-lg';
-                item.innerHTML = `
-                    <div class="flex items-center">
-                        <div class="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center text-black font-bold text-sm mr-3">
-                            ${index + 1}
+                const topList = document.getElementById('topCampaignsList');
+                if (!topList) {
+                    logError("Elemento topCampaignsList no encontrado", null);
+                    return;
+                }
+                
+                topList.innerHTML = '';
+                
+                if (topCampaigns.length === 0) {
+                    topList.innerHTML = '<div class="text-center text-sm opacity-75 py-8">No hay campañas con datos</div>';
+                    return;
+                }
+                
+                topCampaigns.forEach((campaign, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'flex items-center justify-between p-3 bg-white bg-opacity-20 rounded-lg';
+                    item.innerHTML = `
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center text-black font-bold text-sm mr-3">
+                                ${index + 1}
+                            </div>
+                            <div>
+                                <div class="font-semibold text-sm">${campaign.name.substring(0, 20)}...</div>
+                                <div class="text-xs opacity-75">${campaign.objective}</div>
+                            </div>
                         </div>
-                        <div>
-                            <div class="font-semibold text-sm">${campaign.name.substring(0, 20)}...</div>
-                            <div class="text-xs opacity-75">${campaign.objective}</div>
+                        <div class="text-right">
+                            <div class="font-bold">${campaign.roi.toFixed(1)} plays/$</div>
+                            <div class="text-xs opacity-75">${campaign.spent.toFixed(0)}</div>
                         </div>
-                    </div>
-                    <div class="text-right">
-                        <div class="font-bold">${campaign.roi.toFixed(1)} plays/$</div>
-                        <div class="text-xs opacity-75">$${campaign.spent.toFixed(0)}</div>
-                    </div>
-                `;
-                topList.appendChild(item);
-            });
+                    `;
+                    topList.appendChild(item);
+                });
 
-            // Campaign objectives chart
-            createCampaignObjectivesChart();
+                // Campaign objectives chart
+                createCampaignObjectivesChart();
+                
+            } catch (error) {
+                logError("Error en updateCampaignPerformance", error);
+            }
         }
 
         function createCampaignObjectivesChart() {
-            const ctx = document.getElementById('campaignObjectivesChart').getContext('2d');
-            
-            if (charts.objectives) {
-                charts.objectives.destroy();
+            const ctx = document.getElementById('campaignObjectivesChart');
+            if (!ctx) {
+                logError("Canvas campaignObjectivesChart no encontrado", null);
+                return;
             }
             
-            const objectivesData = {};
-            filteredData.campaigns.forEach(campaign => {
-                if (!objectivesData[campaign.objective]) {
-                    objectivesData[campaign.objective] = { plays: 0, spent: 0 };
+            try {
+                if (charts.objectives) {
+                    charts.objectives.destroy();
                 }
-                objectivesData[campaign.objective].plays += campaign.plays;
-                objectivesData[campaign.objective].spent += campaign.spent;
-            });
-            
-            const labels = Object.keys(objectivesData);
-            const data = labels.map(label => objectivesData[label].plays);
-            const colors = ['#E31E24', '#4CAF50', '#2196F3', '#FF9800', '#9C27B0'];
-            
-            charts.objectives = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: data,
-                        backgroundColor: colors.slice(0, labels.length),
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                color: 'white',
-                                font: { size: 11 }
+                
+                const objectivesData = {};
+                filteredData.campaigns.forEach(campaign => {
+                    if (!objectivesData[campaign.objective]) {
+                        objectivesData[campaign.objective] = { plays: 0, spent: 0 };
+                    }
+                    objectivesData[campaign.objective].plays += campaign.plays;
+                    objectivesData[campaign.objective].spent += campaign.spent;
+                });
+                
+                const labels = Object.keys(objectivesData);
+                const data = labels.map(label => objectivesData[label].plays);
+                const colors = ['#E31E24', '#4CAF50', '#2196F3', '#FF9800', '#9C27B0'];
+                
+                charts.objectives = new Chart(ctx.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: data,
+                            backgroundColor: colors.slice(0, labels.length),
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: 'white',
+                                    font: { size: 11 }
+                                }
                             }
                         }
                     }
-                }
-            });
+                });
+                
+            } catch (error) {
+                logError("Error en createCampaignObjectivesChart", error);
+            }
         }
 
         function updateTrendCharts() {
@@ -495,111 +659,322 @@
         }
 
         function createReachEvolutionChart() {
-            const ctx = document.getElementById('reachEvolutionChart').getContext('2d');
-            
-            if (charts.reach) {
-                charts.reach.destroy();
+            const ctx = document.getElementById('reachEvolutionChart');
+            if (!ctx) {
+                logError("Canvas reachEvolutionChart no encontrado", null);
+                return;
             }
             
-            const data = filteredData.experienceMetrics;
-            
-            charts.reach = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: data.map(d => new Date(d.fecha).toLocaleDateString('es-ES', { month: 'short', day: 'numeric' })),
-                    datasets: [{
-                        label: 'Visitas Acumuladas',
-                        data: data.map(d => d.visitasTotales),
-                        borderColor: '#E31E24',
-                        backgroundColor: 'rgba(227, 30, 36, 0.1)',
-                        fill: true,
-                        tension: 0.4,
-                        borderWidth: 3
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
+            try {
+                if (charts.reach) {
+                    charts.reach.destroy();
+                }
+                
+                const data = filteredData.experienceMetrics;
+                
+                charts.reach = new Chart(ctx.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: data.map(d => new Date(d.fecha).toLocaleDateString('es-ES', { month: 'short', day: 'numeric' })),
+                        datasets: [{
+                            label: 'Visitas Acumuladas',
+                            data: data.map(d => d.visitasTotales),
+                            borderColor: '#E31E24',
+                            backgroundColor: 'rgba(227, 30, 36, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            borderWidth: 3
+                        }]
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: false,
-                            grid: { color: 'rgba(0,0,0,0.1)' }
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
                         },
-                        x: {
-                            grid: { color: 'rgba(0,0,0,0.1)' }
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                grid: { color: 'rgba(0,0,0,0.1)' }
+                            },
+                            x: {
+                                grid: { color: 'rgba(0,0,0,0.1)' }
+                            }
                         }
                     }
-                }
-            });
+                });
+                
+            } catch (error) {
+                logError("Error en createReachEvolutionChart", error);
+            }
         }
 
         function createEngagementTrendChart() {
-            const ctx = document.getElementById('engagementTrendChart').getContext('2d');
-            
-            if (charts.engagement) {
-                charts.engagement.destroy();
+            const ctx = document.getElementById('engagementTrendChart');
+            if (!ctx) {
+                logError("Canvas engagementTrendChart no encontrado", null);
+                return;
             }
             
-            const data = filteredData.experienceMetrics;
-            
-            charts.engagement = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: data.map(d => new Date(d.fecha).toLocaleDateString('es-ES', { month: 'short', day: 'numeric' })),
-                    datasets: [{
-                        label: 'Tiempo de Sesión',
-                        data: data.map(d => d.tiempoSesionPromedio),
-                        borderColor: '#2196F3',
-                        backgroundColor: 'rgba(33, 150, 243, 0.1)',
-                        fill: true,
-                        tension: 0.4,
-                        borderWidth: 3
-                    }, {
-                        label: 'Usuarios Activos',
-                        data: data.map(d => d.usuariosActivosDiarios / 1000), // Scale for visualization
-                        borderColor: '#4CAF50',
-                        backgroundColor: 'rgba(76, 175, 80, 0.1)',
-                        fill: false,
-                        tension: 0.4,
-                        borderWidth: 2,
-                        yAxisID: 'y1'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                            labels: { font: { size: 11 } }
-                        }
+            try {
+                if (charts.engagement) {
+                    charts.engagement.destroy();
+                }
+                
+                const data = filteredData.experienceMetrics;
+                
+                charts.engagement = new Chart(ctx.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: data.map(d => new Date(d.fecha).toLocaleDateString('es-ES', { month: 'short', day: 'numeric' })),
+                        datasets: [{
+                            label: 'Tiempo de Sesión',
+                            data: data.map(d => d.tiempoSesionPromedio),
+                            borderColor: '#2196F3',
+                            backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            borderWidth: 3
+                        }, {
+                            label: 'Usuarios Activos (K)',
+                            data: data.map(d => d.usuariosActivosDiarios / 1000),
+                            borderColor: '#4CAF50',
+                            backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                            fill: false,
+                            tension: 0.4,
+                            borderWidth: 2,
+                            yAxisID: 'y1'
+                        }]
                     },
-                    scales: {
-                        y: {
-                            type: 'linear',
-                            display: true,
-                            position: 'left',
-                            title: { display: true, text: 'Minutos' }
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: { font: { size: 11 } }
+                            }
                         },
-                        y1: {
-                            type: 'linear',
-                            display: true,
-                            position: 'right',
-                            title: { display: true, text: 'Usuarios (K)' },
-                            grid: { drawOnChartArea: false }
+                        scales: {
+                            y: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                title: { display: true, text: 'Minutos' }
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                title: { display: true, text: 'Usuarios (K)' },
+                                grid: { drawOnChartArea: false }
+                            }
                         }
                     }
-                }
-            });
+                });
+                
+            } catch (error) {
+                logError("Error en createEngagementTrendChart", error);
+            }
         }
 
         function updateExecutiveInsights() {
-            const insights = [
-                {
-                    icon: 'fas fa-trophy',
-                    color: 'text-green-600',
-                    title: 'Performance Sobresaliente',
-                    description: `ROI de ${filteredData.advertisingMetrics.playsPerDollar.toFixed(1)} plays/USD supera benchmark industry`,
+            try {
+                const insights = [
+                    {
+                        icon: 'fas fa-trophy',
+                        color: 'text-green-600',
+                        title: 'Performance Sobresaliente',
+                        description: `ROI de ${filteredData.advertisingMetrics.playsPerDollar.toFixed(1)} plays/USD supera benchmark industry`,
+                        action: 'Mantener estrategia actual'
+                    },
+                    {
+                        icon: 'fas fa-users',
+                        color: 'text-blue-600',
+                        title: 'Engagement Excepcional',
+                        description: `${filteredData.insightsClave.traficoOrganico.toFixed(1)}% de tráfico orgánico indica alto impacto viral`,
+                        action: 'Potenciar contenido viral'
+                    },
+                    {
+                        icon: 'fas fa-chart-line',
+                        color: 'text-purple-600',
+                        title: 'Eficiencia Publicitaria',
+                        description: `CPP de ${filteredData.advertisingMetrics.costPerPlay.toFixed(3)} optimiza inversión`,
+                        action: 'Escalar presupuesto'
+                    }
+                ];
+
+                const container = document.getElementById('executiveInsights');
+                if (!container) {
+                    logError("Elemento executiveInsights no encontrado", null);
+                    return;
+                }
+                
+                container.innerHTML = '';
+                
+                insights.forEach(insight => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-gray-50 rounded-xl p-6 hover:bg-gray-100 transition-all';
+                    card.innerHTML = `
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center mr-4 shadow-sm">
+                                <i class="${insight.icon} ${insight.color} text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-gray-800 mb-2">${insight.title}</h4>
+                                <p class="text-sm text-gray-600 mb-3">${insight.description}</p>
+                                <div class="inline-flex items-center text-xs font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+                                    <i class="fas fa-lightbulb mr-1"></i>
+                                    ${insight.action}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+                
+            } catch (error) {
+                logError("Error en updateExecutiveInsights", error);
+            }
+        }
+
+        function filterDataByDate() {
+            try {
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                
+                if (!startDate || !endDate || !dashboardData) {
+                    logError("Datos faltantes para filtrar", { startDate, endDate, hasDashboardData: !!dashboardData });
+                    return;
+                }
+                
+                // Filter experience metrics
+                const filteredExperience = dashboardData.experienceMetrics.filter(metric => {
+                    return metric.fecha >= startDate && metric.fecha <= endDate;
+                });
+                
+                if (filteredExperience.length === 0) {
+                    logError("No hay métricas en el período seleccionado", { startDate, endDate });
+                    return;
+                }
+                
+                // CORRECCIÓN: Usar valor directo de visitas totales (acumulativas)
+                const lastExperienceMetric = filteredExperience[filteredExperience.length - 1];
+                
+                // Filter campaigns activas en el período
+                const filteredCampaigns = dashboardData.campaigns.filter(campaign => {
+                    const campaignStart = campaign.startDate;
+                    const campaignEnd = campaign.endDate || new Date().toISOString().split('T')[0];
+                    return campaignStart <= endDate && campaignEnd >= startDate;
+                });
+                
+                // Calcular métricas del período
+                const totalImpressions = filteredCampaigns.reduce((sum, c) => sum + c.impressions, 0);
+                const totalClicks = filteredCampaigns.reduce((sum, c) => sum + c.clicks, 0);
+                const totalPlays = filteredCampaigns.reduce((sum, c) => sum + c.plays, 0);
+                const totalSpent = filteredCampaigns.reduce((sum, c) => sum + c.spent, 0);
+                
+                const overallCTR = totalImpressions > 0 ? (totalClicks / totalImpressions * 100) : 0;
+                const overallPlayRate = totalImpressions > 0 ? (totalPlays / totalImpressions * 100) : 0;
+                const costPerPlay = totalPlays > 0 ? (totalSpent / totalPlays) : 0;
+                const costPerClick = totalClicks > 0 ? (totalSpent / totalClicks) : 0;
+                const clickToPlayRate = totalClicks > 0 ? (totalPlays / totalClicks * 100) : 0;
+                const playsPerDollar = totalSpent > 0 ? (totalPlays / totalSpent) : 0;
+                
+                // Brand KPIs usando visitas acumulativas
+                const tiempoInteraccionMarca = lastExperienceMetric.visitasTotales * lastExperienceMetric.tiempoSesionPromedio;
+                const costoPorMinutoInteraccion = tiempoInteraccionMarca > 0 ? (totalSpent / tiempoInteraccionMarca) : 0;
+                
+                // Tráfico orgánico
+                const playsOrganicosEstimados = Math.max(0, lastExperienceMetric.visitasTotales - totalPlays);
+                const traficoOrganico = lastExperienceMetric.visitasTotales > 0 ? 
+                    (playsOrganicosEstimados / lastExperienceMetric.visitasTotales * 100) : 0;
+                
+                filteredData = {
+                    ...dashboardData,
+                    experienceMetrics: filteredExperience,
+                    campaigns: filteredCampaigns,
+                    advertisingMetrics: {
+                        totalImpressions,
+                        totalClicks,
+                        totalPlays,
+                        totalSpent: Math.round(totalSpent * 100) / 100,
+                        overallCTR: Math.round(overallCTR * 100) / 100,
+                        overallPlayRate: Math.round(overallPlayRate * 100) / 100,
+                        costPerPlay: Math.round(costPerPlay * 1000) / 1000,
+                        costPerClick: Math.round(costPerClick * 1000) / 1000,
+                        clickToPlayRate: Math.round(clickToPlayRate * 100) / 100,
+                        playsPerDollar: Math.round(playsPerDollar * 10) / 10
+                    },
+                    brandKPIs: {
+                        tiempoInteraccionMarca: Math.round(tiempoInteraccionMarca),
+                        costoPorMinutoInteraccion: Math.round(costoPorMinutoInteraccion * 10000) / 10000
+                    },
+                    insightsClave: {
+                        roiPublicitario: Math.round(playsPerDollar * 10) / 10,
+                        traficoOrganico: Math.round(traficoOrganico * 10) / 10,
+                        eficienciaConversion: Math.round(clickToPlayRate * 10) / 10
+                    }
+                };
+                
+                updateExecutiveDashboard();
+                
+                // Información del filtro
+                const filterInfo = document.getElementById('filterInfo');
+                if (filterInfo) {
+                    filterInfo.textContent = `📊 Análisis: ${startDate} a ${endDate} | Visitas: ${lastExperienceMetric.visitasTotales.toLocaleString()} | Campañas: ${filteredCampaigns.length} | ROI: ${playsPerDollar.toFixed(1)} plays/USD`;
+                }
+                
+                logInfo("Filtro aplicado exitosamente", {
+                    período: `${startDate} a ${endDate}`,
+                    métricas: filteredExperience.length,
+                    campañas: filteredCampaigns.length
+                });
+                
+            } catch (error) {
+                logError("Error en filterDataByDate", error);
+            }
+        }
+
+        // Event listeners
+        document.getElementById('applyFilter').addEventListener('click', filterDataByDate);
+        
+        document.getElementById('resetFilter').addEventListener('click', () => {
+            try {
+                if (dashboardData) {
+                    const dates = dashboardData.experienceMetrics.map(d => d.fecha).sort();
+                    document.getElementById('startDate').value = dates[0];
+                    document.getElementById('endDate').value = dates[dates.length - 1];
+                    filteredData = JSON.parse(JSON.stringify(dashboardData));
+                    updateExecutiveDashboard();
+                    
+                    const filterInfo = document.getElementById('filterInfo');
+                    if (filterInfo) {
+                        filterInfo.textContent = '📈 Vista completa: Todos los datos de la campaña';
+                    }
+                    
+                    logInfo("Filtro reseteado", "Vista completa restaurada");
+                }
+            } catch (error) {
+                logError("Error en reset filter", error);
+            }
+        });
+
+        // Initialize executive dashboard when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            logInfo("DOM cargado", "Iniciando carga de dashboard");
+            loadData();
+        });
+
+        // Global error handler
+        window.addEventListener('error', (event) => {
+            logError("Error global capturado", {
+                message: event.message,
+                filename: event.filename,
+                lineno: event.lineno,
+                colno: event.colno
+            });
+        });
+    </script>
+</body>
+</html>
