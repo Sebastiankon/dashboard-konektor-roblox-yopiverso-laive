@@ -128,7 +128,7 @@
             <div id="filterInfo" class="mt-3 text-sm text-blue-600 font-medium"></div>
         </div>
 
-        <!-- KPIs Ejecutivos Hero - Actualizados -->
+        <!-- KPIs Ejecutivos Hero - Ahora con 7 KPIs -->
         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
             <div class="metric-hero rounded-2xl p-5 text-center border border-gray-200">
                 <div class="text-3xl font-bold text-red-600 mb-2" id="visitasTotales">-</div>
@@ -242,7 +242,7 @@
             </div>
         </div>
 
-        <!-- Sección Impacto de Marca - Mejorada -->
+        <!-- Sección Impacto de Marca - Mejorada con CPV -->
         <div class="engagement-gradient rounded-2xl p-8 text-white">
             <h3 class="text-2xl font-bold mb-6">
                 <i class="fas fa-heart mr-3"></i>Impacto e Interacción de Marca
@@ -412,7 +412,7 @@
             console.log(`[Dashboard Info] ${message}:`, data);
         }
 
-        // NUEVA FUNCIÓN: Calcular tiempo de sesión ponderado
+        // FUNCIÓN COMPATIBLE: Calcular tiempo de sesión ponderado
         function calculateWeightedSessionTime(experienceMetrics) {
             let totalWeightedTime = 0;
             let totalVisits = 0;
@@ -431,72 +431,123 @@
             return totalVisits > 0 ? totalWeightedTime / totalVisits : 0;
         }
 
-        // NUEVA FUNCIÓN: Calcular Quality Score
+        // FUNCIÓN COMPATIBLE: Calcular Quality Score
         function calculateQualityScore(sessionTime, retention, organicTraffic) {
-            // Normalizar valores a escala 0-1
-            const sessionScore = Math.min(sessionTime / 5, 1); // 5 minutos = máximo
-            const retentionScore = retention * 25; // 0.04 = 1 en escala
-            const organicScore = organicTraffic / 100; // porcentaje a decimal
+            const sessionScore = Math.min(sessionTime / 5, 1);
+            const retentionScore = retention * 25;
+            const organicScore = organicTraffic / 100;
             
-            // Promedio ponderado
             const qualityScore = (sessionScore * 0.4 + retentionScore * 0.3 + organicScore * 0.3) * 10;
             return Math.min(Math.max(qualityScore, 1), 10);
         }
 
-        // Load data from separate JSON files
+        // FUNCIÓN COMPATIBLE: Cargar datos desde archivos JSON existentes
         async function loadData() {
             try {
-                logInfo("Iniciando carga de datos", "Buscando archivos JSON");
+                logInfo("Iniciando carga de datos", "Intentando cargar archivos JSON");
                 
-                const [mainResponse, campaignsResponse] = await Promise.all([
-                    fetch('./data-main.json'),
-                    fetch('./data-campaigns.json')
-                ]);
+                // Intentar cargar desde archivos separados primero
+                let mainData, campaignsData;
                 
-                logInfo("Respuestas recibidas", {
-                    main: mainResponse.status,
-                    campaigns: campaignsResponse.status
-                });
-                
-                if (!mainResponse.ok) {
-                    throw new Error(`Error cargando data-main.json: ${mainResponse.status} ${mainResponse.statusText}`);
+                try {
+                    const [mainResponse, campaignsResponse] = await Promise.all([
+                        fetch('./data-main.json'),
+                        fetch('./data-campaigns.json')
+                    ]);
+                    
+                    if (mainResponse.ok && campaignsResponse.ok) {
+                        mainData = await mainResponse.json();
+                        campaignsData = await campaignsResponse.json();
+                        logInfo("Carga exitosa", "Archivos separados encontrados");
+                    } else {
+                        throw new Error("Archivos separados no disponibles");
+                    }
+                } catch (separateError) {
+                    // Fallback: intentar cargar data.json unificado
+                    logInfo("Fallback", "Intentando cargar data.json unificado");
+                    const unifiedResponse = await fetch('./data.json');
+                    if (unifiedResponse.ok) {
+                        const unifiedData = await unifiedResponse.json();
+                        mainData = unifiedData;
+                        campaignsData = { campaigns: unifiedData.campaigns || [] };
+                        logInfo("Carga exitosa", "Archivo unificado encontrado");
+                    } else {
+                        throw new Error("No se encontraron archivos de datos válidos");
+                    }
                 }
                 
-                if (!campaignsResponse.ok) {
-                    throw new Error(`Error cargando data-campaigns.json: ${campaignsResponse.status} ${campaignsResponse.statusText}`);
-                }
-                
-                const mainData = await mainResponse.json();
-                const campaignsData = await campaignsResponse.json();
-                
-                logInfo("Datos parseados", {
-                    mainDataKeys: Object.keys(mainData),
-                    campaignsCount: campaignsData.campaigns ? campaignsData.campaigns.length : 0
-                });
-                
-                // Validate data structure
+                // Validar estructura de datos
                 if (!mainData.experienceMetrics || !Array.isArray(mainData.experienceMetrics)) {
-                    throw new Error("Estructura de data-main.json inválida: falta experienceMetrics");
+                    throw new Error("Estructura de datos inválida: falta experienceMetrics");
                 }
                 
-                if (!campaignsData.campaigns || !Array.isArray(campaignsData.campaigns)) {
-                    throw new Error("Estructura de data-campaigns.json inválida: falta campaigns");
-                }
-                
+                // Crear estructura compatible
                 dashboardData = {
-                    ...mainData,
-                    campaigns: campaignsData.campaigns
+                    lastUpdate: mainData.lastUpdate || '2025-07-08',
+                    experienceMetrics: mainData.experienceMetrics,
+                    campaigns: campaignsData.campaigns || mainData.campaigns || [],
+                    
+                    // Usar métricas existentes o calcular fallbacks
+                    advertisingMetrics: mainData.advertisingMetrics || {
+                        totalImpressions: 0,
+                        totalClicks: 0, 
+                        totalPlays: 0,
+                        totalSpent: 0,
+                        overallCTR: 0,
+                        overallPlayRate: 0,
+                        costPerPlay: 0,
+                        costPerClick: 0,
+                        clickToPlayRate: 0,
+                        playsPerDollar: 0
+                    },
+                    
+                    // Calcular métricas de tiempo (compatibilidad)
+                    tiempoMetrics: {
+                        tiempoSesionUltimoDia: mainData.experienceMetrics[mainData.experienceMetrics.length - 1]?.tiempoSesionPromedio || 0,
+                        tiempoSesionPonderado: calculateWeightedSessionTime(mainData.experienceMetrics),
+                        tiempoPromedioGeneral: mainData.experienceMetrics.reduce((sum, m) => sum + m.tiempoSesionPromedio, 0) / mainData.experienceMetrics.length
+                    },
+                    
+                    brandKPIs: mainData.brandKPIs || {
+                        tiempoInteraccionMarca: 0,
+                        costoPorMinutoInteraccion: 0
+                    },
+                    
+                    insightsClave: mainData.insightsClave || {
+                        roiPublicitario: 0,
+                        traficoOrganico: 0,
+                        eficienciaConversion: 0
+                    }
                 };
+                
+                // Calcular CPV si no existe
+                const lastMetric = dashboardData.experienceMetrics[dashboardData.experienceMetrics.length - 1];
+                if (lastMetric && !dashboardData.advertisingMetrics.costPerVisit) {
+                    dashboardData.advertisingMetrics.costPerVisit = lastMetric.visitasTotales > 0 ? 
+                        (dashboardData.advertisingMetrics.totalSpent / lastMetric.visitasTotales) : 0;
+                }
+                
+                // Recalcular tiempo de interacción con tiempo ponderado
+                if (lastMetric) {
+                    const weightedTime = dashboardData.tiempoMetrics.tiempoSesionPonderado;
+                    dashboardData.brandKPIs.tiempoInteraccionMarca = lastMetric.visitasTotales * weightedTime;
+                    
+                    if (dashboardData.advertisingMetrics.totalSpent > 0) {
+                        dashboardData.brandKPIs.costoPorMinutoInteraccion = 
+                            dashboardData.advertisingMetrics.totalSpent / dashboardData.brandKPIs.tiempoInteraccionMarca;
+                    }
+                }
                 
                 filteredData = JSON.parse(JSON.stringify(dashboardData));
                 
-                logInfo("Dashboard data combinado exitosamente", {
+                logInfo("Dashboard data preparado exitosamente", {
                     experienceMetrics: dashboardData.experienceMetrics.length,
                     campaigns: dashboardData.campaigns.length,
-                    lastUpdate: dashboardData.lastUpdate
+                    lastUpdate: dashboardData.lastUpdate,
+                    weightedSessionTime: dashboardData.tiempoMetrics.tiempoSesionPonderado.toFixed(2)
                 });
                 
-                // Hide loading overlay
+                // Ocultar overlay de carga
                 const overlay = document.getElementById('loadingOverlay');
                 if (overlay) {
                     overlay.style.display = 'none';
@@ -507,7 +558,7 @@
             } catch (error) {
                 logError("Error en loadData", error);
                 
-                // Hide loading overlay and show error
+                // Mostrar error amigable
                 const overlay = document.getElementById('loadingOverlay');
                 if (overlay) {
                     overlay.innerHTML = `
@@ -515,6 +566,11 @@
                             <div class="text-red-500 text-6xl mb-4"><i class="fas fa-exclamation-triangle"></i></div>
                             <div class="text-xl font-semibold text-gray-700 mb-2">Error al cargar datos</div>
                             <div class="text-sm text-gray-500 mb-4">${error.message}</div>
+                            <div class="text-xs text-gray-400 mb-4">
+                                Verifica que existan los archivos:<br>
+                                • data-main.json y data-campaigns.json, o<br>
+                                • data.json unificado
+                            </div>
                             <button onclick="location.reload()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
                                 <i class="fas fa-refresh mr-1"></i>Reintentar
                             </button>
@@ -564,7 +620,7 @@
                 updateExecutiveKPIs();
                 updateROIMetrics();
                 updateBrandImpact();
-                updateSessionMetrics(); // NUEVA FUNCIÓN
+                updateSessionMetrics();
                 updateCampaignPerformance();
                 updateTrendCharts();
                 updateExecutiveInsights();
@@ -595,30 +651,28 @@
                     throw new Error("Métricas faltantes en filteredData");
                 }
                 
-                // Visitas totales (acumulativas del CSV)
+                // Visitas totales
                 safeUpdateElement('visitasTotales', lastMetric.visitasTotales.toLocaleString());
                 
                 // Plays totales
                 safeUpdateElement('totalPlays', adMetrics.totalPlays.toLocaleString());
                 
-                // Impresiones totales (en formato M para millones)
+                // Impresiones en millones
                 const impressionsM = (adMetrics.totalImpressions / 1000000).toFixed(1);
                 safeUpdateElement('totalImpressions', impressionsM + 'M');
                 
-                // CPP (Costo por Play)
-                safeUpdateElement('cppMetric', '
-                 + adMetrics.costPerPlay.toFixed(3));
+                // CPP
+                safeUpdateElement('cppMetric', ' + adMetrics.costPerPlay.toFixed(3));
                 
-                // CPV (Costo por Visita) - MEJORADO: usar el valor calculado
-                const cpv = adMetrics.costPerVisit || (lastMetric.visitasTotales > 0 ? (adMetrics.totalSpent / lastMetric.visitasTotales) : 0);
-                safeUpdateElement('cpvMetric', '
-                 + cpv.toFixed(3));
+                // CPV - calculado dinámicamente
+                const cpv = adMetrics.costPerVisit || 
+                    (lastMetric.visitasTotales > 0 ? (adMetrics.totalSpent / lastMetric.visitasTotales) : 0);
+                safeUpdateElement('cpvMetric', ' + cpv.toFixed(3));
                 
                 // Inversión total
-                safeUpdateElement('totalInvestment', '
-                 + (adMetrics.totalSpent / 1000).toFixed(1) + 'K');
+                safeUpdateElement('totalInvestment', ' + (adMetrics.totalSpent / 1000).toFixed(1) + 'K');
                 
-                // NUEVO: Tiempo de sesión promedio ponderado
+                // Tiempo de sesión promedio ponderado
                 const weightedTime = tiempoMetrics?.tiempoSesionPonderado || 
                     calculateWeightedSessionTime(filteredData.experienceMetrics);
                 safeUpdateElement('avgSessionTime', weightedTime.toFixed(1) + ' min');
@@ -643,8 +697,7 @@
                 const insights = filteredData.insightsClave;
                 
                 safeUpdateElement('roiCampaign', adMetrics.playsPerDollar.toFixed(1));
-                safeUpdateElement('costPerPlay', '
-                 + adMetrics.costPerPlay.toFixed(3));
+                safeUpdateElement('costPerPlay', ' + adMetrics.costPerPlay.toFixed(3));
                 safeUpdateElement('organicTraffic', insights.traficoOrganico.toFixed(1) + '%');
                 safeUpdateElement('conversionRate', insights.eficienciaConversion.toFixed(1) + '%');
                 
@@ -668,13 +721,12 @@
                 const adMetrics = filteredData.advertisingMetrics;
                 
                 safeUpdateElement('brandInteractionTime', (brandKPIs.tiempoInteraccionMarca / 1000).toFixed(0) + 'K');
-                safeUpdateElement('costPerMinute', '
-                 + brandKPIs.costoPorMinutoInteraccion.toFixed(4));
+                safeUpdateElement('costPerMinute', ' + brandKPIs.costoPorMinutoInteraccion.toFixed(4));
                 
-                // NUEVO: CPV en la sección de marca
-                const cpv = adMetrics.costPerVisit || (lastMetric.visitasTotales > 0 ? (adMetrics.totalSpent / lastMetric.visitasTotales) : 0);
-                safeUpdateElement('costPerVisit', '
-                 + cpv.toFixed(4));
+                // CPV en la sección de marca
+                const cpv = adMetrics.costPerVisit || 
+                    (lastMetric.visitasTotales > 0 ? (adMetrics.totalSpent / lastMetric.visitasTotales) : 0);
+                safeUpdateElement('costPerVisit', ' + cpv.toFixed(4));
                 
                 // TV equivalency
                 const tvHours = (brandKPIs.tiempoInteraccionMarca / 60).toFixed(0);
@@ -687,7 +739,7 @@
                     `${efficiency.toFixed(0)}% más eficiente` : 'En análisis');
                 
                 // Digital ads comparison para CPV
-                const digitalCPV = 0.45; // Benchmark típico para digital ads
+                const digitalCPV = 0.45;
                 const digitalEfficiency = ((digitalCPV - cpv) / digitalCPV * 100);
                 safeUpdateElement('digitalComparison', digitalEfficiency > 0 ? 
                     `${digitalEfficiency.toFixed(0)}% más eficiente` : 'Competitivo');
@@ -697,7 +749,6 @@
             }
         }
 
-        // NUEVA FUNCIÓN: Actualizar métricas de tiempo de sesión
         function updateSessionMetrics() {
             try {
                 const experienceMetrics = filteredData.experienceMetrics;
@@ -784,7 +835,6 @@
                     topList.appendChild(item);
                 });
 
-                // Campaign objectives chart
                 createCampaignObjectivesChart();
                 
             } catch (error) {
@@ -925,11 +975,10 @@
                             label: 'Tiempo de Sesión (minutos)',
                             data: data.map(d => d.tiempoSesionPromedio),
                             backgroundColor: data.map(d => {
-                                // Color coding basado en el tiempo de sesión
-                                if (d.tiempoSesionPromedio >= 4) return '#4CAF50'; // Verde: Excelente
-                                if (d.tiempoSesionPromedio >= 3) return '#2196F3'; // Azul: Bueno
-                                if (d.tiempoSesionPromedio >= 2) return '#FF9800'; // Naranja: Regular
-                                return '#F44336'; // Rojo: Bajo
+                                if (d.tiempoSesionPromedio >= 4) return '#4CAF50';
+                                if (d.tiempoSesionPromedio >= 3) return '#2196F3';
+                                if (d.tiempoSesionPromedio >= 2) return '#FF9800';
+                                return '#F44336';
                             }),
                             borderColor: '#1976D2',
                             borderWidth: 1,
@@ -1049,7 +1098,7 @@
             }
         }
 
-        // FUNCIÓN DE FILTRADO MEJORADA CON TIEMPO PONDERADO
+        // FUNCIÓN DE FILTRADO COMPATIBLE
         function filterDataByDate() {
             try {
                 const startDate = document.getElementById('startDate').value;
@@ -1072,7 +1121,7 @@
                 
                 const lastExperienceMetric = filteredExperience[filteredExperience.length - 1];
                 
-                // Procesar campañas con metodología mejorada
+                // Procesar campañas
                 const startDateObj = new Date(startDate);
                 const endDateObj = new Date(endDate);
                 
@@ -1090,10 +1139,10 @@
                     const isOverlapping = campaignStart <= endDateObj && campaignEnd >= startDateObj;
                     
                     if (isCompletelyInside) {
-                        totalImpressions += campaign.impressions;
-                        totalClicks += campaign.clicks;
-                        totalPlays += campaign.plays;
-                        totalSpent += campaign.spent;
+                        totalImpressions += campaign.impressions || 0;
+                        totalClicks += campaign.clicks || 0;
+                        totalPlays += campaign.plays || 0;
+                        totalSpent += campaign.spent || 0;
                         campaignsForDisplay.push(campaign);
                         
                     } else if (isOverlapping) {
@@ -1105,27 +1154,23 @@
                         
                         let proportion = Math.min(1, overlapDays / totalCampaignDays);
                         
-                        if (campaign.budgetType === 'Daily') {
-                            proportion = Math.min(1, overlapDays / totalCampaignDays);
-                        } else if (campaign.budgetType === 'Lifetime') {
-                            if (overlapDays < totalCampaignDays * 0.5) {
-                                proportion *= 0.7;
-                            }
+                        if (campaign.budgetType === 'Lifetime' && overlapDays < totalCampaignDays * 0.5) {
+                            proportion *= 0.7;
                         }
                         
                         const minThreshold = 0.1;
                         if (proportion >= minThreshold) {
-                            totalImpressions += Math.round(campaign.impressions * proportion);
-                            totalClicks += Math.round(campaign.clicks * proportion);
-                            totalPlays += Math.round(campaign.plays * proportion);
-                            totalSpent += campaign.spent * proportion;
+                            totalImpressions += Math.round((campaign.impressions || 0) * proportion);
+                            totalClicks += Math.round((campaign.clicks || 0) * proportion);
+                            totalPlays += Math.round((campaign.plays || 0) * proportion);
+                            totalSpent += (campaign.spent || 0) * proportion;
                             
                             const adjustedCampaign = {
                                 ...campaign,
-                                impressions: Math.round(campaign.impressions * proportion),
-                                clicks: Math.round(campaign.clicks * proportion),
-                                plays: Math.round(campaign.plays * proportion),
-                                spent: Math.round(campaign.spent * proportion * 100) / 100,
+                                impressions: Math.round((campaign.impressions || 0) * proportion),
+                                clicks: Math.round((campaign.clicks || 0) * proportion),
+                                plays: Math.round((campaign.plays || 0) * proportion),
+                                spent: Math.round((campaign.spent || 0) * proportion * 100) / 100,
                                 _isAdjusted: true,
                                 _proportion: proportion
                             };
@@ -1133,30 +1178,6 @@
                         }
                     }
                 });
-                
-                // Validación y expansión si es necesario
-                if (totalSpent < 1 || totalImpressions < 100) {
-                    console.warn("Métricas muy bajas en período seleccionado, expandiendo búsqueda...");
-                    
-                    const expandedStart = new Date(startDateObj.getTime() - 7 * 24 * 60 * 60 * 1000);
-                    const expandedEnd = new Date(endDateObj.getTime() + 7 * 24 * 60 * 60 * 1000);
-                    
-                    dashboardData.campaigns.forEach(campaign => {
-                        const campaignStart = new Date(campaign.startDate);
-                        const campaignEnd = new Date(campaign.endDate || campaign.startDate);
-                        
-                        if (campaignStart <= expandedEnd && campaignEnd >= expandedStart) {
-                            const hasOverlap = campaignsForDisplay.some(c => c.campaignId === campaign.campaignId);
-                            if (!hasOverlap && campaign.plays > 0) {
-                                const relevanceFactor = 0.3;
-                                totalImpressions += Math.round(campaign.impressions * relevanceFactor);
-                                totalClicks += Math.round(campaign.clicks * relevanceFactor);
-                                totalPlays += Math.round(campaign.plays * relevanceFactor);
-                                totalSpent += campaign.spent * relevanceFactor;
-                            }
-                        }
-                    });
-                }
                 
                 // Calcular métricas derivadas
                 const overallCTR = totalImpressions > 0 ? (totalClicks / totalImpressions * 100) : 0;
@@ -1167,19 +1188,19 @@
                 const clickToPlayRate = totalClicks > 0 ? (totalPlays / totalClicks * 100) : 0;
                 const playsPerDollar = totalSpent > 0 ? (totalPlays / totalSpent) : 0;
                 
-                // NUEVO: Calcular tiempo de sesión ponderado para el período filtrado
+                // Calcular tiempo de sesión ponderado para el período filtrado
                 const weightedSessionTime = calculateWeightedSessionTime(filteredExperience);
                 
-                // Brand KPIs recalculados con tiempo ponderado
+                // Brand KPIs recalculados
                 const tiempoInteraccionMarca = lastExperienceMetric.visitasTotales * weightedSessionTime;
                 const costoPorMinutoInteraccion = tiempoInteraccionMarca > 0 ? (totalSpent / tiempoInteraccionMarca) : 0;
                 
-                // Tráfico orgánico ajustado
+                // Tráfico orgánico
                 const playsOrganicosEstimados = Math.max(0, lastExperienceMetric.visitasTotales - totalPlays);
                 const traficoOrganico = lastExperienceMetric.visitasTotales > 0 ? 
                     (playsOrganicosEstimados / lastExperienceMetric.visitasTotales * 100) : 0;
                 
-                // Actualizar filteredData con nuevas métricas
+                // Actualizar filteredData
                 filteredData = {
                     ...dashboardData,
                     experienceMetrics: filteredExperience,
@@ -1193,13 +1214,13 @@
                         overallPlayRate: Math.round(Math.max(0, overallPlayRate) * 100) / 100,
                         costPerPlay: Math.max(0, Math.round(costPerPlay * 1000) / 1000),
                         costPerClick: Math.max(0, Math.round(costPerClick * 1000) / 1000),
-                        costPerVisit: Math.max(0, Math.round(costPerVisit * 1000) / 1000), // NUEVO
+                        costPerVisit: Math.max(0, Math.round(costPerVisit * 1000) / 1000),
                         clickToPlayRate: Math.max(0, Math.round(clickToPlayRate * 100) / 100),
                         playsPerDollar: Math.max(0, Math.round(playsPerDollar * 10) / 10)
                     },
                     tiempoMetrics: {
                         tiempoSesionUltimoDia: lastExperienceMetric.tiempoSesionPromedio,
-                        tiempoSesionPonderado: Math.round(weightedSessionTime * 100) / 100, // NUEVO
+                        tiempoSesionPonderado: Math.round(weightedSessionTime * 100) / 100,
                         tiempoPromedioGeneral: filteredExperience.reduce((sum, m) => sum + m.tiempoSesionPromedio, 0) / filteredExperience.length
                     },
                     brandKPIs: {
@@ -1217,7 +1238,7 @@
                 
                 updateExecutiveDashboard();
                 
-                // Información del filtro mejorada
+                // Información del filtro
                 const filterInfo = document.getElementById('filterInfo');
                 if (filterInfo) {
                     const totalCampaigns = campaignsForDisplay.length;
@@ -1235,19 +1256,18 @@
                         (totalSpent > 100 ? 'text-green-600' : totalSpent > 10 ? 'text-blue-600' : 'text-orange-600');
                 }
                 
-                logInfo("Filtro aplicado con mejoras de tiempo ponderado", {
+                logInfo("Filtro aplicado exitosamente", {
                     período: `${startDate} a ${endDate}`,
                     métricas: filteredExperience.length,
                     campañasTotal: campaignsForDisplay.length,
                     campañasAjustadas: campaignsForDisplay.filter(c => c._isAdjusted).length,
                     gastoTotal: totalSpent.toFixed(2),
                     tiempoPonderado: weightedSessionTime.toFixed(2),
-                    cpv: costPerVisit.toFixed(3),
-                    metodología: 'Híbrida con tiempo ponderado'
+                    cpv: costPerVisit.toFixed(3)
                 });
                 
             } catch (error) {
-                logError("Error en filterDataByDate mejorado", error);
+                logError("Error en filterDataByDate", error);
             }
         }
 
@@ -1266,6 +1286,7 @@
                     const filterInfo = document.getElementById('filterInfo');
                     if (filterInfo) {
                         filterInfo.textContent = '📈 Vista completa: Todos los datos de la campaña';
+                        filterInfo.className = 'mt-3 text-sm text-blue-600 font-medium';
                     }
                     
                     logInfo("Filtro reseteado", "Vista completa restaurada");
@@ -1275,9 +1296,9 @@
             }
         });
 
-        // Initialize executive dashboard when page loads
+        // Initialize dashboard when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            logInfo("DOM cargado", "Iniciando carga de dashboard");
+            logInfo("DOM cargado", "Iniciando carga de dashboard compatible");
             loadData();
         });
 
