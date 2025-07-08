@@ -377,14 +377,14 @@
   },
   "tiempoMetrics": {
     "tiempoSesionUltimoDia": 2.3,
-    "tiempoSesionPonderado": 3.42,
-    "tiempoPromedioGeneral": 3.39
+    "tiempoSesionPonderado": 3.673,
+    "tiempoPromedioGeneral": 3.673
   },
   "brandKPIs": {
-    "tiempoInteraccionMarca": 752400,
-    "costoPorMinutoInteraccion": 0.0109,
-    "tiempoTotalInteraccion": 752400,
-    "costoPorMinutoAlternativo": 0.0109
+    "tiempoInteraccionMarca": 808037,
+    "costoPorMinutoInteraccion": 0.0101,
+    "tiempoTotalInteraccion": 808037,
+    "costoPorMinutoAlternativo": 0.0101
   },
   "insightsClave": {
     "roiPublicitario": 17.2,
