@@ -376,7 +376,10 @@
   },
   "brandKPIs": {
     "tiempoInteraccionMarca": 506000,
-    "costoPorMinutoInteraccion": 0.0161
+    "costoPorMinutoInteraccion": 0.0161,
+    "tiempoPromedioTotal": 3.67,
+    "tiempoTotalInteraccion": 687420,
+    "costoPorMinutoAlternativo": 0.0119
   },
   "insightsClave": {
     "roiPublicitario": 17.2,
