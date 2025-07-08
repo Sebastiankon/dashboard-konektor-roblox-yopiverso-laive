@@ -915,18 +915,54 @@
                 // CORRECCIÓN: Usar valor directo de visitas totales (acumulativas)
                 const lastExperienceMetric = filteredExperience[filteredExperience.length - 1];
                 
-                // Filter campaigns activas en el período
+                // Filter campaigns que están completamente dentro del período filtrado
                 const filteredCampaigns = dashboardData.campaigns.filter(campaign => {
                     const campaignStart = campaign.startDate;
-                    const campaignEnd = campaign.endDate || new Date().toISOString().split('T')[0];
-                    return campaignStart <= endDate && campaignEnd >= startDate;
+                    const campaignEnd = campaign.endDate || campaign.startDate; // Si no tiene endDate, usar startDate
+                    // Solo incluir campañas que estén completamente dentro del período
+                    return campaignStart >= startDate && campaignEnd <= endDate;
                 });
                 
-                // Calcular métricas del período
-                const totalImpressions = filteredCampaigns.reduce((sum, c) => sum + c.impressions, 0);
-                const totalClicks = filteredCampaigns.reduce((sum, c) => sum + c.clicks, 0);
-                const totalPlays = filteredCampaigns.reduce((sum, c) => sum + c.plays, 0);
-                const totalSpent = filteredCampaigns.reduce((sum, c) => sum + c.spent, 0);
+                // Si no hay campañas completamente dentro del período, usar proporción de las que se solapan
+                let totalImpressions = 0;
+                let totalClicks = 0;
+                let totalPlays = 0;
+                let totalSpent = 0;
+                
+                if (filteredCampaigns.length === 0) {
+                    // Buscar campañas que se solapan con el período y calcular proporción
+                    const overlappingCampaigns = dashboardData.campaigns.filter(campaign => {
+                        const campaignStart = campaign.startDate;
+                        const campaignEnd = campaign.endDate || new Date().toISOString().split('T')[0];
+                        return campaignStart <= endDate && campaignEnd >= startDate;
+                    });
+                    
+                    overlappingCampaigns.forEach(campaign => {
+                        const campaignStart = new Date(campaign.startDate);
+                        const campaignEnd = new Date(campaign.endDate || campaign.startDate);
+                        const filterStart = new Date(startDate);
+                        const filterEnd = new Date(endDate);
+                        
+                        // Calcular días de solapamiento
+                        const overlapStart = new Date(Math.max(campaignStart.getTime(), filterStart.getTime()));
+                        const overlapEnd = new Date(Math.min(campaignEnd.getTime(), filterEnd.getTime()));
+                        const overlapDays = Math.max(0, (overlapEnd - overlapStart) / (1000 * 60 * 60 * 24) + 1);
+                        const totalCampaignDays = Math.max(1, (campaignEnd - campaignStart) / (1000 * 60 * 60 * 24) + 1);
+                        
+                        const proportion = Math.min(1, overlapDays / totalCampaignDays);
+                        
+                        totalImpressions += Math.round(campaign.impressions * proportion);
+                        totalClicks += Math.round(campaign.clicks * proportion);
+                        totalPlays += Math.round(campaign.plays * proportion);
+                        totalSpent += campaign.spent * proportion;
+                    });
+                } else {
+                    // Usar campañas filtradas directamente
+                    totalImpressions = filteredCampaigns.reduce((sum, c) => sum + c.impressions, 0);
+                    totalClicks = filteredCampaigns.reduce((sum, c) => sum + c.clicks, 0);
+                    totalPlays = filteredCampaigns.reduce((sum, c) => sum + c.plays, 0);
+                    totalSpent = filteredCampaigns.reduce((sum, c) => sum + c.spent, 0);
+                }
                 
                 const overallCTR = totalImpressions > 0 ? (totalClicks / totalImpressions * 100) : 0;
                 const overallPlayRate = totalImpressions > 0 ? (totalPlays / totalImpressions * 100) : 0;
@@ -939,15 +975,22 @@
                 const tiempoInteraccionMarca = lastExperienceMetric.visitasTotales * lastExperienceMetric.tiempoSesionPromedio;
                 const costoPorMinutoInteraccion = tiempoInteraccionMarca > 0 ? (totalSpent / tiempoInteraccionMarca) : 0;
                 
-                // Tráfico orgánico
+                // Tráfico orgánico ajustado para el período
                 const playsOrganicosEstimados = Math.max(0, lastExperienceMetric.visitasTotales - totalPlays);
                 const traficoOrganico = lastExperienceMetric.visitasTotales > 0 ? 
                     (playsOrganicosEstimados / lastExperienceMetric.visitasTotales * 100) : 0;
                 
+                // Usar las campañas originales filtradas para mostrar en la tabla, pero métricas calculadas proporcionalmente
+                const campaignsForDisplay = dashboardData.campaigns.filter(campaign => {
+                    const campaignStart = campaign.startDate;
+                    const campaignEnd = campaign.endDate || new Date().toISOString().split('T')[0];
+                    return campaignStart <= endDate && campaignEnd >= startDate;
+                });
+                
                 filteredData = {
                     ...dashboardData,
                     experienceMetrics: filteredExperience,
-                    campaigns: filteredCampaigns,
+                    campaigns: campaignsForDisplay,
                     advertisingMetrics: {
                         totalImpressions,
                         totalClicks,
@@ -973,16 +1016,19 @@
                 
                 updateExecutiveDashboard();
                 
-                // Información del filtro
+                // Información del filtro con métricas proporcionales
                 const filterInfo = document.getElementById('filterInfo');
                 if (filterInfo) {
-                    filterInfo.textContent = `📊 Análisis: ${startDate} a ${endDate} | Visitas: ${lastExperienceMetric.visitasTotales.toLocaleString()} | Campañas: ${filteredCampaigns.length} | ROI: ${playsPerDollar.toFixed(1)} plays/USD`;
+                    const campaignCount = filteredCampaigns.length > 0 ? filteredCampaigns.length : campaignsForDisplay.length;
+                    filterInfo.textContent = `📊 Análisis: ${startDate} a ${endDate} | Visitas: ${lastExperienceMetric.visitasTotales.toLocaleString()} | Campañas: ${campaignCount} | Gasto: ${totalSpent.toFixed(0)} | ROI: ${playsPerDollar.toFixed(1)} plays/USD`;
                 }
                 
                 logInfo("Filtro aplicado exitosamente", {
                     período: `${startDate} a ${endDate}`,
                     métricas: filteredExperience.length,
-                    campañas: filteredCampaigns.length
+                    campañas: campaignsForDisplay.length,
+                    gastoTotal: totalSpent.toFixed(2),
+                    metodoCálculo: filteredCampaigns.length > 0 ? 'Directo' : 'Proporcional'
                 });
                 
             } catch (error) {
