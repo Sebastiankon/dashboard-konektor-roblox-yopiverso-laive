@@ -371,18 +371,20 @@
     "overallPlayRate": 0.57,
     "costPerPlay": 0.058,
     "costPerClick": 0.028,
+    "costPerVisit": 0.037,
     "clickToPlayRate": 48.3,
     "playsPerDollar": 17.2
   },
   "tiempoMetrics": {
     "tiempoSesionUltimoDia": 2.3,
+    "tiempoSesionPonderado": 3.42,
     "tiempoPromedioGeneral": 3.39
   },
   "brandKPIs": {
-    "tiempoInteraccionMarca": 533352,
-    "costoPorMinutoInteraccion": 0.0153,
-    "tiempoTotalInteraccion": 533352,
-    "costoPorMinutoAlternativo": 0.0153
+    "tiempoInteraccionMarca": 752400,
+    "costoPorMinutoInteraccion": 0.0109,
+    "tiempoTotalInteraccion": 752400,
+    "costoPorMinutoAlternativo": 0.0109
   },
   "insightsClave": {
     "roiPublicitario": 17.2,
