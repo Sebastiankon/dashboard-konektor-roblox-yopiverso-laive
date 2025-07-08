@@ -374,13 +374,9 @@
     "clickToPlayRate": 48.3,
     "playsPerDollar": 17.2
   },
-  "tiempoMetrics": {
-    "tiempoSesionUltimoDia": 2.3,
-    "tiempoPromedioGeneral": 3.39
-  },
   "brandKPIs": {
-    "tiempoTotalInteraccion": 533352,
-    "costoPorMinutoInteraccion": 0.0153
+    "tiempoInteraccionMarca": 506000,
+    "costoPorMinutoInteraccion": 0.0161
   },
   "insightsClave": {
     "roiPublicitario": 17.2,
