@@ -20,6 +20,9 @@
         .performance-gradient {
             background: linear-gradient(135deg, #F57C00 0%, #FF9800 50%, #FFB74D 100%);
         }
+        .advanced-metrics-gradient {
+            background: linear-gradient(135deg, #6A1B9A 0%, #9C27B0 50%, #BA68C8 100%);
+        }
         .metric-hero {
             transition: all 0.3s ease;
             background: rgba(255,255,255,0.95);
@@ -260,6 +263,69 @@
             </div>
         </div>
 
+        <!-- Métricas Avanzadas de Interacción -->
+        <div class="advanced-metrics-gradient rounded-2xl p-8 text-white">
+            <h3 class="text-2xl font-bold mb-6">
+                <i class="fas fa-chart-pie mr-3"></i>Análisis Avanzado de Interacción
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="bg-white bg-opacity-20 rounded-xl p-6 text-center">
+                    <div class="w-12 h-12 bg-white bg-opacity-30 rounded-lg flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-clock text-white text-xl"></i>
+                    </div>
+                    <div class="text-3xl font-bold mb-1" id="avgSessionTime">-</div>
+                    <div class="text-sm font-semibold opacity-90">Tiempo Promedio Total</div>
+                    <div class="text-xs opacity-75 mt-1">Ponderado por usuarios activos</div>
+                </div>
+                
+                <div class="bg-white bg-opacity-20 rounded-xl p-6 text-center">
+                    <div class="w-12 h-12 bg-white bg-opacity-30 rounded-lg flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-calculator text-white text-xl"></i>
+                    </div>
+                    <div class="text-3xl font-bold mb-1" id="totalInteractionReal">-</div>
+                    <div class="text-sm font-semibold opacity-90">Tiempo Real Acumulado</div>
+                    <div class="text-xs opacity-75 mt-1">Suma día por día (K min)</div>
+                </div>
+                
+                <div class="bg-white bg-opacity-20 rounded-xl p-6 text-center">
+                    <div class="w-12 h-12 bg-white bg-opacity-30 rounded-lg flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-dollar-sign text-white text-xl"></i>
+                    </div>
+                    <div class="text-3xl font-bold mb-1" id="costPerMinuteReal">-</div>
+                    <div class="text-sm font-semibold opacity-90">Costo/Min Real</div>
+                    <div class="text-xs opacity-75 mt-1">Basado en tiempo acumulado</div>
+                </div>
+                
+                <div class="bg-white bg-opacity-20 rounded-xl p-6 text-center">
+                    <div class="w-12 h-12 bg-white bg-opacity-30 rounded-lg flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-chart-line text-white text-xl"></i>
+                    </div>
+                    <div class="text-3xl font-bold mb-1" id="efficiencyImprovement">-</div>
+                    <div class="text-sm font-semibold opacity-90">Mejora en Eficiencia</div>
+                    <div class="text-xs opacity-75 mt-1">vs. método tradicional</div>
+                </div>
+            </div>
+            
+            <!-- Explicación de metodologías -->
+            <div class="mt-8 bg-white bg-opacity-10 rounded-xl p-6">
+                <h4 class="text-lg font-semibold mb-4">
+                    <i class="fas fa-info-circle mr-2"></i>Metodologías de Cálculo
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white bg-opacity-10 rounded-lg p-4">
+                        <h5 class="font-semibold mb-2">📊 Método Actual (Dashboard)</h5>
+                        <p class="text-sm opacity-90 mb-2">Tiempo de interacción = Visitas totales × Tiempo promedio del último día</p>
+                        <p class="text-xs opacity-75">Útil para comparaciones rápidas y métricas de alto nivel</p>
+                    </div>
+                    <div class="bg-white bg-opacity-10 rounded-lg p-4">
+                        <h5 class="font-semibold mb-2">🔬 Método Avanzado (Real)</h5>
+                        <p class="text-sm opacity-90 mb-2">Tiempo real = Σ(Usuarios activos × Tiempo promedio) por cada día</p>
+                        <p class="text-xs opacity-75">Más preciso para análisis de eficiencia y optimización</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Performance de Campañas -->
         <div class="performance-gradient rounded-2xl p-8 text-white">
             <h3 class="text-2xl font-bold mb-6">
@@ -355,6 +421,29 @@
             console.log(`[Dashboard Info] ${message}:`, data);
         }
 
+        // Función para calcular métricas avanzadas
+        function calculateAdvancedMetrics(experienceMetrics) {
+            let totalWeightedTime = 0;
+            let totalUsers = 0;
+            let totalRealInteraction = 0;
+
+            experienceMetrics.forEach(day => {
+                const dayUsers = day.usuariosActivosDiarios;
+                const dayTime = day.tiempoSesionPromedio;
+                
+                totalWeightedTime += (dayUsers * dayTime);
+                totalUsers += dayUsers;
+                totalRealInteraction += (dayUsers * dayTime);
+            });
+
+            const avgTimeTotal = totalUsers > 0 ? (totalWeightedTime / totalUsers) : 0;
+
+            return {
+                tiempoPromedioTotal: Math.round(avgTimeTotal * 100) / 100,
+                tiempoTotalInteraccion: Math.round(totalRealInteraction)
+            };
+        }
+
         // Load data from separate JSON files
         async function loadData() {
             try {
@@ -393,6 +482,15 @@
                 
                 if (!campaignsData.campaigns || !Array.isArray(campaignsData.campaigns)) {
                     throw new Error("Estructura de data-campaigns.json inválida: falta campaigns");
+                }
+                
+                // Calcular métricas avanzadas si no existen en el JSON
+                if (!mainData.brandKPIs.tiempoPromedioTotal || !mainData.brandKPIs.tiempoTotalInteraccion) {
+                    const advancedMetrics = calculateAdvancedMetrics(mainData.experienceMetrics);
+                    mainData.brandKPIs.tiempoPromedioTotal = advancedMetrics.tiempoPromedioTotal;
+                    mainData.brandKPIs.tiempoTotalInteraccion = advancedMetrics.tiempoTotalInteraccion;
+                    mainData.brandKPIs.costoPorMinutoAlternativo = advancedMetrics.tiempoTotalInteraccion > 0 ? 
+                        (mainData.advertisingMetrics.totalSpent / advancedMetrics.tiempoTotalInteraccion) : 0;
                 }
                 
                 dashboardData = {
@@ -476,6 +574,7 @@
                 updateExecutiveKPIs();
                 updateROIMetrics();
                 updateBrandImpact();
+                updateAdvancedMetrics();
                 updateCampaignPerformance();
                 updateTrendCharts();
                 updateExecutiveInsights();
@@ -516,14 +615,14 @@
                 safeUpdateElement('totalImpressions', impressionsM + 'M');
                 
                 // CPP (Costo por Play)
-                safeUpdateElement('cppMetric', '$' + adMetrics.costPerPlay.toFixed(3));
+                safeUpdateElement('cppMetric', ' + adMetrics.costPerPlay.toFixed(3));
                 
                 // CPV (Costo por Visita) - calculado como inversión total / visitas totales
                 const cpv = lastMetric.visitasTotales > 0 ? (adMetrics.totalSpent / lastMetric.visitasTotales) : 0;
-                safeUpdateElement('cpvMetric', '$' + cpv.toFixed(3));
+                safeUpdateElement('cpvMetric', ' + cpv.toFixed(3));
                 
                 // Inversión total
-                safeUpdateElement('totalInvestment', '$' + (adMetrics.totalSpent / 1000).toFixed(1) + 'K');
+                safeUpdateElement('totalInvestment', ' + (adMetrics.totalSpent / 1000).toFixed(1) + 'K');
                 
                 // ROI publicitario (se movió a la sección ROI)
                 safeUpdateElement('roiCampaign', adMetrics.playsPerDollar.toFixed(1));
@@ -546,7 +645,7 @@
                 const adMetrics = filteredData.advertisingMetrics;
                 const insights = filteredData.insightsClave;
                 
-                safeUpdateElement('costPerPlay', '$' + adMetrics.costPerPlay.toFixed(3));
+                safeUpdateElement('costPerPlay', ' + adMetrics.costPerPlay.toFixed(3));
                 safeUpdateElement('organicTraffic', insights.traficoOrganico.toFixed(1) + '%');
                 safeUpdateElement('conversionRate', insights.eficienciaConversion.toFixed(1) + '%');
                 
@@ -567,21 +666,52 @@
             try {
                 const brandKPIs = filteredData.brandKPIs;
                 
+                // Método actual (mantener compatibilidad)
                 safeUpdateElement('brandInteractionTime', (brandKPIs.tiempoInteraccionMarca / 1000).toFixed(0) + 'K');
-                safeUpdateElement('costPerMinute', '$' + brandKPIs.costoPorMinutoInteraccion.toFixed(4));
+                safeUpdateElement('costPerMinute', ' + brandKPIs.costoPorMinutoInteraccion.toFixed(4));
                 
-                // TV equivalency
-                const tvHours = (brandKPIs.tiempoInteraccionMarca / 60).toFixed(0);
+                // TV equivalency usando método mejorado si está disponible
+                const timeToUse = brandKPIs.tiempoTotalInteraccion || brandKPIs.tiempoInteraccionMarca;
+                const tvHours = (timeToUse / 60).toFixed(0);
                 safeUpdateElement('tvEquivalent', tvHours + ' horas de TV');
                 
-                // TV comparison
+                // TV comparison usando el costo alternativo si está disponible
+                const costToUse = brandKPIs.costoPorMinutoAlternativo || brandKPIs.costoPorMinutoInteraccion;
                 const tvCost = 0.075;
-                const efficiency = ((tvCost - brandKPIs.costoPorMinutoInteraccion) / tvCost * 100);
+                const efficiency = ((tvCost - costToUse) / tvCost * 100);
                 safeUpdateElement('tvComparison', efficiency > 0 ? 
                     `${efficiency.toFixed(0)}% más eficiente` : 'En análisis');
                 
             } catch (error) {
                 logError("Error en updateBrandImpact", error);
+            }
+        }
+
+        function updateAdvancedMetrics() {
+            try {
+                const brandKPIs = filteredData.brandKPIs;
+                
+                // Tiempo promedio total ponderado
+                safeUpdateElement('avgSessionTime', brandKPIs.tiempoPromedioTotal.toFixed(1) + ' min');
+                
+                // Tiempo total real acumulado
+                safeUpdateElement('totalInteractionReal', (brandKPIs.tiempoTotalInteraccion / 1000).toFixed(0) + 'K');
+                
+                // Costo por minuto alternativo
+                safeUpdateElement('costPerMinuteReal', ' + brandKPIs.costoPorMinutoAlternativo.toFixed(4));
+                
+                // Mejora en eficiencia
+                const improvement = ((brandKPIs.costoPorMinutoInteraccion - brandKPIs.costoPorMinutoAlternativo) / brandKPIs.costoPorMinutoInteraccion * 100);
+                safeUpdateElement('efficiencyImprovement', improvement.toFixed(1) + '%');
+                
+                logInfo("Métricas avanzadas actualizadas", {
+                    tiempoPromedio: brandKPIs.tiempoPromedioTotal,
+                    tiempoTotal: brandKPIs.tiempoTotalInteraccion,
+                    mejora: improvement.toFixed(1) + '%'
+                });
+                
+            } catch (error) {
+                logError("Error en updateAdvancedMetrics", error);
             }
         }
 
@@ -1022,9 +1152,13 @@
                 const clickToPlayRate = totalClicks > 0 ? (totalPlays / totalClicks * 100) : 0;
                 const playsPerDollar = totalSpent > 0 ? (totalPlays / totalSpent) : 0;
                 
-                // Brand KPIs usando la métrica más reciente del período
+                // Calcular métricas avanzadas para el período filtrado
+                const advancedMetrics = calculateAdvancedMetrics(filteredExperience);
+                
+                // Brand KPIs usando ambos métodos
                 const tiempoInteraccionMarca = lastExperienceMetric.visitasTotales * lastExperienceMetric.tiempoSesionPromedio;
                 const costoPorMinutoInteraccion = tiempoInteraccionMarca > 0 ? (totalSpent / tiempoInteraccionMarca) : 0;
+                const costoPorMinutoAlternativo = advancedMetrics.tiempoTotalInteraccion > 0 ? (totalSpent / advancedMetrics.tiempoTotalInteraccion) : 0;
                 
                 // Tráfico orgánico ajustado
                 const playsOrganicosEstimados = Math.max(0, lastExperienceMetric.visitasTotales - totalPlays);
@@ -1050,7 +1184,10 @@
                     },
                     brandKPIs: {
                         tiempoInteraccionMarca: Math.max(0, Math.round(tiempoInteraccionMarca)),
-                        costoPorMinutoInteraccion: Math.max(0, Math.round(costoPorMinutoInteraccion * 10000) / 10000)
+                        costoPorMinutoInteraccion: Math.max(0, Math.round(costoPorMinutoInteraccion * 10000) / 10000),
+                        tiempoPromedioTotal: advancedMetrics.tiempoPromedioTotal,
+                        tiempoTotalInteraccion: advancedMetrics.tiempoTotalInteraccion,
+                        costoPorMinutoAlternativo: Math.max(0, Math.round(costoPorMinutoAlternativo * 10000) / 10000)
                     },
                     insightsClave: {
                         roiPublicitario: Math.max(0, Math.round(playsPerDollar * 10) / 10),
