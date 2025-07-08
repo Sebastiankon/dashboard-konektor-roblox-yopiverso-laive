@@ -454,8 +454,25 @@
                     endDateInput.value = dates[dates.length - 1];
                 }
                 
-                if (lastUpdateSpan) {
-                    lastUpdateSpan.textContent = new Date(dashboardData.lastUpdate).toLocaleDateString('es-ES');
+                // FIX: Mejorar el formateo de la fecha de actualización
+                if (lastUpdateSpan && dashboardData.lastUpdate) {
+                    // Crear fecha directamente desde el string en formato YYYY-MM-DD
+                    const [year, month, day] = dashboardData.lastUpdate.split('-');
+                    const updateDate = new Date(year, month - 1, day); // month - 1 porque JavaScript usa 0-11 para meses
+                    
+                    // Formatear en español
+                    const formattedDate = updateDate.toLocaleDateString('es-ES', {
+                        day: '2-digit',
+                        month: '2-digit', 
+                        year: 'numeric'
+                    });
+                    
+                    lastUpdateSpan.textContent = formattedDate;
+                    
+                    logInfo("Fecha de actualización configurada", {
+                        original: dashboardData.lastUpdate,
+                        formateada: formattedDate
+                    });
                 }
                 
                 updateExecutiveDashboard();
@@ -568,7 +585,7 @@
                 const brandKPIs = filteredData.brandKPIs;
                 
                 safeUpdateElement('brandInteractionTime', (brandKPIs.tiempoInteraccionMarca / 1000).toFixed(0) + 'K');
-                safeUpdateElement('costPerMinute', '$' + brandKPIs.costoPorMinutoInteraccion.toFixed(4));
+                safeUpdateElement('costPerMinute', ' + brandKPIs.costoPorMinutoInteraccion.toFixed(4));
                 
                 // TV equivalency
                 const tvHours = (brandKPIs.tiempoInteraccionMarca / 60).toFixed(0);
@@ -1135,4 +1152,3 @@
     </script>
 </body>
 </html>
-
