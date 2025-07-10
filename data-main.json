@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2025-07-08",
+  "lastUpdate": "2025-07-10",
   "experienceMetrics": [
     {
       "fecha": "2025-05-25",
@@ -360,6 +360,22 @@
       "tiempoSesionPromedio": 2.3,
       "retencionDia1": 0.04,
       "visitasTotales": 220000
+    },
+    {
+      "fecha": "2025-07-09",
+      "usuariosActivosDiarios": 3826,
+      "nuevosUsuarios": 3067,
+      "tiempoSesionPromedio": 2.4,
+      "retencionDia1": 0.03,
+      "visitasTotales": 220300
+    },
+    {
+      "fecha": "2025-07-10",
+      "usuariosActivosDiarios": 3418,
+      "nuevosUsuarios": 2615,
+      "tiempoSesionPromedio": 2.5,
+      "retencionDia1": 0.03,
+      "visitasTotales": 220600
     }
   ],
   "advertisingMetrics": {
@@ -376,19 +392,19 @@
     "playsPerDollar": 17.2
   },
   "tiempoMetrics": {
-    "tiempoSesionUltimoDia": 2.3,
-    "tiempoSesionPonderado": 3.673,
-    "tiempoPromedioGeneral": 3.673
+    "tiempoSesionUltimoDia": 2.5,
+    "tiempoSesionPonderado": 3.676,
+    "tiempoPromedioGeneral": 3.676
   },
   "brandKPIs": {
-    "tiempoInteraccionMarca": 808037,
-    "costoPorMinutoInteraccion": 0.0101,
-    "tiempoTotalInteraccion": 808037,
-    "costoPorMinutoAlternativo": 0.0101
+    "tiempoInteraccionMarca": 810925,
+    "costoPorMinutoInteraccion": 0.0100,
+    "tiempoTotalInteraccion": 810925,
+    "costoPorMinutoAlternativo": 0.0100
   },
   "insightsClave": {
     "roiPublicitario": 17.2,
-    "traficoOrganico": 36.2,
+    "traficoOrganico": 36.3,
     "eficienciaConversion": 48.3
   }
 }
